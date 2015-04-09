@@ -1,5 +1,7 @@
 #include "maya_includes.h"
+#include <maya/MFnPlugin.h>
 #include <iostream>
+#include "exporter.h"
 
 using namespace std;
 
@@ -30,7 +32,7 @@ EXPORT MStatus initializePlugin(MObject obj)
 	{
 		CHECK_MSTATUS(res);
 	}
-	res = myPlugin.registerCommand("myCommand", MyCommand::creator);
+	res = myPlugin.registerCommand("myCommand", Exporter::creator);
 
 	MGlobal::displayInfo("Maya plugin loaded!");
 
