@@ -12,15 +12,21 @@ struct Header
 struct GroupHeader
 {
 	unsigned int mesh_count;
+	unsigned int name_Length;
 };
 
 struct Group
-{
-	unsigned int mesh_ID;
+{	
+	//char name[];
+	double position[3];
+	double rotation[4];
+	double scale[3];
+	unsigned int mesh_ID[];
 };
 
 struct MeshHeader
 {
+	unsigned int name_length;
 	unsigned int material_ID;
 	unsigned int vertex_count;
 	unsigned int joint_count;
@@ -29,6 +35,7 @@ struct MeshHeader
 
 struct Vertex
 {
+	unsigned int vertexID;
 	double position[3];
 	double normal[3];
 	double tangent[3];
@@ -36,8 +43,14 @@ struct Vertex
 	double uv[2];
 };
 
-struct Camera
+struct CameraHeader
 {
+	unsigned int name_length;
+};
+
+struct camera
+{
+	//char name[];
 	double position[3];
 	double up_vector[3];
 	double interest_position[3];
@@ -48,8 +61,6 @@ struct Camera
 	double fear_plane;
 	double far_plane;
 	enum projection_type{ ePerspective, eOrthogonal };
-
-
 };
 
 struct MorphAnimation
@@ -59,8 +70,14 @@ struct MorphAnimation
 	// color
 };
 
+struct MaterialHeader
+{
+	unsigned int name_Length;
+};
+
 struct Material
 {
+	//char name[];
 	bool is_phong;
 	double specular[3];
 	double specular_factor;
@@ -88,15 +105,20 @@ struct Animation
 	// bla bla
 };
 
+struct LightHeader
+{
+	unsigned int name_Lenght;
+};
+
 struct Light
 {
+	//char name[];
 	enum light_type{ ePoint, eDirectional, eSpot, eArea, eVolume };
 	double color[3];
 	double intensity;
 	enum decay_type{ eNone, eLinear, eQuadric, eCubic };
 	bool cast_shadows;
 	double shadow_color[3];
-
 	// posheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeej
 	// direction
 	// bla bla
