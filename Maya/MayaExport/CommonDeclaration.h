@@ -9,25 +9,22 @@ struct Header
 	unsigned int camera_count;
 };
 
-struct GroupHeader
+struct TransformHeader
 {
-	unsigned int mesh_count;
 	unsigned int name_Length;
 };
 
-struct Group
+struct Transform
 {	
 	//char name[];
 	double position[3];
 	double rotation[4];
 	double scale[3];
-	unsigned int mesh_ID[];
 };
 
 struct MeshHeader
 {
 	unsigned int name_length;
-	unsigned int material_ID;
 	unsigned int vertex_count;
 	unsigned int joint_count;
 	bool has_Animation;
@@ -41,6 +38,19 @@ struct Vertex
 	double tangent[3];
 	double bi_tangent[3];
 	double uv[2];
+};
+
+struct shapeHeader
+{
+	unsigned int name_length;
+};
+
+struct shape
+{
+	//char name[];
+	unsigned int mesh_ID;
+	unsigned int transform_ID;
+	unsigned int material_ID;
 };
 
 struct CameraHeader
