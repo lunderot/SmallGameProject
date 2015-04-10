@@ -3,6 +3,11 @@
 
 struct Header
 {
+	Header()
+	{
+		group_count = mesh_count = material_count = camera_count = light_count = 0;
+	};
+
 	unsigned int group_count;
 	unsigned int mesh_count;
 	unsigned int material_count;
