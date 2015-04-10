@@ -16,7 +16,8 @@ struct TransformHeader
 
 struct Transform
 {	
-	//char name[];
+	const char* name;
+	int parentID;
 	double position[3];
 	double rotation[4];
 	double scale[3];

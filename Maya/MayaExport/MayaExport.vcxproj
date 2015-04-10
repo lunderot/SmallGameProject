@@ -105,10 +105,12 @@
     <ClCompile Include="exporter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonDeclaration.h" />
     <ClInclude Include="exporter.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="maya_includes.h" />
     <ClInclude Include="mesh.h" />
   </ItemGroup>
