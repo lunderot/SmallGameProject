@@ -104,6 +104,7 @@
   <ItemGroup>
     <ClCompile Include="exporter.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="material.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="WriteToFile.cpp" />
@@ -111,6 +112,7 @@
   <ItemGroup>
     <ClInclude Include="CommonDeclaration.h" />
     <ClInclude Include="exporter.h" />
+    <ClInclude Include="material.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="maya_includes.h" />
     <ClInclude Include="mesh.h" />

@@ -100,28 +100,30 @@ struct MorphAnimation
 
 struct MaterialHeader
 {
-	unsigned int name_Length;
+	unsigned int name_length;
+	unsigned int duffuse_map_length;
+	unsigned int normal_map_length;
+	unsigned int specular_map_length;
 };
 
 struct Material
 {
-	//char name[];
-	bool is_phong;
+	enum material_type { eLambert, eBlinn, ePhong } mtrl_type;
+	double normal_depth;
 	double specular[3];
 	double specular_factor;
 	double shininess;
 	double reflection[3];
 	double reflection_factor;
-
-	// id
 	double ambient[3];
-	double ambient_factor;
 	double diffuse[3];
 	double diffuse_factor;
-	double normal_map[3];
-	double transparent_color[3];
-	double transparency_factor;
-
+	double transparency_color[3];
+	double incandescence[3];
+	const char* node_name;
+	const char* diffuse_map;
+	const char* normal_map;
+	const char* specular_map;
 };
 
 struct Animation
