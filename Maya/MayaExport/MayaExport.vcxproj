@@ -106,6 +106,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="WriteToFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonDeclaration.h" />
@@ -113,6 +114,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="maya_includes.h" />
     <ClInclude Include="mesh.h" />
+    <ClInclude Include="writeToFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

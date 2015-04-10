@@ -6,6 +6,7 @@ MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<co
 	MStatus status = MS::kSuccess;
 
 	heiraki[mayaTransform.name().asChar()] = transformCount;
+
 	MGlobal::displayInfo(MString() + mayaTransform.parentCount());
 	MFnDependencyNode parent(mayaTransform.parent(0));
 	MGlobal::displayInfo(parent.name());

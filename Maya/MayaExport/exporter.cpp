@@ -2,8 +2,8 @@
 #include "mesh.h"
 #include "Transform.h"
 #include "maya_includes.h"
+#include "writeToFile.h"
 
-#include <iostream>
 #include <vector>
 #include <map>
 
@@ -17,12 +17,11 @@ MStatus Exporter::doIt(const MArgList& argList)
 	Mesh mesh;
 	map<string, unsigned int> materials;
 	map<const char*, int> heiraki;
+	Header header;
 
 	vector<TransformHeader> transfromHeaders;
 	vector<Transform> transformData;
 
-	ofstream outfile("c://test.bin", ofstream::binary);
-	ofstream outfileASCII("c://testASCII.txt");
 	while (!dagIt.isDone())
 	{
 		if (dagIt.getPath(path))
@@ -30,7 +29,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.apiType() == MFn::kMesh)
 			{
 				MFnMesh mayaMesh(path);
-				status = mesh.exportMesh(mayaMesh, materials, outfile);
+				//status = mesh.exportMesh(mayaMesh, materials, outfile);
+				header.mesh_count++;
 			}
 			if (path.apiType() == MFn::kTransform)
 			{
@@ -41,8 +41,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				TransformClass transformClass;
 
 				MFnTransform mayaTransform(path.node(), &status);
-				MGlobal::displayInfo(MString() + status);
-				MGlobal::displayInfo(path.fullPathName());
 				status = transformClass.exportTransform(mayaTransform, heiraki, transfromHeaders.size(), transformHeader, transform);
 				if (status != MS::kSuccess)
 				{
@@ -50,23 +48,22 @@ MStatus Exporter::doIt(const MArgList& argList)
 				}
 				transfromHeaders.push_back(transformHeader);
 				transformData.push_back(transform);
-
-				//Kod för att se om det kan skrivas till fil
-				outfile.write( (const char*)&transformHeader, sizeof(TransformHeader));
-				outfile.write((const char*)&transform, sizeof(Transform));
-				outfileASCII << transformHeader.name_Length << endl;
-				for (unsigned int i = 0; i < transformHeader.name_Length; i++)
-					outfileASCII << transform.name[i];
-
-				outfileASCII << endl << transform.parentID << endl << transform.position[0] << ' ' << transform.position[1] << ' ' << transform.position[3] << endl
-					<< transform.rotation[0] << ' ' << transform.rotation[1] << ' ' << transform.rotation[2] << ' ' << transform.rotation[3] << endl
-					<< transform.scale[0] << ' ' << transform.scale[1] << ' ' << transform.scale[2] << endl << endl;
+				header.group_count++;
 			}
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
-	outfile.close();
-	outfileASCII.close();
+
+	//Printing to files
+	WriteToFile output;
+	output.binaryFilePath("c://test.bin");
+	output.ASCIIFilePath("c://testASCII.txt");
+	output.OpenFiles();
+	output.writeToFiles(&header, 1);
+	output.writeToFiles(&transfromHeaders[0], transfromHeaders.size());
+	output.writeToFiles(&transformData[0], transformData.size());
+
+	output.CloseFiles();
 	return MStatus::kSuccess;
 }
 

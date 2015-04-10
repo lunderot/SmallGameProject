@@ -7,11 +7,26 @@ struct Header
 	unsigned int mesh_count;
 	unsigned int material_count;
 	unsigned int camera_count;
+	unsigned int light_count;
+	friend std::ostream& operator<<(std::ostream& out, const Header& obj)
+	{
+		out << "Number of groups: " << obj.group_count << endl
+			<< "Number of meshes: " << obj.mesh_count << endl
+			<< "Number of materials: " << obj.material_count << endl
+			<< "Number of cameras: " << obj.camera_count << endl
+			<< "Number of lights: " << obj.light_count << endl;
+		return out;
+	}
 };
 
 struct TransformHeader
 {
 	unsigned int name_Length;
+	friend std::ostream& operator<<(std::ostream& out, const TransformHeader& obj)
+	{
+		out << "Transform name length: " <<obj.name_Length;
+		return out;
+	}
 };
 
 struct Transform
@@ -21,6 +36,16 @@ struct Transform
 	double position[3];
 	double rotation[4];
 	double scale[3];
+
+	friend std::ostream& operator<<(std::ostream& out, const Transform& obj)
+	{
+		out << "Name: " << obj.name << endl
+			<< "ParentID: "<< obj.parentID << endl
+			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
+			<< "Rotation: " << obj.rotation[0] << ' ' << obj.rotation[1] << ' ' << obj.rotation[2] << ' ' << obj.rotation[3] << endl
+			<< "Scale: " <<obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2];
+		return out;
+	}
 };
 
 struct MeshHeader
@@ -39,19 +64,6 @@ struct Vertex
 	double tangent[3];
 	double bi_tangent[3];
 	double uv[2];
-};
-
-struct shapeHeader
-{
-	unsigned int name_length;
-};
-
-struct shape
-{
-	//char name[];
-	unsigned int mesh_ID;
-	unsigned int transform_ID;
-	unsigned int material_ID;
 };
 
 struct CameraHeader
