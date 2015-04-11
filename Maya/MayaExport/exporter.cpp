@@ -1,13 +1,23 @@
 #include "exporter.h"
 #include "mesh.h"
+#include "maya_includes.h"
+
+//--Ayu
+#include "Light.h"
+
+
+#include "CommonDeclaration.h"
 #include "material.h"
 #include "Transform.h"
 #include "camera.h"
 #include "JointExporter.h"
 #include "writeToFile.h"
 
+#include <iostream>
 #include <vector>
 #include <map>
+
+using namespace std;
 
 MStatus Exporter::doIt(const MArgList& argList)
 {
@@ -17,6 +27,13 @@ MStatus Exporter::doIt(const MArgList& argList)
 	MItDag dagIt(MItDag::kBreadthFirst);
 
 	Mesh mesh;
+
+	//map<const char*, unsigned int> materials;
+	ofstream outfile("J://Litet spelproj//test.bin", ofstream::binary);
+
+	//--Ayu
+	exportLight aLight; //--
+
 	map<const char*, unsigned int> materials;
 	map<const char*, int> transformHeiraki;
 	map<const char*, int> jointHeiraki;
@@ -39,13 +56,21 @@ MStatus Exporter::doIt(const MArgList& argList)
 	vector<CameraHeader> camera_header;
 	vector<camera> cameraVec;
 
+
+	vector <meshStruct> meshes;
+
+
 	while (!dagIt.isDone())
 	{
 		if (dagIt.getPath(path))
 		{
 			if (path.apiType() == MFn::kMesh)
 			{
+				meshStruct newMesh;
 				MFnMesh mayaMesh(path);
+
+				mesh.exportMesh(mayaMesh, materials, newMesh);
+				meshes.push_back(newMesh);
 				//status = mesh.exportMesh(mayaMesh, materials, outfile);
 				header.mesh_count++;
 			}
@@ -68,6 +93,14 @@ MStatus Exporter::doIt(const MArgList& argList)
 				transformData.push_back(transform);
 				header.group_count++;
 			}
+<<<<<<< HEAD
+=======
+			if (path.apiType() == MFn::kWeightGeometryFilt)
+			{
+				
+			}
+
+>>>>>>> origin/master
 			if (path.apiType() == MFn::kCamera)
 			{
 				MFnCamera mayaCamera(path);
@@ -82,6 +115,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
 			}
+<<<<<<< HEAD
 			if (path.apiType() == MFn::kJoint)
 			{
 				MFnIkJoint mayaJoint(path);
@@ -100,6 +134,18 @@ MStatus Exporter::doIt(const MArgList& argList)
 				jointHeaders.push_back(jointHeader);
 				joints.push_back(joint);
 			}
+=======
+			//--ayu
+			// && !path.hasFn(MFn::defaultlight
+			if (path.hasFn(MFn::kLight))
+			{
+				LightHeader eLHeader;
+				Light eOLight;
+
+				MFnLight eMayaLight(path);
+				aLight.exportLightType(eMayaLight, eLHeader, eOLight);
+			} // ---
+>>>>>>> origin/master
 			
 		}
 		dagIt.next(); // without this line, Maya will crash.
