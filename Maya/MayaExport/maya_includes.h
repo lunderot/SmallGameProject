@@ -28,14 +28,11 @@
 #include <maya/MFnPointLight.h>
 #include <maya/MSelectionList.h>
 #include <maya/MItDependencyNodes.h>
-<<<<<<< HEAD
 #include <maya/MAnimUtil.h>
 #include <maya/MFnIkJoint.h>
 #include <maya/MQuaternion.h>
-=======
 ///--Ayu
 #include <maya/MFnLight.h> //--
->>>>>>> origin/master
 
 // Wrappers
 #include <maya/MGlobal.h>
