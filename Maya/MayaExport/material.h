@@ -4,16 +4,10 @@
 #include "maya_includes.h"
 #include <maya/MPlug.h>
 
-<<<<<<< HEAD
 #include <string>
 #include <vector>
 #include <map>
 #include "CommonDeclaration.h"
-=======
-#include "CommonDeclaration.h"
-#include <fstream>
-#include <string>
->>>>>>> origin/master
 
 using namespace std;
 

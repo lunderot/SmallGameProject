@@ -62,8 +62,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				transformData.push_back(transform);
 				header.group_count++;
 			}
-<<<<<<< HEAD
-=======
 			if (path.apiType() == MFn::kWeightGeometryFilt)
 			{
 				
@@ -83,7 +81,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
 			}
->>>>>>> origin/master
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
