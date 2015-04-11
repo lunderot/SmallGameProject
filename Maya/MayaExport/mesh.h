@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include "maya_includes.h"
+#include "CommonDeclaration.h"
 #include <fstream>
 #include <map>
 

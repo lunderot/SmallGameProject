@@ -2,7 +2,6 @@
 #include "mesh.h"
 #include "material.h"
 #include "Transform.h"
-#include "maya_includes.h"
 #include "writeToFile.h"
 
 #include <vector>

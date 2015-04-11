@@ -4,9 +4,9 @@
 #include "maya_includes.h"
 #include <maya/MPlug.h>
 
+#include "CommonDeclaration.h"
 #include <fstream>
 #include <string>
-#include "CommonDeclaration.h"
 
 using namespace std;
 

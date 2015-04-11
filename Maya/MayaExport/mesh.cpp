@@ -1,5 +1,4 @@
 #include "mesh.h"
-#include "CommonDeclaration.h"
 
 MStatus Mesh::exportMesh(MFnMesh& mesh, map<string, unsigned int>& materials, ofstream& outputFile)
 {
