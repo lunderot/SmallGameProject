@@ -11,10 +11,10 @@ using namespace std;
 class Mesh
 {
 public:
-	MStatus exportMesh(MFnMesh& mesh, map<string, unsigned int>& materials, meshStruct& meshes);
+	MStatus exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, meshStruct& meshes);
 
 private:
-	MStatus exportMaterial(MFnMesh& mesh, map<string, unsigned int>& materials);
+	MStatus exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& materials);
 	MStatus exportVertices(MFnMesh& mesh, meshStruct& meshes);
 	MStatus exportJoints(MFnMesh& mesh);
 };

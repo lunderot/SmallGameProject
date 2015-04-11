@@ -5,23 +5,28 @@
 
 using namespace std;
 
-//class MyCommand : public MPxCommand
-//{
-//public:
-//	MyCommand() {};
-//	virtual MStatus doIt(const MArgList& argList);
-//	static void* creator();
-//protected:
-//private:
-//};
-//
-//void* MyCommand::creator() { return new MyCommand; }
-//
-//MStatus MyCommand::doIt(const MArgList& argList)
-//{
-//	MGlobal::displayInfo("Hello World!");
-//	return MS::kSuccess;
-//}
+
+class MyCommand : public MPxCommand
+{
+public:
+	MyCommand() {};
+	virtual MStatus doIt(const MArgList& argList);
+	static void* creator();
+protected:
+private:
+};
+
+void* MyCommand::creator()
+{
+	return new MyCommand; 
+}
+
+MStatus MyCommand::doIt(const MArgList& argList)
+{
+	MGlobal::displayInfo("Hello World!");
+	return MS::kSuccess;
+}
+
 
 EXPORT MStatus initializePlugin(MObject obj)
 {

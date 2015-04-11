@@ -1,7 +1,6 @@
 #include "mesh.h"
-#include "CommonDeclaration.h"
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<string, unsigned int>& materials, meshStruct& meshes)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, meshStruct& meshes)
 {
 	MStatus status;
 	status = exportMaterial(mesh, materials);
@@ -11,7 +10,7 @@ MStatus Mesh::exportMesh(MFnMesh& mesh, map<string, unsigned int>& materials, me
 	return status;
 }
 
-MStatus Mesh::exportMaterial(MFnMesh& mesh, map<string, unsigned int>& materials)
+MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& materials)
 {
 	return MStatus::kSuccess;
 }
