@@ -103,12 +103,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="exporter.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonDeclaration.h" />
     <ClInclude Include="exporter.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="maya_includes.h" />
     <ClInclude Include="mesh.h" />
   </ItemGroup>
