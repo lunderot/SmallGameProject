@@ -3,6 +3,7 @@
 #include "material.h"
 #include "Transform.h"
 #include "camera.h"
+#include "JointExporter.h"
 #include "writeToFile.h"
 
 #include <vector>
@@ -17,7 +18,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	Mesh mesh;
 	map<const char*, unsigned int> materials;
-	map<const char*, int> heiraki;
+	map<const char*, int> transformHeiraki;
+	map<const char*, int> jointHeiraki;
 	Header header;
 
 	vector<MaterialHeader> mat_headers;
@@ -28,6 +30,9 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	vector<TransformHeader> transfromHeaders;
 	vector<Transform> transformData;
+
+	vector<JointHeader> jointHeaders;
+	vector<Joint> joints;
 
 	// camera
 	Camera cam;
@@ -53,22 +58,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 				TransformClass transformClass;
 
 				MFnTransform mayaTransform(path.node(), &status);
-				status = transformClass.exportTransform(mayaTransform, heiraki, transfromHeaders.size(), transformHeader, transform);
+				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transfromHeaders.size(), transformHeader, transform);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at TransformClass::exportTransform()");
+					return status;
 				}
 				transfromHeaders.push_back(transformHeader);
 				transformData.push_back(transform);
 				header.group_count++;
 			}
-<<<<<<< HEAD
-=======
-			if (path.apiType() == MFn::kWeightGeometryFilt)
-			{
-				
-			}
-
 			if (path.apiType() == MFn::kCamera)
 			{
 				MFnCamera mayaCamera(path);
@@ -83,7 +82,25 @@ MStatus Exporter::doIt(const MArgList& argList)
 				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
 			}
->>>>>>> origin/master
+			if (path.apiType() == MFn::kJoint)
+			{
+				MFnIkJoint mayaJoint(path);
+
+				Joint joint;
+				JointHeader jointHeader;
+
+				JointExporter jointExporter;
+				status = jointExporter.exportJoint(mayaJoint, jointHeiraki, transformHeiraki, joints.size(), jointHeader, joint);
+				if (status != MS::kSuccess)
+				{
+					MGlobal::displayInfo("Failure at JointExporter::exportJoint()");
+					return status;
+				}
+
+				jointHeaders.push_back(jointHeader);
+				joints.push_back(joint);
+			}
+			
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
@@ -100,10 +117,12 @@ MStatus Exporter::doIt(const MArgList& argList)
 	//Headers
 	output.writeToFiles(&mat_headers[0], mat_headers.size());
 	output.writeToFiles(&transfromHeaders[0], transfromHeaders.size());
+	output.writeToFiles(&jointHeaders[0], jointHeaders.size());
 
 	//Data
 	output.writeToFiles(&mat[0], mat.size());
 	output.writeToFiles(&transformData[0], transformData.size());
+	output.writeToFiles(&joints[0], joints.size());
 
 	// camera
 	output.writeToFiles(&cameraVec[0], cameraVec.size());

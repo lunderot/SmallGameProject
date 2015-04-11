@@ -53,6 +53,33 @@ struct Transform
 	}
 };
 
+struct JointHeader
+{	
+	TransformHeader	transformHeader;
+	friend std::ostream& operator<<(std::ostream& out, const JointHeader& obj)
+	{
+		out << "Joint name length: " << obj.transformHeader.name_Length << endl;
+		return out;
+	}
+};
+
+struct Joint
+{
+	Transform transform;
+	double jointOrientation[4];
+
+	friend std::ostream& operator<<(std::ostream& out, const Joint& obj)
+	{
+		out << "Joint Name: " << obj.transform.name << endl
+			<< "ParentID: " << obj.transform.parentID << endl
+			<< "Position: " << obj.transform.position[0] << ' ' << obj.transform.position[1] << ' ' << obj.transform.position[3] << endl
+			<< "Rotation: " << obj.transform.rotation[0] << ' ' << obj.transform.rotation[1] << ' ' << obj.transform.rotation[2] << ' ' << obj.transform.rotation[3] << endl
+			<< "Scale: " << obj.transform.scale[0] << ' ' << obj.transform.scale[1] << ' ' << obj.transform.scale[2] << endl
+			<< "Orientation: " << obj.jointOrientation[0] << ' ' << obj.jointOrientation[1] << ' ' << obj.jointOrientation[2] << endl;
+		return out;
+	}
+};
+
 struct MeshHeader
 {
 	unsigned int name_length;

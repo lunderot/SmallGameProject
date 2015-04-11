@@ -101,11 +101,13 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\Maya2015\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ShowProgress>NotSet</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="exporter.cpp" />
+    <ClCompile Include="JointExporter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -116,6 +118,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="CommonDeclaration.h" />
     <ClInclude Include="exporter.h" />
+    <ClInclude Include="JointExporter.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="maya_includes.h" />
