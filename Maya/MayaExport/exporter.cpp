@@ -2,6 +2,7 @@
 #include "mesh.h"
 #include "material.h"
 #include "Transform.h"
+#include "camera.h"
 #include "writeToFile.h"
 
 #include <vector>
@@ -21,6 +22,11 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	vector<TransformHeader> transfromHeaders;
 	vector<Transform> transformData;
+
+	// camera
+	Camera cam;
+	vector<CameraHeader> camera_header;
+	vector<camera> cameraVec;
 
 	while (!dagIt.isDone())
 	{
@@ -54,18 +60,36 @@ MStatus Exporter::doIt(const MArgList& argList)
 			{
 				
 			}
+
+			if (path.apiType() == MFn::kCamera)
+			{
+				MFnCamera mayaCamera(path);
+				camera camera;
+				CameraHeader camHeader;
+				status = cam.exportCamera(mayaCamera, camera, camHeader);
+
+				if (status != MS::kSuccess)
+				{
+					MGlobal::displayInfo("Failure at Camera::exportCamera()");
+				}
+				camera_header.push_back(camHeader);
+				cameraVec.push_back(camera);
+			}
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
 
 	//Printing to files
 	WriteToFile output;
-	output.binaryFilePath("c://test.bin");
-	output.ASCIIFilePath("c://testASCII.txt");
+	output.binaryFilePath("C://test.bin");
+	output.ASCIIFilePath("C://testASCII.txt");
 	output.OpenFiles();
 	output.writeToFiles(&header, 1);
 	output.writeToFiles(&transfromHeaders[0], transfromHeaders.size());
 	output.writeToFiles(&transformData[0], transformData.size());
+
+	// camera
+	output.writeToFiles(&cameraVec[0], cameraVec.size());
 
 	output.CloseFiles();
 	return MStatus::kSuccess;
