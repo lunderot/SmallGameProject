@@ -16,9 +16,15 @@ MStatus Exporter::doIt(const MArgList& argList)
 	MItDag dagIt(MItDag::kBreadthFirst);
 
 	Mesh mesh;
-	map<string, unsigned int> materials;
+	map<const char*, unsigned int> materials;
 	map<const char*, int> heiraki;
 	Header header;
+
+	vector<MaterialHeader> mat_headers;
+	vector<Material> mat;
+	Materials  matExporter;
+	matExporter.exportMaterial(mat_headers, mat, materials);
+	header.material_count = mat_headers.size();
 
 	vector<TransformHeader> transfromHeaders;
 	vector<Transform> transformData;
@@ -51,10 +57,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				transformData.push_back(transform);
 				header.group_count++;
 			}
-			if (path.apiType() == MFn::kWeightGeometryFilt)
-			{
-				
-			}
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
@@ -64,8 +66,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.binaryFilePath("c://test.bin");
 	output.ASCIIFilePath("c://testASCII.txt");
 	output.OpenFiles();
+
+	//Main header
 	output.writeToFiles(&header, 1);
+
+	//Headers
+	output.writeToFiles(&mat_headers[0], mat_headers.size());
 	output.writeToFiles(&transfromHeaders[0], transfromHeaders.size());
+
+	//Data
+	output.writeToFiles(&mat[0], mat.size());
 	output.writeToFiles(&transformData[0], transformData.size());
 
 	output.CloseFiles();

@@ -44,7 +44,7 @@ struct Transform
 
 	friend std::ostream& operator<<(std::ostream& out, const Transform& obj)
 	{
-		out << "Name: " << obj.name << endl
+		out << "Transform Name: " << obj.name << endl
 			<< "ParentID: "<< obj.parentID << endl
 			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 			<< "Rotation: " << obj.rotation[0] << ' ' << obj.rotation[1] << ' ' << obj.rotation[2] << ' ' << obj.rotation[3] << endl
@@ -100,14 +100,37 @@ struct MorphAnimation
 
 struct MaterialHeader
 {
+	MaterialHeader()
+	{
+		name_length = duffuse_map_length = normal_map_length = specular_map_length = 0;
+	}
 	unsigned int name_length;
 	unsigned int duffuse_map_length;
 	unsigned int normal_map_length;
 	unsigned int specular_map_length;
+
+	friend std::ostream& operator<<(std::ostream& out, const MaterialHeader& obj)
+	{
+		out << "Material name lenght: " << obj.name_length << endl
+			<< "Diffuse map name lenght: " << obj.duffuse_map_length << endl
+			<< "Normal map name lenght: " << obj.normal_map_length << endl
+			<< "Specular map name lenght: " << obj.specular_map_length << endl;
+		return out;
+	}
 };
 
 struct Material
 {
+	Material()
+	{
+		mtrl_type = eLambert;
+		normal_depth = specular_factor = shininess = reflection_factor = diffuse_factor = 0;
+		specular[3] = reflection[3] = ambient[3] = diffuse[3] = transparency_color[3] = incandescence[3] = { 0.0f };
+		node_name = nullptr;
+		diffuse_map = nullptr;
+		normal_map = nullptr;
+		specular_map = nullptr;
+	}
 	enum material_type { eLambert, eBlinn, ePhong } mtrl_type;
 	double normal_depth;
 	double specular[3];
@@ -124,6 +147,36 @@ struct Material
 	const char* diffuse_map;
 	const char* normal_map;
 	const char* specular_map;
+
+	friend std::ostream& operator<<(std::ostream& out, const Material& obj)
+	{
+		out << "Material type: " << obj.mtrl_type << endl
+			<< "Normal depth: " << obj.normal_depth << endl
+			<< "Specular: " << obj.specular[0] << " " << obj.specular[1] << " " << obj.specular[2] << endl
+			<< "Specular factor: " << obj.specular_factor << endl
+			<< "Shininess: " << obj.shininess << endl
+			<< "Reflection: " << obj.reflection[0] << " " << obj.reflection[1] << " " << obj.reflection[2] << endl
+			<< "Reflection factor: " << obj.reflection_factor << endl
+			<< "Ambient: " << obj.ambient[0] << " " << obj.ambient[1] << " " << obj.ambient[2] << endl
+			<< "Diffuse: " << obj.diffuse[0] << " " << obj.diffuse[1] << " " << obj.diffuse[2] << endl
+			<< "Diffuse factor: " << obj.diffuse_factor << endl
+			<< "Transparency color: " << obj.transparency_color[0] << " " << obj.transparency_color[1] << " " << obj.transparency_color[2] << endl
+			<< "Incandescence: " << obj.incandescence[0] << " " << obj.incandescence[1] << " " << obj.incandescence[2] << endl
+			<< "Name: " << obj.node_name << endl
+			<< "Diffuse map: ";
+		if (obj.diffuse_map != nullptr)
+			out << obj.diffuse_map;
+		out << endl
+			<< "Normal map: ";
+		if (obj.diffuse_map != nullptr)
+			out<< obj.normal_map;
+		out << endl
+			<< "Specular map: ";
+		if (obj.diffuse_map != nullptr)
+			out << obj.specular_map;
+		out << endl;
+		return out;
+	}
 };
 
 struct Animation
