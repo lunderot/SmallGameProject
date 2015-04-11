@@ -93,14 +93,12 @@ MStatus Exporter::doIt(const MArgList& argList)
 				transformData.push_back(transform);
 				header.group_count++;
 			}
-<<<<<<< HEAD
-=======
+
 			if (path.apiType() == MFn::kWeightGeometryFilt)
 			{
 				
 			}
 
->>>>>>> origin/master
 			if (path.apiType() == MFn::kCamera)
 			{
 				MFnCamera mayaCamera(path);
@@ -115,7 +113,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
 			}
-<<<<<<< HEAD
+
 			if (path.apiType() == MFn::kJoint)
 			{
 				MFnIkJoint mayaJoint(path);
@@ -134,7 +132,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				jointHeaders.push_back(jointHeader);
 				joints.push_back(joint);
 			}
-=======
+
 			//--ayu
 			// && !path.hasFn(MFn::defaultlight
 			if (path.hasFn(MFn::kLight))
@@ -145,8 +143,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MFnLight eMayaLight(path);
 				aLight.exportLightType(eMayaLight, eLHeader, eOLight);
 			} // ---
->>>>>>> origin/master
-			
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
