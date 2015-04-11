@@ -1,5 +1,8 @@
 #ifndef COMMONDECLARATION_H
 #define COMMONDECLARATION_H
+#include <vector>
+
+using namespace std;
 
 struct Header
 {
@@ -26,18 +29,32 @@ struct MeshHeader
 {
 	unsigned int name_length;
 	unsigned int vertex_count;
+	unsigned int triangle_count;
 	unsigned int joint_count;
 	bool has_Animation;
 };
 
 struct Vertex
 {
-	unsigned int vertexID;
+	//unsigned int vertexID;
 	double position[3];
-	double normal[3];
+	float normal[3];
 	double tangent[3];
 	double bi_tangent[3];
-	double uv[2];
+	float uv[2];
+};
+
+struct meshStruct
+{
+	MeshHeader meshHeader;
+	const char* name;
+	vector <Vertex> vertices;
+	vector <unsigned int> indices;
+};
+
+struct Face
+{
+	unsigned int vertexID[3];
 };
 
 struct shapeHeader
