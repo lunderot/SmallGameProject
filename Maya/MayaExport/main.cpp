@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 class MyCommand : public MPxCommand
 {
 public:
@@ -15,13 +16,17 @@ protected:
 private:
 };
 
-void* MyCommand::creator() { return new MyCommand; }
+void* MyCommand::creator()
+{
+	return new MyCommand; 
+}
 
 MStatus MyCommand::doIt(const MArgList& argList)
 {
 	MGlobal::displayInfo("Hello World!");
 	return MS::kSuccess;
 }
+
 
 EXPORT MStatus initializePlugin(MObject obj)
 {
