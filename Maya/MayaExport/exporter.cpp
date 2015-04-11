@@ -51,6 +51,10 @@ MStatus Exporter::doIt(const MArgList& argList)
 				transformData.push_back(transform);
 				header.group_count++;
 			}
+			if (path.apiType() == MFn::kWeightGeometryFilt)
+			{
+				
+			}
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}

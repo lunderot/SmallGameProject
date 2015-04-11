@@ -29,7 +29,7 @@ struct TransformHeader
 	unsigned int name_Length;
 	friend std::ostream& operator<<(std::ostream& out, const TransformHeader& obj)
 	{
-		out << "Transform name length: " <<obj.name_Length;
+		out << "Transform name length: " << obj.name_Length << endl;
 		return out;
 	}
 };
@@ -48,7 +48,7 @@ struct Transform
 			<< "ParentID: "<< obj.parentID << endl
 			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 			<< "Rotation: " << obj.rotation[0] << ' ' << obj.rotation[1] << ' ' << obj.rotation[2] << ' ' << obj.rotation[3] << endl
-			<< "Scale: " <<obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2];
+			<< "Scale: " << obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2] << endl;
 		return out;
 	}
 };
