@@ -111,7 +111,7 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, meshStruct& meshes)
 	unsigned int instanceNumber;
 	MObjectArray shaders;
 	MIntArray shaderIndicies;
-	mesh.getConnectedShaders(instanceNumber, shaders, shaderIndicies);
+	//mesh.getConnectedShaders(instanceNumber, shaders, shaderIndicies);
 	MGlobal::displayInfo(MString() + shaders.length());
 
 	MGlobal::displayInfo(MString() + "TriangleCount: " + indicies.length());

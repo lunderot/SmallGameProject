@@ -4,7 +4,6 @@
 #include "maya_includes.h"
 #include <maya/MPlug.h>
 
-
 #include <string>
 #include <vector>
 #include <map>

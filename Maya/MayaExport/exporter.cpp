@@ -93,7 +93,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				transformData.push_back(transform);
 				header.group_count++;
 			}
-
 			if (path.apiType() == MFn::kCamera)
 			{
 				MFnCamera mayaCamera(path);
@@ -126,6 +125,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				jointHeaders.push_back(jointHeader);
 				joints.push_back(joint);
 			}
+
 			//--ayu
 			// && !path.hasFn(MFn::defaultlight
 			if (path.hasFn(MFn::kLight))
@@ -136,7 +136,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MFnLight eMayaLight(path);
 				aLight.exportLightType(eMayaLight, eLHeader, eOLight);
 			} // ---
-			
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
