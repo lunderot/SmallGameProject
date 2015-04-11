@@ -15,7 +15,10 @@ protected:
 private:
 };
 
-void* MyCommand::creator() { return new MyCommand; }
+void* MyCommand::creator()
+{
+	return new MyCommand; 
+}
 
 MStatus MyCommand::doIt(const MArgList& argList)
 {

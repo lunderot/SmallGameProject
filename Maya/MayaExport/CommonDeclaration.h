@@ -78,17 +78,30 @@ struct CameraHeader
 
 struct camera
 {
-	//char name[];
+	const char* name;
+	unsigned int parentID;
 	double position[3];
 	double up_vector[3];
 	double interest_position[3];
-	double roll[3];
-	double field_of_view;
 	double field_of_view_x;
 	double field_of_view_y;
-	double fear_plane;
+	double near_plane;
 	double far_plane;
-	enum projection_type{ ePerspective, eOrthogonal };
+	enum projection_type{ ePerspective, eOrthogonal } projection;
+
+	friend std::ostream& operator<<(std::ostream& out, const camera& obj)
+	{
+		out << "CAMERA" << endl
+			<< "Name: " << obj.name << endl
+			<< "ParentID: " << obj.parentID << endl
+			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
+			<< "Up Vector: " << obj.up_vector[0] << ' ' << obj.up_vector[1] << ' ' << obj.up_vector[2] << endl
+			<< "FOV X: " << obj.field_of_view_x << endl
+			<< "FOV Y: " << obj.field_of_view_y << endl
+			<< "Near Plane: " << obj.near_plane << endl
+			<< "Far Plane: " << obj.far_plane << endl;
+		return out;
+	}
 };
 
 struct MorphAnimation
