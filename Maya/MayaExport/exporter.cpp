@@ -45,7 +45,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	matExporter.exportMaterial(mat_headers, mat, materials);
 	header.material_count = mat_headers.size();
 
-	vector<TransformHeader> transfromHeaders;
+	vector<TransformHeader> transformHeaders;
 	vector<Transform> transformData;
 
 	vector<JointHeader> jointHeaders;
@@ -83,13 +83,13 @@ MStatus Exporter::doIt(const MArgList& argList)
 				TransformClass transformClass;
 
 				MFnTransform mayaTransform(path.node(), &status);
-				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transfromHeaders.size(), transformHeader, transform);
+				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transformHeaders.size(), transformHeader, transform);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at TransformClass::exportTransform()");
 					return status;
 				}
-				transfromHeaders.push_back(transformHeader);
+				transformHeaders.push_back(transformHeader);
 				transformData.push_back(transform);
 				header.group_count++;
 			}
@@ -153,17 +153,15 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	//Headers
 	output.writeToFiles(&mat_headers[0], mat_headers.size());
-	output.writeToFiles(&transfromHeaders[0], transfromHeaders.size());
+	output.writeToFiles(&transformHeaders[0], transformHeaders.size());
 	output.writeToFiles(&jointHeaders[0], jointHeaders.size());
 	output.writeToFiles(&camera_header[0], camera_header.size());
 
 	//Data
-	output.writeToFiles(&mat[0], mat.size());
-	output.writeToFiles(&transformData[0], transformData.size());
-	output.writeToFiles(&joints[0], joints.size());
-
-	// camera
-	output.writeToFiles(&cameraVec[0], cameraVec.size());
+	output.writeToFiles(&mat[0], &mat_headers[0] ,mat.size());
+	output.writeToFiles(&transformData[0], &transformHeaders[0], transformData.size());
+	output.writeToFiles(&joints[0], &jointHeaders[0], joints.size());
+	output.writeToFiles(&cameraVec[0], &camera_header[0], cameraVec.size());
 
 	output.CloseFiles();
 	return MStatus::kSuccess;
