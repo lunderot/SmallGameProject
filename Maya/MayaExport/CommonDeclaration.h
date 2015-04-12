@@ -160,6 +160,12 @@ struct CameraHeader
 {
 	unsigned int name_length;
 
+	void WriteBinary(ofstream& outputfile)
+	{
+		MGlobal::displayInfo("CameraHeader::WriteBinary()");
+		outputfile.write((const char*) this, sizeof(CameraHeader));
+	}
+
 	friend std::ostream& operator<<(std::ostream& out, const CameraHeader& obj)
 	{
 		out << "Camera name length: " << obj.name_length << endl;
