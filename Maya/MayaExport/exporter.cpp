@@ -103,6 +103,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at Camera::exportCamera()");
+					return status;
 				}
 				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
@@ -153,6 +154,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&mat_headers[0], mat_headers.size());
 	output.writeToFiles(&transfromHeaders[0], transfromHeaders.size());
 	output.writeToFiles(&jointHeaders[0], jointHeaders.size());
+	output.writeToFiles(&camera_header[0], camera_header.size());
 
 	//Data
 	output.writeToFiles(&mat[0], mat.size());

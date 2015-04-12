@@ -118,6 +118,12 @@ struct Face
 struct CameraHeader
 {
 	unsigned int name_length;
+
+	friend std::ostream& operator<<(std::ostream& out, const CameraHeader& obj)
+	{
+		out << "Camera name length: " << obj.name_length << endl;
+		return out;
+	}
 };
 
 struct camera
