@@ -107,6 +107,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				}
 				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
+				header.camera_count++;
 			}
 			if (path.apiType() == MFn::kJoint)
 			{
