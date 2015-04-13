@@ -1,42 +1,67 @@
 #include "Light.h"
+#include "maya/mPlug.h"
 
-MStatus exportLight::exportLightType(MFnLight& mayaLight, LightHeader& Lheader, Light& oneLight)
+//MStatus exportLight::exportLightType(MFnLight& mayaLight, LightHeader& Lheader, Light& oneLight)
+MStatus exportLight::exportLightType(MObject& inputLight, LightHeader& Lheader, Light& oneLight)
 {
-	//MGlobal::displayInfo("exportLight::exportLightType()");
-
-	// ____________________________________________________//
-	//                LIGHT TYPE     
-	//                DECAY TYPE
-	// ____________________________________________________//
 
 
-	MFn::Type mLight = mayaLight.type();
+	//------------------------------------------------------//
+	//                LIGHT TYPE                            //
+	//                DECAY TYPE                            //
+	//------------------------------------------------------//
+
+	MFnNonAmbientLight mayaLight(inputLight);
+	MFnLight test;
+
+	MStatus status;
+
+	if (inputLight.hasFn(MFn::Type::kPointLight))
+	{	
+		oneLight.type = Light::light_type::ePoint;
+		oneLight.dType = (Light::decay_type)mayaLight.decayRate(&status);
+	}
+
 	
-	// ej ambient?
+	else if (inputLight.hasFn(MFn::Type::kDirectionalLight))
+	{
+		oneLight.type = Light::light_type::eDirectional;
+		oneLight.dType = Light::eNone;
+	}
 
-	if (mLight == MFn::Type::kPointLight)
-		oneLight.type = Light::ePoint;
 
-	
-	if (mLight == MFn::Type::kDirectionalLight)
-		oneLight.type = Light::eDirectional;
-		oneLight.dType = Light::noSuppDecay;
+	else if (inputLight.hasFn(MFn::Type::kSpotLight))
+	{
+		oneLight.type = Light::light_type::eSpot;
+		oneLight.dType = (Light::decay_type)mayaLight.decayRate(&status);
+	}
 
-	if (mLight == MFn::Type::kSpotLight)
-		oneLight.type = Light::eSpot;
 
-	if (mLight == MFn::Type::kAreaLight)
-		oneLight.type = Light::eArea;
+	else if (inputLight.hasFn(MFn::Type::kAreaLight))
+	{
+		oneLight.type = Light::light_type::eArea;
+		oneLight.dType = (Light::decay_type)mayaLight.decayRate(&status);
+	}
 
-	if (mLight == MFn::Type::kVolumeLight)
-		oneLight.type = Light::eVolume;
-		oneLight.dType = Light::noSuppDecay;
 
-	MGlobal::displayInfo("Light Type: " + mayaLight.typeName());
+	else if (inputLight.hasFn(MFn::Type::kVolumeLight))
+	{
+		oneLight.type = Light::light_type::eVolume;
+		oneLight.dType = Light::eNone;
+	}
+	else
+		return MS::kFailure;
+
+
+	MGlobal::displayInfo("Maya Light Type: " + MString() + mayaLight.typeName());
+	MGlobal::displayInfo("Maya Decay Type: " + MString() + (Light::decay_type)mayaLight.decayRate(&status));
+	MGlobal::displayInfo("Light Type: " + MString() + oneLight.type);
 	MGlobal::displayInfo("Decay Type: " + MString() + oneLight.dType);
 
-	// --------------- COLOR -------------------
 
+	// ----------------------------------------------------//
+	//                    COLOR                            //
+	// ----------------------------------------------------//
 	
 	MColor colorOfLight = mayaLight.color();
 	
@@ -45,16 +70,46 @@ MStatus exportLight::exportLightType(MFnLight& mayaLight, LightHeader& Lheader, 
 	oneLight.color[2] = colorOfLight.b;
 	
 
-
-	MGlobal::displayInfo("Color: " + MString() + colorOfLight.r + " " + MString() + colorOfLight.g + " " + MString() + colorOfLight.b);
+	MGlobal::displayInfo("OneLight Color: " + MString() + oneLight.color[0] + " " + MString() + oneLight.color[1] + " " + MString() + oneLight.color[2]);
+	MGlobal::displayInfo("Maya Color: " + MString() + colorOfLight.r + " " + MString() + colorOfLight.g + " " + MString() + colorOfLight.b);
 	
 
-	// ------------ INTENSITY ------------
+	// ----------------------------------------------------//
+	//               INTENSITY                             //
+	// ----------------------------------------------------//
 
 	oneLight.intensity = mayaLight.intensity();
 
-	MGlobal::displayInfo("Intensity: " + MString() + mayaLight.intensity());
+	MGlobal::displayInfo("OneLight Intensity: " + MString() + oneLight.intensity);
+	MGlobal::displayInfo("Maya Intensity: " + MString() + mayaLight.intensity());
 
+	// ----------------------------------------------------//
+	//               CAST SHADOW                           //
+	// ----------------------------------------------------//
+
+	//MFnNonAmbientLight fast i objektform
+	MObject reachCastSHadowFunc = mayaLight.object();
+
+	MFnDependencyNode aDNode(reachCastSHadowFunc);
+	MPlug aPlug =  aDNode.findPlug("useDepthMapShadows");
+
+	aPlug.getValue(oneLight.cast_shadows);
+
+	MGlobal::displayInfo("OneLight Cast shadow?: " + MString() + oneLight.cast_shadows);
+
+	// ----------------------------------------------------//
+	//               SHADOW COLOR                          //
+	// ----------------------------------------------------//
+
+	MColor colorOfShadow = mayaLight.shadowColor();
+
+	// hänmtar RGB 0 - 1 (även om det är inställd på HSV eller RGB 0 -255)
+	oneLight.shadow_color[0] = colorOfShadow.r;
+	oneLight.shadow_color[1] = colorOfShadow.g;
+	oneLight.shadow_color[2] = colorOfShadow.b;
+
+	MGlobal::displayInfo("OneLight Shadow Color: " + MString() + oneLight.shadow_color[0] + " " + MString() + oneLight.shadow_color[1] + " " + MString() + oneLight.shadow_color[2]);
+	MGlobal::displayInfo("Maya Shadow Color: " + MString() + colorOfShadow.r + " " + MString() + colorOfShadow.g + " " + MString() + colorOfShadow.b);
 
 
 

@@ -32,6 +32,9 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	//--Ayu
 	exportLight aLight; //--
+	vector<LightHeader> lighthead;
+	vector<Light> lightbody;
+
 
 	map<const char*, unsigned int> materials;
 	map<const char*, int> heiraki;
@@ -108,13 +111,18 @@ MStatus Exporter::doIt(const MArgList& argList)
 			}
 			//--ayu
 			// && !path.hasFn(MFn::defaultlight
-			if (path.hasFn(MFn::kLight))
+			if (path.hasFn(MFn::kNonAmbientLight))
 			{
 				LightHeader eLHeader;
 				Light eOLight;
 
-				MFnLight eMayaLight(path);
+				//MFnLight eMayaLight(path);
+				//MFnNonAmbientLight eMayaLight(path);
+				MObject eMayaLight = path.node();
 				aLight.exportLightType(eMayaLight, eLHeader, eOLight);
+
+				lighthead.push_back(eLHeader);
+				lightbody.push_back(eOLight);
 			} // ---
 			
 		}

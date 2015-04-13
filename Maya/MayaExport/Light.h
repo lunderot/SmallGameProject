@@ -12,7 +12,7 @@ class exportLight
 {
 public:
 
-	MStatus exportLightType(MFnLight& mayaLight, LightHeader& Lheader, Light& oneLight);
+	MStatus exportLightType(MObject& mayaLight, LightHeader& Lheader, Light& oneLight);
 
 };
 

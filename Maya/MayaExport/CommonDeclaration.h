@@ -228,8 +228,9 @@ struct Light
 	//char name[];
 	enum light_type{ ePoint, eDirectional, eSpot, eArea, eVolume }type;
 	double color[3];
-	double intensity;
-	enum decay_type{ eNone, eLinear, eQuadric, eCubic, noSuppDecay }dType;
+	float intensity;
+	enum decay_type{ eNone, eLinear, eQuadric, eCubic }dType;
+	//short decay_type;
 	bool cast_shadows;
 	double shadow_color[3];
 	// posheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeej
