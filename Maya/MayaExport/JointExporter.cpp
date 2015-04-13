@@ -7,7 +7,7 @@ MStatus JointExporter::exportJoint(MFnIkJoint& mayaJoint, std::map<const char*, 
 
 	TransformClass transformExport;
 	TransformHeader transformHeader;
-	status = transformExport.exportTransform(mayaJoint, jointHeiraki, jointCount, jointHeader.transformHeader, joint.transform);
+	status = transformExport.exportTransform(mayaJoint, jointHeiraki, jointCount, jointHeader.transformHeader, joint.transform );
 	if (status != MS::kSuccess)
 	{
 		MGlobal::displayInfo("Failure at TransformClass::exportTransform()");

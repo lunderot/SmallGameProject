@@ -152,10 +152,10 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&header, 1);
 
 	//Headers
-	output.writeToFiles(&mat_headers[0], mat_headers.size());
-	output.writeToFiles(&transformHeaders[0], transformHeaders.size());
-	output.writeToFiles(&jointHeaders[0], jointHeaders.size());
-	output.writeToFiles(&camera_header[0], camera_header.size());
+	output.writeToFiles(mat_headers.data(), mat_headers.size());
+	output.writeToFiles(transformHeaders.data(), transformHeaders.size());
+	output.writeToFiles(jointHeaders.data(), jointHeaders.size());
+	output.writeToFiles(camera_header.data(), camera_header.size());
 
 	//Data
 	output.writeToFiles(&mat[0], &mat_headers[0] ,mat.size());
