@@ -18,13 +18,6 @@ struct Header
 	unsigned int camera_count;
 	unsigned int light_count;
 
-	void WriteBinary(ofstream& outputfile)
-	{
-		MGlobal::displayInfo("Header::WriteBinary()");
-		outputfile.write((const char*) this, sizeof(Header));
-	}
-
-
 	friend std::ostream& operator<<(std::ostream& out, const Header& obj)
 	{
 		out << "Number of groups: " << obj.group_count << endl
@@ -39,12 +32,6 @@ struct Header
 struct TransformHeader
 {
 	unsigned int name_Length;
-
-	void WriteBinary(ofstream& outputfile)
-	{
-		MGlobal::displayInfo("TreansformHeader::WriteBinary()");
-		outputfile.write((const char*) this, sizeof(TransformHeader));
-	}
 
 	friend std::ostream& operator<<(std::ostream& out, const TransformHeader& obj)
 	{
@@ -84,12 +71,6 @@ struct Transform
 struct JointHeader	
 {	
 	TransformHeader	transformHeader;
-
-	void WriteBinary(ofstream& outputfile)
-	{
-		MGlobal::displayInfo("JointHeader::WriteBinary()");
-		transformHeader.WriteBinary(outputfile);
-	}
 
 	friend std::ostream& operator<<(std::ostream& out, const JointHeader& obj)
 	{
@@ -131,24 +112,70 @@ struct MeshHeader
 	unsigned int triangle_count;
 	unsigned int joint_count;
 	bool has_Animation;
+
+	friend std::ostream& operator<<(std::ostream& out, const MeshHeader& obj)
+	{
+		out << "Name Length: " << obj.name_length << endl
+			<< "Vertex Count: " << obj.name_length << endl
+			<< "Triangle Count: " << obj.triangle_count << endl;
+		return out;
+	}
 };
 
 struct Vertex
 {
 	//unsigned int vertexID;
 	double position[3];
+	float uv[2];
 	float normal[3];
 	double tangent[3];
 	double bi_tangent[3];
-	float uv[2];
+
+	void WriteBinary(ofstream& outputfile)
+	{
+		outputfile.write((const char*) this, sizeof(Vertex));
+	}
+
+	friend std::ostream& operator<<(std::ostream& out, const Vertex& obj)
+	{
+		out << endl
+			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[2] << endl
+			<< "UV: " << obj.uv[0] << ' ' << obj.uv[1] << endl
+			<< "Normal:     " << obj.normal[0] << ' ' << obj.normal[1] << ' ' << obj.normal[2] << endl
+			<< "Tangent:    " << obj.tangent[0] << ' ' << obj.tangent[1] << ' ' << obj.tangent[2] << endl
+			<< "Bi-Tangent: " << obj.bi_tangent[0] << ' ' << obj.bi_tangent[1] << ' ' << obj.bi_tangent[2] << endl;
+		return out;
+	}
 };
 
 struct meshStruct
 {
 	MeshHeader meshHeader;
 	const char* name;
+	int transform;
 	vector <Vertex> vertices;
 	vector <unsigned int> indices;
+
+	void WriteBinary(MeshHeader* header, ofstream& outputfile)
+	{
+		MGlobal::displayInfo("meshStruct::WriteBinary()");
+		outputfile.write(name, sizeof(char)* header->name_length);
+		char* output = (char*) this;
+		output = &output[sizeof(MeshHeader) + sizeof(const char*)];
+		outputfile.write((const char*)output, sizeof(meshStruct)-sizeof(MeshHeader)-sizeof(const char*));
+	}
+
+	friend std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
+	{
+		out << "Mesh Name: " << obj.name << endl
+			<< "Transform: " << obj.transform << endl
+			<< "Verticies count: " << obj.vertices.size() << endl
+			<< "Indicies count: " << obj.indices.size() << endl << endl;
+
+		for (unsigned int i = 0; i < obj.vertices.size(); i++)
+			out << "Vertex " << i << ": " << obj.vertices[i] << endl;
+		return out;
+	}
 };
 
 struct Face
@@ -159,12 +186,6 @@ struct Face
 struct CameraHeader
 {
 	unsigned int name_length;
-
-	void WriteBinary(ofstream& outputfile)
-	{
-		MGlobal::displayInfo("CameraHeader::WriteBinary()");
-		outputfile.write((const char*) this, sizeof(CameraHeader));
-	}
 
 	friend std::ostream& operator<<(std::ostream& out, const CameraHeader& obj)
 	{
@@ -229,12 +250,6 @@ struct MaterialHeader
 	unsigned int duffuse_map_length;
 	unsigned int normal_map_length;
 	unsigned int specular_map_length;
-
-	void WriteBinary(ofstream& outputfile)
-	{
-		MGlobal::displayInfo("MaterialHeader::WriteBinary()");
-		outputfile.write((const char*) this, sizeof(MaterialHeader));
-	}
 
 	friend std::ostream& operator<<(std::ostream& out, const MaterialHeader& obj)
 	{

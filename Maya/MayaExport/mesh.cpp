@@ -1,10 +1,11 @@
 #include "mesh.h"
+#include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, meshStruct& meshes)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes)
 {
 	MStatus status;
 	status = exportMaterial(mesh, materials);
-	status = exportVertices(mesh, meshes);
+	status = exportVertices(mesh, transformHeiraki, meshes);
 	status = exportJoints(mesh);
 
 	return status;
@@ -15,10 +16,10 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& mate
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, meshStruct& meshes)
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, meshStruct& meshes)
 {
 	MStatus status;
-
+	
 	/*unsigned int numVertices = mesh.numVertices(&status);
 	unsigned int numUVs = mesh.numUVs(&status);
 	unsigned int numNormals = mesh.numNormals(&status);*/
@@ -85,17 +86,14 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, meshStruct& meshes)
 	MGlobal::displayInfo("");
 	
 	// MATERIAL - ..............
-	MItDependencyNodes it(MFn::kLambert);
+	/*MItDependencyNodes it(MFn::kLambert);
 	for (; !it.isDone(); it.next())
 	{
 		MObject mat = it.item();
 		MGlobal::displayInfo("hej");
 	}
-	MGlobal::displayInfo("");
+	MGlobal::displayInfo("");*/
 
-	unsigned int instanceNumber;
-	MObjectArray shaders;
-	MIntArray shaderIndicies;
 	//mesh.getConnectedShaders(instanceNumber, shaders, shaderIndicies);
 	//Global::displayInfo(MString() + shaders.length());
 
@@ -145,7 +143,18 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, meshStruct& meshes)
 	MGlobal::displayInfo(MString() + "Normal total: " + normal_array_vector.length());
 	MGlobal::displayInfo("");
 
-	meshes.name = mesh.name().asChar();
+	for (unsigned int i = 0; i < mesh.parentCount(); i++)
+	{
+		MObject parent = mesh.parent(i);
+		MFnDagNode storeParent(parent);
+		meshes.name = storeParent.name().asChar();
+		meshes.transform = transformHeiraki[storeParent.name().asChar()];
+
+		MGlobal::displayInfo(MString() + storeParent.name().asChar());
+		MGlobal::displayInfo(MString() + meshes.transform);
+	}
+
+	//meshes.name = mesh.name().asChar();
 	meshes.vertices.resize(indicie_array.length());
 	meshes.indices.resize(indicie_array.length());
 
@@ -206,6 +215,46 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, meshStruct& meshes)
 		MGlobal::displayInfo(MString() + "TANGENT:    " + meshes.vertices[i].tangent[0] + " " + meshes.vertices[i].tangent[1] + " " + meshes.vertices[i].tangent[2]);
 		MGlobal::displayInfo(MString() + "BI-TANGENT: " + meshes.vertices[i].bi_tangent[0] + " " + meshes.vertices[i].bi_tangent[1] + " " + meshes.vertices[i].bi_tangent[2]);
 	}
+	
+
+	
+	MItDependencyNodes it(MFn::kLambert);
+	for (; !it.isDone(); it.next())
+	{
+		MObject mat = it.item();
+		MFnDagNode storeMat(mat);
+		//MGlobal::displayInfo(MString() + storeMat.);
+	}
+	MGlobal::displayInfo("");
+	
+	MPlugArray materials;
+	for (unsigned int i = 0; i < mesh.parentCount(); i++)
+	{
+		MObjectArray shaderss;
+		MIntArray shadersindi;
+		mesh.getConnectedShaders(i, shaderss, shadersindi);
+
+		MObject shading = shaderss[0];
+		MFnDependencyNode fn(shading);
+		MPlug sshader = fn.findPlug("surfaceShader");
+		
+		sshader.connectedTo(materials, true, false);
+		MGlobal::displayInfo(MString() + "i: " + i);
+		if (materials.length())
+		{
+			MFnDependencyNode fnMat(materials[0].node());
+			MGlobal::displayInfo(MString() + "Material name: " + fnMat.name().asChar());
+		}
+	}
+	MGlobal::displayInfo(MString() + materials.length());
+
+	unsigned int instanceNumber;
+	MObjectArray shaders;
+	MIntArray shaderIndicies;
+	mesh.getConnectedShaders(2, shaders, shaderIndicies);
+	MGlobal::displayInfo(MString() + shaders.length());
+	MGlobal::displayInfo(MString() + shaderIndicies.length());
+
 	return MStatus::kSuccess;
 }
 

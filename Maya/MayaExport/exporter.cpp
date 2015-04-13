@@ -69,7 +69,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				meshStruct newMesh;
 				MFnMesh mayaMesh(path);
 
-				mesh.exportMesh(mayaMesh, materials, newMesh);
+				mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh);
 				meshes.push_back(newMesh);
 				//status = mesh.exportMesh(mayaMesh, materials, outfile);
 				header.mesh_count++;
@@ -156,12 +156,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(transformHeaders.data(), transformHeaders.size());
 	output.writeToFiles(jointHeaders.data(), jointHeaders.size());
 	output.writeToFiles(camera_header.data(), camera_header.size());
+	for (unsigned int i = 0; i < meshes.size(); i++)
+		output.writeToFiles(&meshes[i].meshHeader);
 
 	//Data
 	output.writeToFiles(&mat[0], &mat_headers[0] ,mat.size());
 	output.writeToFiles(&transformData[0], &transformHeaders[0], transformData.size());
 	output.writeToFiles(&joints[0], &jointHeaders[0], joints.size());
 	output.writeToFiles(&cameraVec[0], &camera_header[0], cameraVec.size());
+	for (unsigned int i = 0; i < meshes.size(); i++)
+		output.writeToFiles(&meshes[i], &meshes[i].meshHeader);
 
 	output.CloseFiles();
 	return MStatus::kSuccess;
