@@ -1,6 +1,6 @@
 #include "material.h"
 
-MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector, vector<struct Material>& mat_vector, map<const char*, unsigned int> mat_map)
+MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector, vector<struct Material>& mat_vector, map<const char*, unsigned int>& mat_map)
 {
 	MStatus status;
 
@@ -14,7 +14,7 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 		if ( matIt.thisNode().hasFn(MFn::kPhong) )
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
-
+			MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + materialFn.name().asChar());
 			//Johan har lag till
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
@@ -34,6 +34,9 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 		else if ( matIt.thisNode().hasFn(MFn::kBlinn) )
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
+			MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + materialFn.name().asChar());
+			//Johan har lag till
+			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.eBlinn;
 			
@@ -52,6 +55,10 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 		else if ( matIt.thisNode().hasFn(MFn::kLambert) )
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
+
+			MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + materialFn.name().asChar());
+			//Johan har lag till
+			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.eLambert;
 			
@@ -73,6 +80,7 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 		
 		// Write to file or push_back the data here
 		//Johan har lag till
+		MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + mat_vector.size());
 		mat_head_vector.push_back(mat_head_struct);
 		mat_vector.push_back(mat_struct);
 

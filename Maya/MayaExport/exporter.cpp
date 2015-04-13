@@ -62,6 +62,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	vector <meshStruct> meshes;
 
+	
 
 	while (!dagIt.isDone())
 	{
