@@ -41,35 +41,33 @@ struct TransformHeader
 };
 
 struct Transform
-{	
-	const char* name;
+{
 	int parentID;
 	double position[3];
 	double rotation[4];
 	double scale[3];
+	const char* name;
 
 	void WriteBinary(TransformHeader* header, ofstream& outputfile)
 	{
-		MGlobal::displayInfo("Transform::WriteBinary()");
-		outputfile.write(name, sizeof(char) * header->name_Length);
 		char* output = (char*) this;
-		output = &output[sizeof(char*)];
-		outputfile.write(output, sizeof(Transform) - sizeof(char*));
+		outputfile.write(output, sizeof(Transform) - sizeof(const char*));
+		outputfile.write(name, sizeof(const char) * header->name_Length);
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const Transform& obj)
 	{
-		out << "Transform Name: " << obj.name << endl
-			<< "ParentID: "<< obj.parentID << endl
+		out << "ParentID: " << obj.parentID << endl
 			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 			<< "Rotation: " << obj.rotation[0] << ' ' << obj.rotation[1] << ' ' << obj.rotation[2] << ' ' << obj.rotation[3] << endl
-			<< "Scale: " << obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2] << endl;
+			<< "Scale: " << obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2] << endl
+			<< "Transform Name: " << obj.name << endl;
 		return out;
 	}
 };
 
-struct JointHeader	
-{	
+struct JointHeader
+{
 	TransformHeader	transformHeader;
 
 	friend std::ostream& operator<<(std::ostream& out, const JointHeader& obj)
@@ -81,26 +79,24 @@ struct JointHeader
 
 struct Joint
 {
-	Transform transform;
 	double jointOrientation[4];
+	Transform transform;
 
 	void WriteBinary(JointHeader* header, ofstream& outputfile)
 	{
-		MGlobal::displayInfo("Joint::WriteBinary()");
-		transform.WriteBinary(&header->transformHeader, outputfile);
 		char* output = (char*) this;
-		output = &output[sizeof(transform)];
 		outputfile.write((const char*)output, sizeof(Joint) - sizeof(const char*));
+		transform.WriteBinary(&header->transformHeader, outputfile);
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const Joint& obj)
 	{
-		out << "Joint Name: " << obj.transform.name << endl
-			<< "ParentID: " << obj.transform.parentID << endl
+		out << "ParentID: " << obj.transform.parentID << endl
 			<< "Position: " << obj.transform.position[0] << ' ' << obj.transform.position[1] << ' ' << obj.transform.position[3] << endl
 			<< "Rotation: " << obj.transform.rotation[0] << ' ' << obj.transform.rotation[1] << ' ' << obj.transform.rotation[2] << ' ' << obj.transform.rotation[3] << endl
 			<< "Scale: " << obj.transform.scale[0] << ' ' << obj.transform.scale[1] << ' ' << obj.transform.scale[2] << endl
-			<< "Orientation: " << obj.jointOrientation[0] << ' ' << obj.jointOrientation[1] << ' ' << obj.jointOrientation[2] << endl;
+			<< "Orientation: " << obj.jointOrientation[0] << ' ' << obj.jointOrientation[1] << ' ' << obj.jointOrientation[2] << endl
+			<< "Joint Name: " << obj.transform.name << endl;
 		return out;
 	}
 };
@@ -196,7 +192,6 @@ struct CameraHeader
 
 struct camera
 {
-	const char* name;
 	unsigned int parentID;
 	double position[3];
 	double up_vector[3];
@@ -206,20 +201,19 @@ struct camera
 	double near_plane;
 	double far_plane;
 	enum projection_type{ ePerspective, eOrthogonal } projection;
+	const char* name;
 
 	void WriteBinary(CameraHeader* header, ofstream& outputfile)
 	{
-		MGlobal::displayInfo("camera::WriteBinary()");
-		outputfile.write(name, sizeof(char) * header->name_length);
+		MGlobal::displayInfo(MString() + header->name_length);
 		char* output = (char*) this;
-		output = &output[sizeof(const char*)];
 		outputfile.write((const char*)output, sizeof(camera) - sizeof(const char*));
+		outputfile.write(name, header->name_length);
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const camera& obj)
 	{
 		out << "CAMERA" << endl
-			<< "Name: " << obj.name << endl
 			<< "ParentID: " << obj.parentID << endl
 			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 			<< "Up Vector: " << obj.up_vector[0] << ' ' << obj.up_vector[1] << ' ' << obj.up_vector[2] << endl
@@ -228,7 +222,8 @@ struct camera
 			<< "FOV Y: " << obj.field_of_view_y << endl
 			<< "Near Plane: " << obj.near_plane << endl
 			<< "Far Plane: " << obj.far_plane << endl
-			<< "Projection type: " << obj.projection << endl;
+			<< "Projection type: " << obj.projection << endl
+			<< "Name: " << obj.name << endl;
 		return out;
 	}
 };
@@ -292,7 +287,6 @@ struct Material
 
 	void WriteBinary(MaterialHeader* header, ofstream& outputfile)
 	{
-		MGlobal::displayInfo("Material::WriteBinary()");
 		char* output = (char*) this;
 		outputfile.write((const char*)output, sizeof(Material) - sizeof(const char*) * 4);
 		outputfile.write(node_name, sizeof(char) * header->name_length);
@@ -322,7 +316,7 @@ struct Material
 		out << endl
 			<< "Normal map: ";
 		if (obj.diffuse_map != nullptr)
-			out<< obj.normal_map;
+			out << obj.normal_map;
 		out << endl
 			<< "Specular map: ";
 		if (obj.diffuse_map != nullptr)
