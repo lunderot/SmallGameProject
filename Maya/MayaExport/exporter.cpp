@@ -10,6 +10,7 @@
 #include "material.h"
 #include "Transform.h"
 #include "camera.h"
+#include "JointExporter.h"
 #include "writeToFile.h"
 
 #include <iostream>
@@ -37,7 +38,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 
 	map<const char*, unsigned int> materials;
-	map<const char*, int> heiraki;
+	map<const char*, int> transformHeiraki;
+	map<const char*, int> jointHeiraki;
 	Header header;
 
 	vector<MaterialHeader> mat_headers;
@@ -46,8 +48,11 @@ MStatus Exporter::doIt(const MArgList& argList)
 	matExporter.exportMaterial(mat_headers, mat, materials);
 	header.material_count = mat_headers.size();
 
-	vector<TransformHeader> transfromHeaders;
+	vector<TransformHeader> transformHeaders;
 	vector<Transform> transformData;
+
+	vector<JointHeader> jointHeaders;
+	vector<Joint> joints;
 
 	// camera
 	Camera cam;
@@ -67,7 +72,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				meshStruct newMesh;
 				MFnMesh mayaMesh(path);
 
-				mesh.exportMesh(mayaMesh, materials, newMesh);
+				mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh);
 				meshes.push_back(newMesh);
 				//status = mesh.exportMesh(mayaMesh, materials, outfile);
 				header.mesh_count++;
@@ -81,20 +86,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 				TransformClass transformClass;
 
 				MFnTransform mayaTransform(path.node(), &status);
-				status = transformClass.exportTransform(mayaTransform, heiraki, transfromHeaders.size(), transformHeader, transform);
+				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transformHeaders.size(), transformHeader, transform);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at TransformClass::exportTransform()");
+					return status;
 				}
-				transfromHeaders.push_back(transformHeader);
+				transformHeaders.push_back(transformHeader);
 				transformData.push_back(transform);
 				header.group_count++;
 			}
-			if (path.apiType() == MFn::kWeightGeometryFilt)
-			{
-				
-			}
-
 			if (path.apiType() == MFn::kCamera)
 			{
 				MFnCamera mayaCamera(path);
@@ -105,10 +106,31 @@ MStatus Exporter::doIt(const MArgList& argList)
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at Camera::exportCamera()");
+					return status;
 				}
 				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
+				header.camera_count++;
 			}
+			if (path.apiType() == MFn::kJoint)
+			{
+				MFnIkJoint mayaJoint(path);
+
+				Joint joint;
+				JointHeader jointHeader;
+
+				JointExporter jointExporter;
+				status = jointExporter.exportJoint(mayaJoint, jointHeiraki, transformHeiraki, joints.size(), jointHeader, joint);
+				if (status != MS::kSuccess)
+				{
+					MGlobal::displayInfo("Failure at JointExporter::exportJoint()");
+					return status;
+				}
+
+				jointHeaders.push_back(jointHeader);
+				joints.push_back(joint);
+			}
+
 			//--ayu
 			// && !path.hasFn(MFn::defaultlight
 			if (path.hasFn(MFn::kNonAmbientLight))
@@ -124,7 +146,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				lighthead.push_back(eLHeader);
 				lightbody.push_back(eOLight);
 			} // ---
-			
 		}
 		dagIt.next(); // without this line, Maya will crash.
 	}
@@ -139,15 +160,20 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&header, 1);
 
 	//Headers
-	output.writeToFiles(&mat_headers[0], mat_headers.size());
-	output.writeToFiles(&transfromHeaders[0], transfromHeaders.size());
+	output.writeToFiles(mat_headers.data(), mat_headers.size());
+	output.writeToFiles(transformHeaders.data(), transformHeaders.size());
+	output.writeToFiles(jointHeaders.data(), jointHeaders.size());
+	output.writeToFiles(camera_header.data(), camera_header.size());
+	for (unsigned int i = 0; i < meshes.size(); i++)
+		output.writeToFiles(&meshes[i].meshHeader);
 
 	//Data
-	output.writeToFiles(&mat[0], mat.size());
-	output.writeToFiles(&transformData[0], transformData.size());
-
-	// camera
-	output.writeToFiles(&cameraVec[0], cameraVec.size());
+	output.writeToFiles(&mat[0], &mat_headers[0] ,mat.size());
+	output.writeToFiles(&transformData[0], &transformHeaders[0], transformData.size());
+	output.writeToFiles(&joints[0], &jointHeaders[0], joints.size());
+	output.writeToFiles(&cameraVec[0], &camera_header[0], cameraVec.size());
+	for (unsigned int i = 0; i < meshes.size(); i++)
+		output.writeToFiles(&meshes[i], &meshes[i].meshHeader);
 
 	output.CloseFiles();
 	return MStatus::kSuccess;

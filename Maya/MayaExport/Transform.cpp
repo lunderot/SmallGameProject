@@ -2,7 +2,6 @@
 
 MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, TransformHeader& transformHeader, Transform& transform)
 {	
-	MGlobal::displayInfo("TransformClass::exportTransform()");
 	MStatus status = MS::kSuccess;
 
 	heiraki[mayaTransform.name().asChar()] = transformCount;
@@ -21,22 +20,44 @@ MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<co
 
 
 	transformHeader.name_Length = mayaTransform.name(&status).numChars();
+	if (status != MS::kSuccess)
+	{
+		MGlobal::displayInfo("Failure at TransformClass::exportTransform() with 'mayaTransform.name(&status).numChars()'" );
+		return status;
+	}
 
-	if (status == MS::kSuccess)
-		status = exportName(mayaTransform, transform);
-	if (status == MS::kSuccess)
-		status = exportTranslation(mayaTransform, transform);
-	if (!status == MS::kSuccess)
-		status = exportRotation(mayaTransform, transform);
-	if (!status == MS::kSuccess)
-		status = exportScale(mayaTransform, transform);
+	status = exportName(mayaTransform, transform);
+	if (status != MS::kSuccess)
+	{
+		MGlobal::displayInfo("Failure at TransformClass::exportName()");
+		return status;
+	}
+
+	status = exportTranslation(mayaTransform, transform);
+	if (status != MS::kSuccess)
+	{
+		MGlobal::displayInfo("Failure at TransformClass::exportTranslation()");
+		return status;
+	}
+
+	status = exportRotation(mayaTransform, transform);
+	if (status != MS::kSuccess)
+	{
+		MGlobal::displayInfo("Failure at TransformClass::exportRotation()");
+		return status;
+	}
+
+	status = exportScale(mayaTransform, transform);
+	if (status != MS::kSuccess)
+	{
+		MGlobal::displayInfo("Failure at TransformClass::exportScale()");
+	}
 
 	return status;
 }
 
 MStatus TransformClass::exportName(MFnTransform& mayaTransform, Transform& transform)
 {
-	MGlobal::displayInfo("TransformClass::exportName()");
 	MS status;
 	transform.name = mayaTransform.name(&status).asChar();
 	MGlobal::displayInfo(mayaTransform.name());
@@ -45,7 +66,6 @@ MStatus TransformClass::exportName(MFnTransform& mayaTransform, Transform& trans
 
 MStatus TransformClass::exportTranslation(MFnTransform& mayaTransform, Transform& transform)
 {
-	MGlobal::displayInfo("TransformClass::exportTranslation()");
 	MS status;
 	MSpace space;
 	MVector pos = mayaTransform.getTranslation(space.kTransform, &status);
@@ -55,12 +75,11 @@ MStatus TransformClass::exportTranslation(MFnTransform& mayaTransform, Transform
 
 MStatus TransformClass::exportRotation(MFnTransform& mayaTransform, Transform& transform)
 {
-	MGlobal::displayInfo("TransformClass::exportRotation()");
 	return mayaTransform.getRotationQuaternion(transform.rotation[0], transform.rotation[1], transform.rotation[2], transform.rotation[3]);
 }
 
 MStatus TransformClass::exportScale(MFnTransform& mayaTransform, Transform& transform)
 {
-	MGlobal::displayInfo("TransformClass::exportScale()");
+
 	return mayaTransform.getScale(transform.scale);
 }

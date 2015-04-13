@@ -1,10 +1,11 @@
 #include "mesh.h"
+#include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, meshStruct& meshes)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes)
 {
 	MStatus status;
 	status = exportMaterial(mesh, materials);
-	status = exportVertices(mesh, meshes);
+	status = exportVertices(mesh, transformHeiraki, meshes);
 	status = exportJoints(mesh);
 
 	return status;
@@ -15,19 +16,15 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& mate
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, meshStruct& meshes)
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, meshStruct& meshes)
 {
 	MStatus status;
-
-	unsigned int numVertices = mesh.numVertices(&status);
+	
+	/*unsigned int numVertices = mesh.numVertices(&status);
 	unsigned int numUVs = mesh.numUVs(&status);
-	unsigned int numNormals = mesh.numNormals(&status);
+	unsigned int numNormals = mesh.numNormals(&status);*/
 
-	MIntArray triangleCount;
-	MIntArray triangleVertices;
-	status = mesh.getTriangles(triangleCount, triangleVertices);
-
-	double** verticesPos = new double*[numVertices];
+	/*double** verticesPos = new double*[numVertices];
 	double** verticesNormal = new double*[numVertices];
 	float** verticesUV = new float*[numVertices];
 
@@ -36,164 +33,227 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, meshStruct& meshes)
 		verticesPos[i] = new double[4];
 		verticesNormal[i] = new double[4];
 		verticesUV[i] = new float[2];
-	}
-
-	//for (unsigned int vertexID = 0; vertexID < numVertices; vertexID++)
-	//{
-	//	MPoint Pos;
-	//	mesh.getPoint(vertexID, Pos, MSpace::kWorld);
-	//	Pos.get(verticesPos[vertexID]);
-
-	//	MGlobal::displayInfo(MString() + "ID: " + vertexID);
-	//	MGlobal::displayInfo(MString() + "Position: " + Pos.x + " " + Pos.y + " " + Pos.z);
-	//}
-
-	MPointArray vertexArray;
-	mesh.getPoints(vertexArray, MSpace::kWorld);
-	for (unsigned int i = 0; i < numVertices; i++)
-	{
-		MGlobal::displayInfo(MString() + i + " | Position: " + vertexArray[i].x + " " + vertexArray[i].y + " " + vertexArray[i].z);
-	}
-
-	/*for (unsigned int UVcounter = 0; UVcounter < numUVs; UVcounter++)
-	{
-		float u;
-		float v;
-		const MString* uvSet = NULL;
-		mesh.getUV(UVcounter, u, v, uvSet);
-		MGlobal::displayInfo(MString() + UVcounter + " | UV: " + u + " " + v);
 	}*/
 
-	MFloatArray uArray;
-	MFloatArray vArray;
-	mesh.getUVs(uArray, vArray, NULL);
-	for (unsigned int i = 0; i < numUVs; i++)
-	{
-		MGlobal::displayInfo(MString() + i + " | UV: " + uArray[i] + " " + vArray[i]);
-	}
+	//MIntArray triangleCount;
+	//MIntArray triangleVertices;
+	//status = mesh.getTriangles(triangleCount, triangleVertices);
 
-	MFloatVectorArray Norm;
-	mesh.getNormals(Norm, MSpace::kWorld);
-	for (unsigned int i = 0; i < numNormals; i++)
+	// POSITION - get information
+	MPointArray vertex_array;
+	mesh.getPoints(vertex_array, MSpace::kWorld);
+	for (unsigned int i = 0; i < vertex_array.length()/*numVertices*/; i++)
 	{
-		MGlobal::displayInfo(MString() + i + " | Norm: " + Norm[i].x + " " + Norm[i].y + " " + Norm[i].z);
+		MGlobal::displayInfo(MString() + i + " | Position: " + vertex_array[i].x + " " + vertex_array[i].y + " " + vertex_array[i].z);
 	}
+	MGlobal::displayInfo("");
+
+	// UV - get information
+	MFloatArray u_array;
+	MFloatArray v_array;
+	mesh.getUVs(u_array, v_array, NULL);
+	for (unsigned int i = 0; i < u_array.length()/*numUVs*/; i++)
+	{
+		MGlobal::displayInfo(MString() + i + " | UV: " + u_array[i] + " " + v_array[i]);
+	}
+	MGlobal::displayInfo("");
+
+	// NORMAL - get information
+	MFloatVectorArray normal_array_vector;
+	mesh.getNormals(normal_array_vector, MSpace::kWorld);
+	for (unsigned int i = 0; i < normal_array_vector.length()/*numNormals*/; i++)
+	{
+		MGlobal::displayInfo(MString() + i + " | Normal: " + normal_array_vector[i].x + " " + normal_array_vector[i].y + " " + normal_array_vector[i].z);
+	}
+	MGlobal::displayInfo("");
+
+	// TANGENT - get information
+	MFloatVectorArray tangent_array_vector;
+	mesh.getTangents(tangent_array_vector, MSpace::kWorld, NULL);
+	for (unsigned int i = 0; i < tangent_array_vector.length(); i++)
+	{
+		MGlobal::displayInfo(MString() + i + " | Tangent: " + tangent_array_vector[i].x + " " + tangent_array_vector[i].y + " " + tangent_array_vector[i].z);
+	}
+	MGlobal::displayInfo("");
+
+	// BI-NORMAL "BI-TANGENT" - fix information
+	MFloatVectorArray biNormal_array_vector;
+	mesh.getBinormals(biNormal_array_vector, MSpace::kWorld, NULL);
+	for (unsigned int i = 0; i < biNormal_array_vector.length(); i++)
+	{
+		MGlobal::displayInfo(MString() + i + " | Bi-Tangent: " + biNormal_array_vector[i].x + " " + biNormal_array_vector[i].y + " " + biNormal_array_vector[i].z);
+	}
+	MGlobal::displayInfo("");
 	
-	MFloatVectorArray tangent;
-	mesh.getTangents(tangent, MSpace::kWorld, NULL);
-	for (unsigned int i = 0; i < tangent.length(); i++)
-	{
-		MGlobal::displayInfo(MString() + i + " | Tangent: " + tangent[i].x + " " + tangent[i].y + " " + tangent[i].z);
-	}
-
-	MFloatVectorArray biNormals;
-	mesh.getBinormals(biNormals, MSpace::kWorld, NULL);
-	for (unsigned int i = 0; i < biNormals.length(); i++)
-	{
-		MGlobal::displayInfo(MString() + i + " | Bi-Tangent: " + biNormals[i].x + " " + biNormals[i].y + " " + biNormals[i].z);
-	}
-
-	MIntArray triangleCounts;
-	MIntArray indicies;
-	mesh.getTriangles(triangleCounts, indicies);
-	for (unsigned int i = 0; i < indicies.length(); i++)
-	{
-		MGlobal::displayInfo(MString() + i + " | Indicies: " + indicies[i]);
-	}
-
-	MItDependencyNodes it(MFn::kLambert);
+	// MATERIAL - ..............
+	/*MItDependencyNodes it(MFn::kLambert);
 	for (; !it.isDone(); it.next())
 	{
 		MObject mat = it.item();
 		MGlobal::displayInfo("hej");
 	}
+	MGlobal::displayInfo("");*/
+
+	//mesh.getConnectedShaders(instanceNumber, shaders, shaderIndicies);
+	//Global::displayInfo(MString() + shaders.length());
+
+
+	// -------------------------- 
+	// INDICIES - get ID
+	MIntArray triangleCount_array;
+	MIntArray indicie_array;
+	mesh.getTriangles(triangleCount_array, indicie_array);
+	for (unsigned int i = 0; i < indicie_array.length(); i++)
+	{
+		MGlobal::displayInfo(MString() + i + " | Indicies: " + indicie_array[i]);
+	}
+	MGlobal::displayInfo("");
+
+	// UV - get ID
+	MIntArray uvId_array;
+	for (unsigned int i = 0; i < triangleCount_array.length(); i++)
+	{
+		MGlobal::displayInfo(MString() + "FACE: " + i);
+		for (unsigned int k = 0; k < 3; k++)
+		{
+			int tmpStore;
+			mesh.getPolygonUVid(i, k, tmpStore, NULL);
+			uvId_array.append(tmpStore);
+			MGlobal::displayInfo(MString() + "tmpStoreUV_ID: " + tmpStore);
+		}
+		MGlobal::displayInfo("");
+	}
+	MGlobal::displayInfo(MString() + "uvId_array | LENGTH: " + uvId_array.length());
+	MGlobal::displayInfo("");
+
+	// NORMAL - get ID
+	MIntArray normalcount_array;
+	MIntArray normalId_array;
+	mesh.getNormalIds(normalcount_array, normalId_array);
+	for (unsigned int i = 0; i < normalId_array.length(); i++)
+	{
+		MGlobal::displayInfo(MString() + i + " : normal ID: " + normalId_array[i]);
+	}
+	MGlobal::displayInfo("");
+
+	MGlobal::displayInfo(MString() + normalcount_array.length() + " " + normalId_array.length());
+	MGlobal::displayInfo(MString() + "TriangleCount: " + triangleCount_array.length());
+	MGlobal::displayInfo(MString() + "Verticies: " + vertex_array.length());
+	MGlobal::displayInfo(MString() + "UV total: " + u_array.length()); //elr v_array.length()
+	MGlobal::displayInfo(MString() + "Normal total: " + normal_array_vector.length());
+	MGlobal::displayInfo("");
+
+	for (unsigned int i = 0; i < mesh.parentCount(); i++)
+	{
+		MObject parent = mesh.parent(i);
+		MFnDagNode storeParent(parent);
+		meshes.name = storeParent.name().asChar();
+		meshes.transform = transformHeiraki[storeParent.name().asChar()];
+
+		MGlobal::displayInfo(MString() + storeParent.name().asChar());
+		MGlobal::displayInfo(MString() + meshes.transform);
+	}
+
+	//meshes.name = mesh.name().asChar();
+	meshes.vertices.resize(indicie_array.length());
+	meshes.indices.resize(indicie_array.length());
+
+	meshes.meshHeader.name_length = mesh.name().length();
+	meshes.meshHeader.vertex_count = vertex_array.length();
+	meshes.meshHeader.triangle_count = triangleCount_array.length();
+	MGlobal::displayInfo("STRUCT - MESHSTRUCT");
+	MGlobal::displayInfo(MString() + "name: " + meshes.name);
+	MGlobal::displayInfo("-----");
+	MGlobal::displayInfo("STRUCT - MESHHEADER");
+	MGlobal::displayInfo(MString() + "name_length: " + meshes.meshHeader.name_length);
+	MGlobal::displayInfo(MString() + "vertex_count: " + meshes.meshHeader.vertex_count);
+	MGlobal::displayInfo(MString() + "triangle_count: " + meshes.meshHeader.triangle_count);
+	MGlobal::displayInfo("");
+
+	for (unsigned int i = 0; i < indicie_array.length(); i++)
+	{
+		int tmpPosition;
+		tmpPosition = indicie_array[i];
+		meshes.vertices[i].position[0] = vertex_array[tmpPosition].x;
+		meshes.vertices[i].position[1] = vertex_array[tmpPosition].y;
+		meshes.vertices[i].position[2] = vertex_array[tmpPosition].z;
+
+		int tmpUv;
+		tmpUv = uvId_array[i];
+		meshes.vertices[i].uv[0] = u_array[tmpUv];
+		meshes.vertices[i].uv[1] = v_array[tmpUv];
+
+		int tmpNormal;
+		tmpNormal = normalId_array[i];
+		meshes.vertices[i].normal[0] = normal_array_vector[tmpNormal].x;
+		meshes.vertices[i].normal[1] = normal_array_vector[tmpNormal].y;
+		meshes.vertices[i].normal[2] = normal_array_vector[tmpNormal].z;
+
+		meshes.vertices[i].tangent[0] = tangent_array_vector[i].x;
+		meshes.vertices[i].tangent[1] = tangent_array_vector[i].y;
+		meshes.vertices[i].tangent[2] = tangent_array_vector[i].z;
+
+		meshes.vertices[i].bi_tangent[0] = biNormal_array_vector[i].x;
+		meshes.vertices[i].bi_tangent[1] = biNormal_array_vector[i].y;
+		meshes.vertices[i].bi_tangent[2] = biNormal_array_vector[i].z;
+	}
+
+	bool displayControl = true;
+	int displayCounter = 0;
+	for (unsigned int i = 0; i < indicie_array.length(); i++)
+	{
+		if (displayControl == true)
+		{
+			MGlobal::displayInfo(MString() + "F: " + displayCounter + "                    ");
+			displayControl = false;
+			displayCounter++;
+		}
+		MGlobal::displayInfo(MString() + "---VERTEX: " + indicie_array[i] + " | " + uvId_array[i] + " | " + normalId_array[i] + " | ( " + i + " | " + i + " ) ---");
+		MGlobal::displayInfo(MString() + "POS: " + meshes.vertices[i].position[0] + " " + meshes.vertices[i].position[1] + " " + meshes.vertices[i].position[2]);
+		MGlobal::displayInfo(MString() + "UV: " + meshes.vertices[i].uv[0] + " " + meshes.vertices[i].uv[1]);
+		MGlobal::displayInfo(MString() + "NORM:       " + meshes.vertices[i].normal[0] + " " + meshes.vertices[i].normal[1] + " " + meshes.vertices[i].normal[2]);
+		MGlobal::displayInfo(MString() + "TANGENT:    " + meshes.vertices[i].tangent[0] + " " + meshes.vertices[i].tangent[1] + " " + meshes.vertices[i].tangent[2]);
+		MGlobal::displayInfo(MString() + "BI-TANGENT: " + meshes.vertices[i].bi_tangent[0] + " " + meshes.vertices[i].bi_tangent[1] + " " + meshes.vertices[i].bi_tangent[2]);
+	}
 	
+
+	
+	MItDependencyNodes it(MFn::kLambert);
+	for (; !it.isDone(); it.next())
+	{
+		MObject mat = it.item();
+		MFnDagNode storeMat(mat);
+		//MGlobal::displayInfo(MString() + storeMat.);
+	}
+	MGlobal::displayInfo("");
+	
+	MPlugArray materials;
+	for (unsigned int i = 0; i < mesh.parentCount(); i++)
+	{
+		MObjectArray shaderss;
+		MIntArray shadersindi;
+		mesh.getConnectedShaders(i, shaderss, shadersindi);
+
+		MObject shading = shaderss[0];
+		MFnDependencyNode fn(shading);
+		MPlug sshader = fn.findPlug("surfaceShader");
+		
+		sshader.connectedTo(materials, true, false);
+		MGlobal::displayInfo(MString() + "i: " + i);
+		if (materials.length())
+		{
+			MFnDependencyNode fnMat(materials[0].node());
+			MGlobal::displayInfo(MString() + "Material name: " + fnMat.name().asChar());
+		}
+	}
+	MGlobal::displayInfo(MString() + materials.length());
+
 	unsigned int instanceNumber;
 	MObjectArray shaders;
 	MIntArray shaderIndicies;
-	mesh.getConnectedShaders(instanceNumber, shaders, shaderIndicies);
+	mesh.getConnectedShaders(2, shaders, shaderIndicies);
 	MGlobal::displayInfo(MString() + shaders.length());
-
-	MGlobal::displayInfo(MString() + "TriangleCount: " + indicies.length());
-	MGlobal::displayInfo(MString() + "Verticies: " + numVertices);
-	MGlobal::displayInfo(MString() + "UV total: " + numUVs);
-	MGlobal::displayInfo(MString() + "Normal total: " + numNormals);
-
-	meshes.meshHeader.vertex_count = numVertices;
-	meshes.meshHeader.triangle_count = indicies.length() / 3;
-	meshes.vertices.resize(indicies.length());
-	
-	int NormControl = 0;
-	int NormCounter = 0;
-	int NormCounter1 = 0;
-	int store = 0;
-	for (unsigned int i = 0; i < indicies.length(); i++)
-	{
-		int tmp;
-		tmp = indicies[i];
-		meshes.vertices[i].position[0] = vertexArray[tmp].x;
-		meshes.vertices[i].position[1] = vertexArray[tmp].y;
-		meshes.vertices[i].position[2] = vertexArray[tmp].z;
-		//MGlobal::displayInfo(MString() + i + " | POSITION: " + meshes.vertices[i].position[0] + " " + meshes.vertices[i].position[1] + " " + meshes.vertices[i].position[2]);
-
-		meshes.vertices[i].uv[0] = uArray[0];
-		meshes.vertices[i].uv[1] = vArray[0];
-
-		meshes.vertices[i].normal[0] = Norm[NormCounter].x;
-		meshes.vertices[i].normal[1] = Norm[NormCounter].y;
-		meshes.vertices[i].normal[2] = Norm[NormCounter].z;
-		//MGlobal::displayInfo(MString() + i + " | NORMAL: " + meshes.vertices[i].normal[0] + " " + meshes.vertices[i].normal[1] + " " + meshes.vertices[i].normal[2]);
-		
-		MGlobal::displayInfo(MString() + "F: " + (tmp+1)/*(indicies[i]+1)*/ + " | " + " | " + (NormCounter+1));	
-		
-		if (NormControl != 2)
-		{
-			NormCounter++;
-			NormControl++;
-			NormCounter1++;
-		}
-		else
-		{
-			NormControl = 0;
-			NormCounter1++;
-		}
-
-		if (NormCounter1 == 4 || NormCounter1 == 5)
-		{
-			if (NormCounter1 == 4)
-			{
-				store = NormCounter;
-				NormCounter = NormCounter - 2;
-			}
-
-			if (NormCounter1 == 5)
-			{
-				NormCounter = store;
-				NormCounter1 = -1;
-			}
-		}
-
-		if (NormCounter1 == 0)
-		{
-			NormCounter++;
-		}
-
-	}
-
-	/*for (unsigned int i = 0; i < numNormals; i++)
-	{
-		meshes.vertices[i].normal[0] = Norm[i].x;
-		meshes.vertices[i].normal[1] = Norm[i].y;
-		meshes.vertices[i].normal[2] = Norm[i].z;
-		MGlobal::displayInfo(MString() + i + " | NORMAL: " + meshes.vertices[i].normal[0] + " " + meshes.vertices[i].normal[1] + " " + meshes.vertices[i].normal[2]);
-	}*/
-
-	//for (unsigned int i = 0; i < numUVs; i++)
-	//{
-	//	meshes.vertices[i].uv[0] = uArray[i];
-	//	meshes.vertices[i].uv[1] = vArray[i];
-	//	MGlobal::displayInfo(MString() + i + " | UV: " + meshes.vertices[i].uv[0] + " " + meshes.vertices[i].uv[1]);
-	//}
+	MGlobal::displayInfo(MString() + shaderIndicies.length());
 
 	return MStatus::kSuccess;
 }
