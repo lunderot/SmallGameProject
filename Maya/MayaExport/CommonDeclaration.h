@@ -170,7 +170,7 @@ struct meshStruct
 
 	void WriteBinary(MeshHeader* header, ofstream& outputfile)
 	{
-		MGlobal::displayInfo("meshStruct::WriteBinary()");
+		//MGlobal::displayInfo("meshStruct::WriteBinary()");
 		outputfile.write(name, sizeof(char)* header->name_length);
 		char* output = (char*) this;
 		output = &output[sizeof(MeshHeader) + sizeof(const char*)];
@@ -266,7 +266,7 @@ struct camera
 
 	void WriteBinary(CameraHeader* header, ofstream& outputfile)
 	{
-		MGlobal::displayInfo(MString() + header->name_length);
+		//MGlobal::displayInfo(MString() + header->name_length);
 		char* output = (char*) this;
 		outputfile.write((const char*)output, sizeof(camera) - sizeof(const char*));
 		outputfile.write(name, header->name_length);
