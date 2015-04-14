@@ -106,6 +106,8 @@ struct MeshHeader
 	unsigned int name_length;
 	unsigned int vertex_count;
 	unsigned int triangle_count;
+	int material_count;
+	int transform_count;
 	unsigned int joint_count;
 	bool has_Animation;
 
@@ -113,7 +115,9 @@ struct MeshHeader
 	{
 		out << "Name Length: " << obj.name_length << endl
 			<< "Vertex Count: " << obj.name_length << endl
-			<< "Triangle Count: " << obj.triangle_count << endl;
+			<< "Triangle Count: " << obj.triangle_count << endl
+			<< "Material Count: " << obj.material_count << endl
+			<< "Transform Count: " << obj.transform_count << endl;
 		return out;
 	}
 };
@@ -146,9 +150,11 @@ struct Vertex
 
 struct meshStruct
 {
-	MeshHeader meshHeader;
 	const char* name;
-	int transform;
+	vector <unsigned int> transform_Id;
+	vector <unsigned int> material_Id;
+	//vector <const char*> material_name;
+	//const char* material_name;
 	vector <Vertex> vertices;
 	vector <unsigned int> indices;
 
@@ -163,19 +169,25 @@ struct meshStruct
 	friend std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 	{
 		out << "Mesh Name: " << obj.name << endl
-			<< "Transform: " << obj.transform << endl
-			<< "Verticies count: " << obj.vertices.size() << endl
+			<< "Transform id: " << endl;
+		for (unsigned int i = 0; i < obj.transform_Id.size(); i++)
+		{
+			out << obj.transform_Id[i] << endl;
+		}
+
+		out << "Material id: " << endl;
+
+		for (unsigned int i = 0; i < obj.material_Id.size(); i++)
+		{
+			out << obj.material_Id[i] << endl;
+		}
+			out << "Verticies count: " << obj.vertices.size() << endl
 			<< "Indicies count: " << obj.indices.size() << endl << endl;
 
 		for (unsigned int i = 0; i < obj.vertices.size(); i++)
 			out << "Vertex " << i << ": " << obj.vertices[i] << endl;
 		return out;
 	}
-};
-
-struct Face
-{
-	unsigned int vertexID[3];
 };
 
 struct CameraHeader

@@ -5,7 +5,7 @@ MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& material
 {
 	MStatus status;
 	status = exportMaterial(mesh, materials);
-	status = exportVertices(mesh, transformHeiraki, meshes);
+	status = exportVertices(mesh, transformHeiraki, materials, meshes);
 	status = exportJoints(mesh);
 
 	return status;
@@ -16,7 +16,7 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& mate
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, meshStruct& meshes)
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, unsigned int>& transform_materials, meshStruct& meshes)
 {
 	MStatus status;
 	
@@ -228,6 +228,9 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MGlobal::displayInfo("");
 	
 	MPlugArray materials;
+	//meshes.material_count = mesh.parentCount();
+	//meshes.material_name.resize(mesh.parentCount());
+	meshes.material_Id.resize(mesh.parentCount());
 	for (unsigned int i = 0; i < mesh.parentCount(); i++)
 	{
 		MObjectArray shaderss;
@@ -240,11 +243,19 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 		
 		sshader.connectedTo(materials, true, false);
 		MGlobal::displayInfo(MString() + "i: " + i);
+		
 		if (materials.length())
 		{
+			unsigned int test;
 			MFnDependencyNode fnMat(materials[0].node());
+			test = transform_materials[fnMat.name().asChar()]; // <-- fucked
+			meshes.material_Id[i] = test;
+			//meshes.material_name[i] = fnMat.name().asChar();
+			MGlobal::displayInfo(MString() + test);
 			MGlobal::displayInfo(MString() + "Material name: " + fnMat.name().asChar());
 		}
+
+		meshes.meshHeader.material_count = mesh.parentCount();
 	}
 	MGlobal::displayInfo(MString() + materials.length());
 
