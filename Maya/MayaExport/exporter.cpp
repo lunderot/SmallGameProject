@@ -199,17 +199,13 @@ MStatus Exporter::doIt(const MArgList& argList)
 		output.writeToFiles(jointHeaders.data(), jointHeaders.size());
 		output.writeToFiles(camera_header.data(), camera_header.size());
 		output.writeToFiles(meshHeader.data(), meshHeader.size());
-		for (unsigned int i = 0; i < meshes.size(); i++)
-			output.writeToFiles(&meshes[i]);
 
 		//Data
 		output.writeToFiles(&mat[0], &mat_headers[0], mat.size());
 		output.writeToFiles(&transformData[0], &transformHeaders[0], transformData.size());
 		output.writeToFiles(&joints[0], &jointHeaders[0], joints.size());
 		output.writeToFiles(&cameraVec[0], &camera_header[0], cameraVec.size());
-		output.writeToFiles(meshHeader.data(), meshHeader.size());
-		for (unsigned int i = 0; i < meshes.size(); i++)
-			output.writeToFiles(&meshes[i]);
+		output.writeToFiles(&meshes[0], &meshHeader[0], meshHeader.size());
 
 		output.CloseFiles();
 		return MStatus::kSuccess;

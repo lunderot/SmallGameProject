@@ -22,9 +22,13 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 
 	// POSITION - get information
 	MPointArray vertex_array;
-	mesh.getPoints(vertex_array, MSpace::kWorld);
+	mesh.getPoints(vertex_array, MSpace::kObject);
+	meshes.position.resize(vertex_array.length());
 	for (unsigned int i = 0; i < vertex_array.length(); i++)
 	{
+		meshes.position[i].push_back(vertex_array[i].x);
+		meshes.position[i].push_back(vertex_array[i].y);
+		meshes.position[i].push_back(vertex_array[i].z);
 		MGlobal::displayInfo(MString() + i + " | Position: " + vertex_array[i].x + " " + vertex_array[i].y + " " + vertex_array[i].z);
 	}
 	MGlobal::displayInfo("");
@@ -33,35 +37,50 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MFloatArray u_array;
 	MFloatArray v_array;
 	mesh.getUVs(u_array, v_array, NULL);
+	meshes.uv.resize(u_array.length());
 	for (unsigned int i = 0; i < u_array.length(); i++)
 	{
+		meshes.uv[i].push_back(u_array[i]);
+		meshes.uv[i].push_back(v_array[i]);
 		MGlobal::displayInfo(MString() + i + " | UV: " + u_array[i] + " " + v_array[i]);
 	}
 	MGlobal::displayInfo("");
-
+	
 	// NORMAL - get information
 	MFloatVectorArray normal_array_vector;
-	mesh.getNormals(normal_array_vector, MSpace::kWorld);
+	mesh.getNormals(normal_array_vector, MSpace::kObject);
+	meshes.normal.resize(normal_array_vector.length());
 	for (unsigned int i = 0; i < normal_array_vector.length(); i++)
 	{
+		meshes.normal[i].push_back(normal_array_vector[i].x);
+		meshes.normal[i].push_back(normal_array_vector[i].y);
+		meshes.normal[i].push_back(normal_array_vector[i].z);
 		MGlobal::displayInfo(MString() + i + " | Normal: " + normal_array_vector[i].x + " " + normal_array_vector[i].y + " " + normal_array_vector[i].z);
 	}
 	MGlobal::displayInfo("");
 
 	// TANGENT - get information
 	MFloatVectorArray tangent_array_vector;
-	mesh.getTangents(tangent_array_vector, MSpace::kWorld, NULL);
+	mesh.getTangents(tangent_array_vector, MSpace::kObject, NULL);
+	meshes.tangent.resize(tangent_array_vector.length());
 	for (unsigned int i = 0; i < tangent_array_vector.length(); i++)
 	{
+		meshes.tangent[i].push_back(tangent_array_vector[i].x);
+		meshes.tangent[i].push_back(tangent_array_vector[i].y);
+		meshes.tangent[i].push_back(tangent_array_vector[i].z);
 		MGlobal::displayInfo(MString() + i + " | Tangent: " + tangent_array_vector[i].x + " " + tangent_array_vector[i].y + " " + tangent_array_vector[i].z);
 	}
 	MGlobal::displayInfo("");
 
 	// BI-NORMAL "BI-TANGENT" - fix information
 	MFloatVectorArray biNormal_array_vector;
-	mesh.getBinormals(biNormal_array_vector, MSpace::kWorld, NULL);
+	mesh.getBinormals(biNormal_array_vector, MSpace::kObject, NULL);
+	meshes.bi_tangent.resize(biNormal_array_vector.length());
 	for (unsigned int i = 0; i < biNormal_array_vector.length(); i++)
 	{
+		meshes.bi_tangent[i].push_back(biNormal_array_vector[i].x);
+		meshes.bi_tangent[i].push_back(biNormal_array_vector[i].y);
+		meshes.bi_tangent[i].push_back(biNormal_array_vector[i].z);
 		MGlobal::displayInfo(MString() + i + " | Bi-Tangent: " + biNormal_array_vector[i].x + " " + biNormal_array_vector[i].y + " " + biNormal_array_vector[i].z);
 	}
 	MGlobal::displayInfo("");
@@ -72,11 +91,13 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MIntArray triangleCount_array;
 	MIntArray indicie_array;
 	mesh.getTriangles(triangleCount_array, indicie_array);
+	//meshes.indices.resize(indicie_array.length());
 	for (unsigned int i = 0; i < indicie_array.length(); i++)
 	{
+		//meshes.indices[i] = indicie_array[i];
 		MGlobal::displayInfo(MString() + i + " | Indicies: " + indicie_array[i]);
 	}
-	MGlobal::displayInfo("");
+	MGlobal::displayInfo(MString() + indicie_array.length());
 
 	// UV - get ID
 	MIntArray uvId_array;
@@ -125,13 +146,14 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 		MGlobal::displayInfo(MString() + storeParent.name().asChar());
 	}
 
-
+	meshes.vertices_count = vertex_array.length();
 	meshes.vertices.resize(indicie_array.length());
-	meshes.indices.resize(indicie_array.length());
+	//meshes.indices.resize(indicie_array.length());
 
 	mayaMeshHeader.name_length = mesh.name().length();
+	mayaMeshHeader.triangle_count = indicie_array.length();
+
 	mayaMeshHeader.vertex_count = vertex_array.length();
-	mayaMeshHeader.transform_count = triangleCount_array.length();
 
 	//meshes.meshHeader.name_length = mesh.name().length();
 	//meshes.meshHeader.vertex_count = vertex_array.length();
@@ -144,8 +166,9 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MGlobal::displayInfo(MString() + "vertex_count: " + mayaMeshHeader.vertex_count);
 	MGlobal::displayInfo(MString() + "triangle_count: " + mayaMeshHeader.triangle_count);
 	MGlobal::displayInfo("");
+	
 
-	for (unsigned int i = 0; i < indicie_array.length(); i++)
+	/*for (unsigned int i = 0; i < indicie_array.length(); i++)
 	{
 		int tmpPosition;
 		tmpPosition = indicie_array[i];
@@ -189,9 +212,14 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 		MGlobal::displayInfo(MString() + "NORM:       " + meshes.vertices[i].normal[0] + " " + meshes.vertices[i].normal[1] + " " + meshes.vertices[i].normal[2]);
 		MGlobal::displayInfo(MString() + "TANGENT:    " + meshes.vertices[i].tangent[0] + " " + meshes.vertices[i].tangent[1] + " " + meshes.vertices[i].tangent[2]);
 		MGlobal::displayInfo(MString() + "BI-TANGENT: " + meshes.vertices[i].bi_tangent[0] + " " + meshes.vertices[i].bi_tangent[1] + " " + meshes.vertices[i].bi_tangent[2]);
+	}*/
+
+	for (unsigned int i = 0; i < indicie_array.length(); i++)
+	{
+		meshes.vertices[i].position = indicie_array[i];
+		meshes.vertices[i].uv = uvId_array[i];
+		meshes.vertices[i].normal = normalId_array[i];
 	}
-
-
 
 	MItDependencyNodes it(MFn::kLambert);
 	for (; !it.isDone(); it.next())

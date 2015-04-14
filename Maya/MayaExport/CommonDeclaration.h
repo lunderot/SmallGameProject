@@ -114,8 +114,8 @@ struct MeshHeader
 	friend std::ostream& operator<<(std::ostream& out, const MeshHeader& obj)
 	{
 		out << "Name Length: " << obj.name_length << endl
-			<< "Vertex Count: " << obj.name_length << endl
-			<< "Triangle Count: " << obj.triangle_count << endl
+			<< "Vertex Count: " << obj.vertex_count << endl
+			<< "Indicies Count: " << obj.triangle_count << endl
 			<< "Material Count: " << obj.material_count << endl
 			<< "Transform Count: " << obj.transform_count << endl;
 		return out;
@@ -124,12 +124,17 @@ struct MeshHeader
 
 struct Vertex
 {
-	//unsigned int vertexID;
-	double position[3];
+	// IDs
+	/*double position[3]; 
 	float uv[2];
 	float normal[3];
 	double tangent[3];
-	double bi_tangent[3];
+	double bi_tangent[3];*/
+	unsigned int position;
+	unsigned int uv;
+	unsigned int normal;
+	/*unsigned int tangent;
+	unsigned int bi_tangent;*/
 
 	void WriteBinary(ofstream& outputfile)
 	{
@@ -138,12 +143,11 @@ struct Vertex
 
 	friend std::ostream& operator<<(std::ostream& out, const Vertex& obj)
 	{
-		out << endl
-			<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[2] << endl
-			<< "UV: " << obj.uv[0] << ' ' << obj.uv[1] << endl
-			<< "Normal:     " << obj.normal[0] << ' ' << obj.normal[1] << ' ' << obj.normal[2] << endl
-			<< "Tangent:    " << obj.tangent[0] << ' ' << obj.tangent[1] << ' ' << obj.tangent[2] << endl
-			<< "Bi-Tangent: " << obj.bi_tangent[0] << ' ' << obj.bi_tangent[1] << ' ' << obj.bi_tangent[2] << endl;
+		out	<< obj.position << 
+			" / " << obj.uv <<
+			" / " << obj.normal
+			/*<< "Tangent:    " << obj.tangent << endl
+			<< "Bi-Tangent: " << obj.bi_tangent << endl*/;
 		return out;
 	}
 };
@@ -151,15 +155,22 @@ struct Vertex
 struct meshStruct
 {
 	const char* name;
+
+	vector <vector<double>> position;
+	vector <vector<float>> uv;
+	vector <vector<double>> normal;
+	vector <vector<double>> tangent;
+	vector <vector<double>> bi_tangent;
+
 	vector <unsigned int> transform_Id;
 	vector <unsigned int> material_Id;
-	//vector <const char*> material_name;
-	//const char* material_name;
+	unsigned int vertices_count;
 	vector <Vertex> vertices;
-	vector <unsigned int> indices;
+	//vector <unsigned int> indices;
 
 	void WriteBinary(MeshHeader* header, ofstream& outputfile)
 	{
+		MGlobal::displayInfo("meshStruct::WriteBinary()");
 		outputfile.write(name, sizeof(char)* header->name_length);
 		char* output = (char*) this;
 		output = &output[sizeof(MeshHeader) + sizeof(const char*)];
@@ -181,11 +192,50 @@ struct meshStruct
 		{
 			out << obj.material_Id[i] << endl;
 		}
-			out << "Verticies count: " << obj.vertices.size() << endl
-			<< "Indicies count: " << obj.indices.size() << endl << endl;
+		out << "Verticies count: " << obj.vertices_count << endl;
+		//	<< "Indicies count: " << obj.indices.size() << endl;
+		//	
+		//for (unsigned int i = 0; i < obj.indices.size(); i++)
+		//{
+		//	out << obj.indices[i] << endl;
+		//}
+		
+		for (unsigned int i = 0; i < obj.position.size(); i++)
+		{
+			out << "Position " << i << ": " << obj.position[i][0] << " " << obj.position[i][1] << " " << obj.position[i][2] << endl;
+		}
+		for (unsigned int i = 0; i < obj.uv.size(); i++)
+		{
+			out << "UV: " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << " " << obj.uv[i][2] << endl;
+		}
+		for (unsigned int i = 0; i < obj.normal.size(); i++)
+		{
+			out << "Normal: " << ": " << obj.normal[i][0] << " " << obj.normal[i][1] << " " << obj.normal[i][2] << endl;
+		}
+		for (unsigned int i = 0; i < obj.tangent.size(); i++)
+		{
+			out << "Tangent: " << ": " << obj.tangent[i][0] << " " << obj.tangent[i][1] << " " << obj.tangent[i][2] << endl;
 
+		}
+		for (unsigned int i = 0; i < obj.bi_tangent.size(); i++)
+		{
+			out << "Bi-Tangent: " << ": " << obj.bi_tangent[i][0] << " " << obj.bi_tangent[i][1] << " " << obj.bi_tangent[i][2] << endl;
+		}
+
+		int tmp = 0;
+		int tmp_faceCounter = 0;
 		for (unsigned int i = 0; i < obj.vertices.size(); i++)
-			out << "Vertex " << i << ": " << obj.vertices[i] << endl;
+		{
+			if (tmp == 0 || tmp == 3)
+			{
+				out << "Face " <<  tmp_faceCounter << ": " << endl;
+				tmp_faceCounter++;
+				tmp = 0;
+			}
+			out << obj.vertices[i] << endl;
+			tmp++;
+		}
+
 		return out;
 	}
 };
@@ -216,6 +266,7 @@ struct camera
 
 	void WriteBinary(CameraHeader* header, ofstream& outputfile)
 	{
+		MGlobal::displayInfo(MString() + header->name_length);
 		char* output = (char*) this;
 		outputfile.write((const char*)output, sizeof(camera) - sizeof(const char*));
 		outputfile.write(name, header->name_length);
