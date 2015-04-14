@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "camera.h"
 #include "JointExporter.h"
+#include "morphAnimation.h"
 #include "writeToFile.h"
 
 #include <iostream>
@@ -72,6 +73,10 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 		vector <MeshHeader> meshHeader;
 		vector <meshStruct> meshes;
+
+		MorphAnimations morphAnims;
+		vector<morphAnimationHeader> morphHeader;
+		vector <MorphAnimation> morphs;
 
 		MDagPath testdag;
 
@@ -164,6 +169,17 @@ MStatus Exporter::doIt(const MArgList& argList)
 					lighthead.push_back(eLHeader);
 					lightbody.push_back(eOLight);
 				} // ---
+
+				if (path.hasFn(MFn::kBlendShape))
+				{
+					morphAnimationHeader morphHead;
+					MorphAnimation morphAnim;
+					cout << "ALLAHU AKBAR" << endl;
+
+					//morphAnims.exportMorphAnimation();
+
+
+				}
 			}
 			dagIt.next(); // without this line, Maya will crash.
 		}
