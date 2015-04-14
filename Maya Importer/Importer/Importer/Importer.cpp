@@ -32,9 +32,10 @@ bool Importer::importFile(string filePathAndName)
 	offset += sizeof(Header);
 	headers = extractedHeader;
 
-	MaterialHeader extractedMaterialHeader;
+
 	for (unsigned int i = 0; i < extractedHeader.material_count; i++)
-	{
+	{  
+		MaterialHeader extractedMaterialHeader;
 		memcpy(&extractedMaterialHeader, &fileData[offset], sizeof(MaterialHeader));
 		offset += sizeof(MaterialHeader);
 		materialHeaders.push_back(extractedMaterialHeader);
@@ -43,9 +44,10 @@ bool Importer::importFile(string filePathAndName)
 			return false;
 	}
 
-	TransformHeader extractedTransformHeader;
+	
 	for (unsigned int i = 0; i < extractedHeader.group_count; i++)
-	{
+	{	
+		TransformHeader extractedTransformHeader;
 		memcpy(&extractedTransformHeader, &fileData[offset], sizeof(TransformHeader));
 		offset += sizeof(TransformHeader);
 		transformHeaders.push_back(extractedTransformHeader);
@@ -54,9 +56,10 @@ bool Importer::importFile(string filePathAndName)
 			return false;
 	}
 
-	CameraHeader extractedCamera;
+	
 	for (unsigned int i = 0; i < extractedHeader.camera_count; i++)
-	{
+	{	
+		CameraHeader extractedCamera;
 		memcpy(&extractedCamera, &fileData[offset], sizeof(CameraHeader));
 		offset += sizeof(CameraHeader);
 		cameraHeaders.push_back(extractedCamera);
@@ -65,9 +68,22 @@ bool Importer::importFile(string filePathAndName)
 			return false;
 	}
 
-	Material extractedMaterial;
-	for (unsigned int i = 0; i < extractedHeader.material_count; i++)
+
+	for (unsigned int i = 0; i < extractedHeader.mesh_count; i++)
 	{
+		MeshHeader extractedMesh;
+		memcpy(&extractedMesh, &fileData[offset], sizeof(MeshHeader));
+		offset += sizeof(MeshHeader);
+		meshHeaders.push_back(extractedMesh);
+
+		if (extractedMesh.name_length <= 0)
+			return false;
+	}
+
+	
+	for (unsigned int i = 0; i < extractedHeader.material_count; i++)
+	{	
+		Material extractedMaterial;
 		memcpy(&extractedMaterial, &fileData[offset], sizeof(Material) - sizeof(const char*) * 4);
 		offset += sizeof(Material) - sizeof(const char*) * 4;
 		char* node_name = new char[materialHeaders[i].name_length + 1];
@@ -127,9 +143,10 @@ bool Importer::importFile(string filePathAndName)
 		materials.push_back(extractedMaterial);
 	}
 
-	Transform extractedTransform;
+
 	for (unsigned int i = 0; i < extractedHeader.group_count; i++)
-	{
+	{	
+		Transform extractedTransform;
 		memcpy(&extractedTransform, &fileData[offset], sizeof(Transform) - sizeof(char*));
 		offset += sizeof(Transform) - sizeof(char*) - 4;
 
@@ -144,9 +161,10 @@ bool Importer::importFile(string filePathAndName)
 		transforms.push_back(extractedTransform);
 	}
 
-	camera extractCamera;
+	
 	for (unsigned int i = 0; i < extractedHeader.camera_count; i++)
-	{
+	{	
+		camera extractCamera;
 		memcpy(&extractCamera, &fileData[offset], sizeof(camera) - sizeof(char*));
 		offset += sizeof(camera) - sizeof(char*) + 4;
 
@@ -159,6 +177,33 @@ bool Importer::importFile(string filePathAndName)
 		offset += cameraHeaders[i].name_length;
 
 		cameras.push_back(extractCamera);
+	}
+
+
+	for (unsigned int i = 0; i < extractedHeader.mesh_count; i++)
+	{																						
+		meshStruct extractedMesh;
+		extractedMesh.vertices.resize(meshHeaders[i].vertex_count);
+		extractedMesh.indices.resize(meshHeaders[i].triangle_count);
+		extractedMesh.material_Id.resize(meshHeaders[i].material_count);
+		extractedMesh.transform_Id.resize(meshHeaders[i].transform_count);
+
+		memcpy((char*)extractedMesh.transform_Id.data(), &fileData[offset], meshHeaders[i].transform_count * sizeof(int));
+		offset += meshHeaders[i].transform_count * sizeof(int);
+
+		memcpy((char*)extractedMesh.material_Id.data(), &fileData[offset], meshHeaders[i].material_count * sizeof(int));
+		offset += meshHeaders[i].material_count * sizeof(int);
+
+		memcpy((char*)extractedMesh.vertices.data(), &fileData[offset], meshHeaders[i].vertex_count * sizeof(Vertex));
+		offset += meshHeaders[i].vertex_count * sizeof(int);
+
+		memcpy((char*)extractedMesh.indices.data(), &fileData[offset], meshHeaders[i].triangle_count * sizeof(int));
+		offset += meshHeaders[i].triangle_count * sizeof(int);
+
+		memcpy((char*)extractedMesh.name, &fileData[offset], meshHeaders[i].name_length);
+		offset += meshHeaders[i].name_length;
+
+		meshes.push_back(extractedMesh);
 	}
 
 	//ofstream out("C://ImporterTest.txt", ofstream::ate);

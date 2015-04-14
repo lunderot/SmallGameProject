@@ -150,20 +150,19 @@ struct Vertex
 
 struct meshStruct
 {
-	const char* name;
 	vector <unsigned int> transform_Id;
 	vector <unsigned int> material_Id;
 	//vector <const char*> material_name;
 	//const char* material_name;
 	vector <Vertex> vertices;
 	vector <unsigned int> indices;
+	const char* name;
 
 	void WriteBinary(MeshHeader* header, ofstream& outputfile)
 	{
-		outputfile.write(name, sizeof(char)* header->name_length);
 		char* output = (char*) this;
-		output = &output[sizeof(MeshHeader) + sizeof(const char*)];
-		outputfile.write((const char*)output, sizeof(meshStruct)-sizeof(MeshHeader)-sizeof(const char*));
+		outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*));
+		outputfile.write(name, sizeof(char) * header->name_length);
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const meshStruct& obj)

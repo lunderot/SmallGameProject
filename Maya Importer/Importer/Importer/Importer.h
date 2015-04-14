@@ -16,6 +16,7 @@ public:
 	Header headers;
 
 	vector<TransformHeader> transformHeaders;
+	vector<MeshHeader> meshHeaders;
 	vector<CameraHeader> cameraHeaders;
 	vector<MaterialHeader> materialHeaders;
 	vector<LightHeader> lightHeaders;
