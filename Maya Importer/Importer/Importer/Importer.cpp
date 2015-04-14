@@ -38,6 +38,9 @@ bool Importer::importFile(string filePathAndName)
 		memcpy(&extractedMaterialHeader, &fileData[offset], sizeof(MaterialHeader));
 		offset += sizeof(MaterialHeader);
 		materialHeaders.push_back(extractedMaterialHeader);
+
+		if (extractedMaterialHeader.name_length <= 0)
+			return false;
 	}
 
 	TransformHeader extractedTransformHeader;
@@ -46,6 +49,9 @@ bool Importer::importFile(string filePathAndName)
 		memcpy(&extractedTransformHeader, &fileData[offset], sizeof(TransformHeader));
 		offset += sizeof(TransformHeader);
 		transformHeaders.push_back(extractedTransformHeader);
+
+		if (extractedTransformHeader.name_Length <= 0)
+			return false;
 	}
 
 	CameraHeader extractedCamera;
@@ -54,6 +60,9 @@ bool Importer::importFile(string filePathAndName)
 		memcpy(&extractedCamera, &fileData[offset], sizeof(CameraHeader));
 		offset += sizeof(CameraHeader);
 		cameraHeaders.push_back(extractedCamera);
+
+		if (extractedCamera.name_length <= 0)
+			return false;
 	}
 
 	Material extractedMaterial;
@@ -63,42 +72,55 @@ bool Importer::importFile(string filePathAndName)
 		offset += sizeof(Material) - sizeof(const char*) * 4;
 		char* node_name = new char[materialHeaders[i].name_length + 1];
 		node_name[materialHeaders[i].name_length] = '\0';
-		char* diffuse_map = new char[materialHeaders[i].duffuse_map_length + 1];
-		diffuse_map[materialHeaders[i].duffuse_map_length] = '\0';
-		char* normal_map = new char[materialHeaders[i].normal_map_length + 1];
-		normal_map[materialHeaders[i].normal_map_length] = '\0';
-		char* specular_map = new char[materialHeaders[i].specular_map_length + 1];
-		specular_map[materialHeaders[i].specular_map_length] = '\0';
 
 		extractedMaterial.node_name = node_name;
-		extractedMaterial.diffuse_map = diffuse_map;
-		extractedMaterial.normal_map = normal_map;
-		extractedMaterial.specular_map = specular_map;
 
 		memcpy((char*)extractedMaterial.node_name, &fileData[offset], materialHeaders[i].name_length);
 		offset += materialHeaders[i].name_length;
-		memcpy((char*)extractedMaterial.diffuse_map, &fileData[offset], materialHeaders[i].duffuse_map_length);
-		offset += materialHeaders[i].duffuse_map_length;
-		memcpy((char*)extractedMaterial.normal_map, &fileData[offset], materialHeaders[i].normal_map_length);
-		offset += materialHeaders[i].normal_map_length;
-		memcpy((char*)extractedMaterial.specular_map, &fileData[offset], materialHeaders[i].specular_map_length);
 		
 
 		if (materialHeaders[i].duffuse_map_length == 0)
 		{
-			delete[] extractedMaterial.diffuse_map;
+			char* diffuse_map = new char[materialHeaders[i].duffuse_map_length + 1];
+			diffuse_map[materialHeaders[i].duffuse_map_length] = '\0';
+
+			memcpy(diffuse_map, &fileData[offset], materialHeaders[i].duffuse_map_length);
+			offset += materialHeaders[i].duffuse_map_length;
+
+			extractedMaterial.diffuse_map = diffuse_map;
+		}
+		else
+		{
 			extractedMaterial.diffuse_map = nullptr;
 		}
 
 		if (materialHeaders[i].normal_map_length == 0)
 		{
-			delete[] extractedMaterial.normal_map;
+			char* normal_map = new char[materialHeaders[i].normal_map_length + 1];
+			normal_map[materialHeaders[i].normal_map_length] = '\0';
+
+			memcpy(normal_map, &fileData[offset], materialHeaders[i].normal_map_length);
+			offset += materialHeaders[i].normal_map_length;
+
+			extractedMaterial.normal_map = normal_map;
+		}
+		else
+		{
 			extractedMaterial.normal_map = nullptr;
 		}
 
 		if (materialHeaders[i].specular_map_length == 0)
 		{
-			delete[] extractedMaterial.specular_map;
+			char* specular_map = new char[materialHeaders[i].specular_map_length + 1];
+			specular_map[materialHeaders[i].specular_map_length] = '\0';
+
+			memcpy(specular_map, &fileData[offset], materialHeaders[i].specular_map_length);
+			offset += materialHeaders[i].specular_map_length;
+
+			extractedMaterial.specular_map = specular_map;
+		}
+		else
+		{
 			extractedMaterial.specular_map = nullptr;
 		}
 

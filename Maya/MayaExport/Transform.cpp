@@ -18,7 +18,6 @@ MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<co
 		transform.parentID = heiraki[parent.name().asChar()];
 	}
 
-
 	transformHeader.name_Length = mayaTransform.name(&status).numChars();
 	if (status != MS::kSuccess)
 	{
