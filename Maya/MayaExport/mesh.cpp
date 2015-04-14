@@ -1,11 +1,11 @@
 #include "mesh.h"
 #include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, MeshHeader& mayaMeshHeader)
 {
 	MStatus status;
 	status = exportMaterial(mesh, materials);
-	status = exportVertices(mesh, transformHeiraki, materials, meshes);
+	status = exportVertices(mesh, transformHeiraki, materials, meshes, mayaMeshHeader);
 	status = exportJoints(mesh);
 
 	return status;
@@ -16,33 +16,14 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& mate
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, unsigned int>& transform_materials, meshStruct& meshes)
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, unsigned int>& transform_materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
 {
 	MStatus status;
-	
-	/*unsigned int numVertices = mesh.numVertices(&status);
-	unsigned int numUVs = mesh.numUVs(&status);
-	unsigned int numNormals = mesh.numNormals(&status);*/
-
-	/*double** verticesPos = new double*[numVertices];
-	double** verticesNormal = new double*[numVertices];
-	float** verticesUV = new float*[numVertices];
-
-	for (unsigned int i = 0; i < numVertices; i++)
-	{
-		verticesPos[i] = new double[4];
-		verticesNormal[i] = new double[4];
-		verticesUV[i] = new float[2];
-	}*/
-
-	//MIntArray triangleCount;
-	//MIntArray triangleVertices;
-	//status = mesh.getTriangles(triangleCount, triangleVertices);
 
 	// POSITION - get information
 	MPointArray vertex_array;
 	mesh.getPoints(vertex_array, MSpace::kWorld);
-	for (unsigned int i = 0; i < vertex_array.length()/*numVertices*/; i++)
+	for (unsigned int i = 0; i < vertex_array.length(); i++)
 	{
 		MGlobal::displayInfo(MString() + i + " | Position: " + vertex_array[i].x + " " + vertex_array[i].y + " " + vertex_array[i].z);
 	}
@@ -52,7 +33,7 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MFloatArray u_array;
 	MFloatArray v_array;
 	mesh.getUVs(u_array, v_array, NULL);
-	for (unsigned int i = 0; i < u_array.length()/*numUVs*/; i++)
+	for (unsigned int i = 0; i < u_array.length(); i++)
 	{
 		MGlobal::displayInfo(MString() + i + " | UV: " + u_array[i] + " " + v_array[i]);
 	}
@@ -61,7 +42,7 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	// NORMAL - get information
 	MFloatVectorArray normal_array_vector;
 	mesh.getNormals(normal_array_vector, MSpace::kWorld);
-	for (unsigned int i = 0; i < normal_array_vector.length()/*numNormals*/; i++)
+	for (unsigned int i = 0; i < normal_array_vector.length(); i++)
 	{
 		MGlobal::displayInfo(MString() + i + " | Normal: " + normal_array_vector[i].x + " " + normal_array_vector[i].y + " " + normal_array_vector[i].z);
 	}
@@ -84,18 +65,6 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 		MGlobal::displayInfo(MString() + i + " | Bi-Tangent: " + biNormal_array_vector[i].x + " " + biNormal_array_vector[i].y + " " + biNormal_array_vector[i].z);
 	}
 	MGlobal::displayInfo("");
-	
-	// MATERIAL - ..............
-	/*MItDependencyNodes it(MFn::kLambert);
-	for (; !it.isDone(); it.next())
-	{
-		MObject mat = it.item();
-		MGlobal::displayInfo("hej");
-	}
-	MGlobal::displayInfo("");*/
-
-	//mesh.getConnectedShaders(instanceNumber, shaders, shaderIndicies);
-	//Global::displayInfo(MString() + shaders.length());
 
 
 	// -------------------------- 
@@ -139,35 +108,41 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MGlobal::displayInfo(MString() + normalcount_array.length() + " " + normalId_array.length());
 	MGlobal::displayInfo(MString() + "TriangleCount: " + triangleCount_array.length());
 	MGlobal::displayInfo(MString() + "Verticies: " + vertex_array.length());
-	MGlobal::displayInfo(MString() + "UV total: " + u_array.length()); //elr v_array.length()
+	MGlobal::displayInfo(MString() + "UV total: " + u_array.length()); 
 	MGlobal::displayInfo(MString() + "Normal total: " + normal_array_vector.length());
 	MGlobal::displayInfo("");
 
+
+	meshes.name = mesh.name().asChar();
+	//meshes.meshHeader.transform_count = mesh.parentCount();
+	mayaMeshHeader.transform_count = mesh.parentCount();
+	meshes.transform_Id.resize(mayaMeshHeader.transform_count);
 	for (unsigned int i = 0; i < mesh.parentCount(); i++)
 	{
 		MObject parent = mesh.parent(i);
 		MFnDagNode storeParent(parent);
-		meshes.name = storeParent.name().asChar();
-		meshes.transform = transformHeiraki[storeParent.name().asChar()];
-
+		meshes.transform_Id[i] = transformHeiraki[storeParent.name().asChar()];
 		MGlobal::displayInfo(MString() + storeParent.name().asChar());
-		MGlobal::displayInfo(MString() + meshes.transform);
 	}
 
-	//meshes.name = mesh.name().asChar();
+
 	meshes.vertices.resize(indicie_array.length());
 	meshes.indices.resize(indicie_array.length());
 
-	meshes.meshHeader.name_length = mesh.name().length();
-	meshes.meshHeader.vertex_count = vertex_array.length();
-	meshes.meshHeader.triangle_count = triangleCount_array.length();
+	mayaMeshHeader.name_length = mesh.name().length();
+	mayaMeshHeader.vertex_count = vertex_array.length();
+	mayaMeshHeader.transform_count = triangleCount_array.length();
+
+	//meshes.meshHeader.name_length = mesh.name().length();
+	//meshes.meshHeader.vertex_count = vertex_array.length();
+	//meshes.meshHeader.triangle_count = triangleCount_array.length();
 	MGlobal::displayInfo("STRUCT - MESHSTRUCT");
 	MGlobal::displayInfo(MString() + "name: " + meshes.name);
 	MGlobal::displayInfo("-----");
 	MGlobal::displayInfo("STRUCT - MESHHEADER");
-	MGlobal::displayInfo(MString() + "name_length: " + meshes.meshHeader.name_length);
-	MGlobal::displayInfo(MString() + "vertex_count: " + meshes.meshHeader.vertex_count);
-	MGlobal::displayInfo(MString() + "triangle_count: " + meshes.meshHeader.triangle_count);
+	MGlobal::displayInfo(MString() + "name_length: " + mayaMeshHeader.name_length);
+	MGlobal::displayInfo(MString() + "vertex_count: " + mayaMeshHeader.vertex_count);
+	MGlobal::displayInfo(MString() + "triangle_count: " + mayaMeshHeader.triangle_count);
 	MGlobal::displayInfo("");
 
 	for (unsigned int i = 0; i < indicie_array.length(); i++)
@@ -215,21 +190,18 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 		MGlobal::displayInfo(MString() + "TANGENT:    " + meshes.vertices[i].tangent[0] + " " + meshes.vertices[i].tangent[1] + " " + meshes.vertices[i].tangent[2]);
 		MGlobal::displayInfo(MString() + "BI-TANGENT: " + meshes.vertices[i].bi_tangent[0] + " " + meshes.vertices[i].bi_tangent[1] + " " + meshes.vertices[i].bi_tangent[2]);
 	}
-	
 
-	
+
+
 	MItDependencyNodes it(MFn::kLambert);
 	for (; !it.isDone(); it.next())
 	{
 		MObject mat = it.item();
 		MFnDagNode storeMat(mat);
-		//MGlobal::displayInfo(MString() + storeMat.);
 	}
 	MGlobal::displayInfo("");
-	
+
 	MPlugArray materials;
-	//meshes.material_count = mesh.parentCount();
-	//meshes.material_name.resize(mesh.parentCount());
 	meshes.material_Id.resize(mesh.parentCount());
 	for (unsigned int i = 0; i < mesh.parentCount(); i++)
 	{
@@ -240,22 +212,22 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 		MObject shading = shaderss[0];
 		MFnDependencyNode fn(shading);
 		MPlug sshader = fn.findPlug("surfaceShader");
-		
+
 		sshader.connectedTo(materials, true, false);
 		MGlobal::displayInfo(MString() + "i: " + i);
-		
+
 		if (materials.length())
 		{
 			unsigned int test;
 			MFnDependencyNode fnMat(materials[0].node());
-			test = transform_materials[fnMat.name().asChar()]; // <-- fucked
+			test = transform_materials[fnMat.name().asChar()]; 
 			meshes.material_Id[i] = test;
-			//meshes.material_name[i] = fnMat.name().asChar();
+			
 			MGlobal::displayInfo(MString() + test);
 			MGlobal::displayInfo(MString() + "Material name: " + fnMat.name().asChar());
 		}
-
-		meshes.meshHeader.material_count = mesh.parentCount();
+		mayaMeshHeader.material_count = mesh.parentCount();
+		//meshes.meshHeader.material_count = mesh.parentCount();
 	}
 	MGlobal::displayInfo(MString() + materials.length());
 
@@ -267,6 +239,7 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MGlobal::displayInfo(MString() + shaderIndicies.length());
 
 	return MStatus::kSuccess;
+
 }
 
 MStatus Mesh::exportJoints(MFnMesh& mesh)
