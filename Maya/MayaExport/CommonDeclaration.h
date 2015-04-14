@@ -237,7 +237,10 @@ struct camera
 		return out;
 	}
 };
+struct morphAnimationHeader
+{
 
+};
 struct MorphAnimation
 {
 	// key frames

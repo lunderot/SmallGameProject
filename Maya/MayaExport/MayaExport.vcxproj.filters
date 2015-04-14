@@ -24,14 +24,9 @@
     <ClCompile Include="mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-
-
     <ClCompile Include="Light.cpp">
-	  <Filter>Source Files</Filter>
-	</ClCompile>
-
-
-
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,6 +45,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="morphAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maya_includes.h">
@@ -64,13 +62,9 @@
     <ClInclude Include="mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-
-
     <ClInclude Include="Light.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-
-
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -87,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="morphAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
