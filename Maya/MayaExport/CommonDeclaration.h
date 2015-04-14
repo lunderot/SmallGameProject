@@ -105,9 +105,15 @@ struct MeshHeader
 {
 	unsigned int name_length;
 	unsigned int vertex_count;
+	unsigned int vertices_count;
 	unsigned int triangle_count;
-	int material_count;
-	int transform_count;
+	unsigned int position_count;
+	unsigned int uv_count;
+	unsigned int normal_count;
+	unsigned int tangent_count;
+	unsigned int biTangent_count;
+	unsigned int material_count;
+	unsigned int transform_count;
 	unsigned int joint_count;
 	bool has_Animation;
 
@@ -115,7 +121,13 @@ struct MeshHeader
 	{
 		out << "Name Length: " << obj.name_length << endl
 			<< "Vertex Count: " << obj.vertex_count << endl
+			<< "Vertices Count: " << obj.vertices_count << endl
 			<< "Indicies Count: " << obj.triangle_count << endl
+			<< "Position Count: " << obj.position_count << endl
+			<< "Uv Count: " << obj.uv_count << endl
+			<< "Normal Count: " << obj.normal_count << endl
+			<< "tangent Count: " << obj.tangent_count << endl
+			<< "bi-Tangent Count: " << obj.biTangent_count << endl
 			<< "Material Count: " << obj.material_count << endl
 			<< "Transform Count: " << obj.transform_count << endl;
 		return out;
@@ -162,7 +174,7 @@ struct meshStruct
 
 	vector <unsigned int> transform_Id;
 	vector <unsigned int> material_Id;
-	unsigned int vertices_count;
+	/*unsigned int vertices_count;*/
 	vector <Vertex> vertices;
 	vector <unsigned int> indices;
 	const char* name;
@@ -189,21 +201,21 @@ struct meshStruct
 		{
 			out << obj.material_Id[i] << endl;
 		}
-		out << "Verticies count: " << obj.vertices_count << endl;
+		//out << "Verticies count: " << obj.vertices_count << endl;
 		//	<< "Indicies count: " << obj.indices.size() << endl;
 		//	
 		//for (unsigned int i = 0; i < obj.indices.size(); i++)
 		//{
 		//	out << obj.indices[i] << endl;
 		//}
-		
+
 		for (unsigned int i = 0; i < obj.position.size(); i++)
 		{
 			out << "Position " << i << ": " << obj.position[i][0] << " " << obj.position[i][1] << " " << obj.position[i][2] << endl;
 		}
 		for (unsigned int i = 0; i < obj.uv.size(); i++)
 		{
-			out << "UV: " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << " " << obj.uv[i][2] << endl;
+			out << "UV: " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << endl;
 		}
 		for (unsigned int i = 0; i < obj.normal.size(); i++)
 		{

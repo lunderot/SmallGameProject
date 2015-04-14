@@ -133,6 +133,11 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MGlobal::displayInfo(MString() + "Normal total: " + normal_array_vector.length());
 	MGlobal::displayInfo("");
 
+	mayaMeshHeader.position_count = vertex_array.length();
+	mayaMeshHeader.uv_count = u_array.length();
+	mayaMeshHeader.normal_count = normal_array_vector.length();
+	mayaMeshHeader.tangent_count = tangent_array_vector.length();
+	mayaMeshHeader.biTangent_count = biNormal_array_vector.length();
 
 	meshes.name = mesh.name().asChar();
 	//meshes.meshHeader.transform_count = mesh.parentCount();
@@ -146,7 +151,7 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 		MGlobal::displayInfo(MString() + storeParent.name().asChar());
 	}
 
-	meshes.vertices_count = vertex_array.length();
+	mayaMeshHeader.vertices_count = vertex_array.length();
 	meshes.vertices.resize(indicie_array.length());
 	//meshes.indices.resize(indicie_array.length());
 
