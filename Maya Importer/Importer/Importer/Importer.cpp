@@ -263,7 +263,8 @@ bool Importer::extractMeshes(unsigned int& offset, char* fileData, unsigned int&
 		extractedMesh.vertices.resize(meshHeaders[i].indice_count);
 		extractedMesh.material_Id.resize(meshHeaders[i].material_count);
 		extractedMesh.transform_Id.resize(meshHeaders[i].transform_count);
-		extractedMesh.name = new char[meshHeaders[i].name_length];
+		char* name = new char[meshHeaders[i].name_length + 1];
+		name[meshHeaders[i].name_length] = '\0';
 
 		memcpy((char*)extractedMesh.transform_Id.data(), &fileData[offset], meshHeaders[i].transform_count * sizeof(int));
 		offset += meshHeaders[i].transform_count * sizeof(int);
@@ -274,7 +275,8 @@ bool Importer::extractMeshes(unsigned int& offset, char* fileData, unsigned int&
 		memcpy((char*)extractedMesh.vertices.data(), &fileData[offset], meshHeaders[i].indice_count * sizeof(Vertex));
 		offset += meshHeaders[i].indice_count * sizeof(Vertex);
 
-		memcpy((char*)extractedMesh.name, &fileData[offset], meshHeaders[i].name_length);
+		memcpy((char*)name, &fileData[offset], meshHeaders[i].name_length);
+		extractedMesh.name = name;
 		offset += meshHeaders[i].name_length;
 
 		meshes[i] = extractedMesh;
@@ -442,9 +444,9 @@ bool Importer::constructModels()
 
 			unsigned int& parent = meshes[i].transform_Id[j];
 
-			memcpy(models[modelID].position, transforms[j].position, sizeof(double) * 3);
-			memcpy(models[modelID].rotation, transforms[j].rotation, sizeof(double) * 4);
-			memcpy(models[modelID].scale, transforms[j].scale, sizeof(double) * 3);
+			memcpy(models[modelID].position, transforms[parent].position, sizeof(double) * 3);
+			memcpy(models[modelID].rotation, transforms[parent].rotation, sizeof(double) * 4);
+			memcpy(models[modelID].scale, transforms[parent].scale, sizeof(double) * 3);
 
 			modelID++;
 		}
@@ -484,4 +486,12 @@ unsigned int Importer::getNumMeshes() const
 unsigned int Importer::getNumModels() const
 {
 	return numModels;
+}
+
+unsigned int Importer::getMeshVertexCount(unsigned int meshID) const
+{
+	if (0 <= meshID && meshID < headers.mesh_count)
+		return meshHeaders[meshID].indice_count;
+	else
+		return 0;
 }

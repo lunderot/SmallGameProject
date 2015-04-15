@@ -37,6 +37,7 @@ public:
 	//unsigned int numLights();
 	unsigned int getNumMeshes() const;
 	unsigned int getNumModels() const;
+	unsigned int getMeshVertexCount(unsigned int meshID) const;
 
 	//unsigned int numGroups();
 	const Model* getModels() const;
