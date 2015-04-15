@@ -202,7 +202,7 @@ bool Importer::extractMeshes(unsigned int& offset, char* fileData, unsigned int&
 	{
 		readSize += meshHeaders[i].position_count * sizeof(double) * 3 + meshHeaders[i].uv_count * sizeof(float) + meshHeaders[i].normal_count * sizeof(double) * 3 +
 					meshHeaders[i].tangent_count * sizeof(double) * 3 + meshHeaders[i].biTangent_count * sizeof(double) * 3 +
-					meshHeaders[i].transform_count * sizeof(int) + meshHeaders[i].material_count * sizeof(int) + meshHeaders[i].triangle_count * sizeof(Vertex) +
+					meshHeaders[i].transform_count * sizeof(int) + meshHeaders[i].material_count * sizeof(int) + meshHeaders[i].indice_count * sizeof(Vertex) +
 					meshHeaders[i].name_length;
 	}
 
@@ -260,7 +260,7 @@ bool Importer::extractMeshes(unsigned int& offset, char* fileData, unsigned int&
 			offset += extractedMesh.bi_tangent[j].size() * sizeof(double);
 		}
 
-		extractedMesh.vertices.resize(meshHeaders[i].triangle_count);
+		extractedMesh.vertices.resize(meshHeaders[i].indice_count);
 		extractedMesh.material_Id.resize(meshHeaders[i].material_count);
 		extractedMesh.transform_Id.resize(meshHeaders[i].transform_count);
 		extractedMesh.name = new char[meshHeaders[i].name_length];
@@ -271,8 +271,8 @@ bool Importer::extractMeshes(unsigned int& offset, char* fileData, unsigned int&
 		memcpy((char*)extractedMesh.material_Id.data(), &fileData[offset], meshHeaders[i].material_count * sizeof(int));
 		offset += meshHeaders[i].material_count * sizeof(int);
 
-		memcpy((char*)extractedMesh.vertices.data(), &fileData[offset], meshHeaders[i].triangle_count * sizeof(Vertex));
-		offset += meshHeaders[i].triangle_count * sizeof(Vertex);
+		memcpy((char*)extractedMesh.vertices.data(), &fileData[offset], meshHeaders[i].indice_count * sizeof(Vertex));
+		offset += meshHeaders[i].indice_count * sizeof(Vertex);
 
 		memcpy((char*)extractedMesh.name, &fileData[offset], meshHeaders[i].name_length);
 		offset += meshHeaders[i].name_length;
@@ -407,8 +407,8 @@ bool Importer::constructVerticiesAndGeometry()
 
 	for (unsigned int i = 0; i < headers.mesh_count; i++)
 	{
-		meshGeometry[i] = new VertexPositionTexCoordNormalBinormalTangent[meshHeaders[i].triangle_count];
-		for (unsigned int j = 0; j < meshHeaders[i].triangle_count; j++)
+		meshGeometry[i] = new VertexPositionTexCoordNormalBinormalTangent[meshHeaders[i].indice_count];
+		for (unsigned int j = 0; j < meshHeaders[i].indice_count; j++)
 		{
 			unsigned int& positionID = meshes[i].vertices[j].position;
 			unsigned int& uvID = meshes[i].vertices[j].uv;

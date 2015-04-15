@@ -158,7 +158,7 @@ struct meshStruct
 
 		outputfile.write((char*)material_Id.data(), header->material_count * sizeof(int));
 
-		outputfile.write((char*)vertices.data(), header->triangle_count * sizeof(Vertex));
+		outputfile.write((char*)vertices.data(), header->indice_count * sizeof(Vertex));
 
 		outputfile.write(name, header->name_length);
 	}
