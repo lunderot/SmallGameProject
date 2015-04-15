@@ -105,8 +105,7 @@ struct MeshHeader
 {
 	unsigned int name_length;
 	unsigned int vertex_count;
-	unsigned int vertices_count;
-	unsigned int triangle_count;
+	unsigned int indice_count;
 	unsigned int position_count;
 	unsigned int uv_count;
 	unsigned int normal_count;
@@ -121,8 +120,7 @@ struct MeshHeader
 	{
 		out << "Name Length: " << obj.name_length << endl
 			<< "Vertex Count: " << obj.vertex_count << endl
-			<< "Vertices Count: " << obj.vertices_count << endl
-			<< "Indicies Count: " << obj.triangle_count << endl
+			<< "Indices Count: " << obj.indice_count << endl
 			<< "Position Count: " << obj.position_count << endl
 			<< "Uv Count: " << obj.uv_count << endl
 			<< "Normal Count: " << obj.normal_count << endl
@@ -136,17 +134,9 @@ struct MeshHeader
 
 struct Vertex
 {
-	// IDs
-	/*double position[3]; 
-	float uv[2];
-	float normal[3];
-	double tangent[3];
-	double bi_tangent[3];*/
 	unsigned int position;
 	unsigned int uv;
 	unsigned int normal;
-	/*unsigned int tangent;
-	unsigned int bi_tangent;*/
 
 	void WriteBinary(ofstream& outputfile)
 	{
@@ -157,9 +147,7 @@ struct Vertex
 	{
 		out	<< obj.position << 
 			" / " << obj.uv <<
-			" / " << obj.normal
-			/*<< "Tangent:    " << obj.tangent << endl
-			<< "Bi-Tangent: " << obj.bi_tangent << endl*/;
+			" / " << obj.normal;
 		return out;
 	}
 };
@@ -174,9 +162,7 @@ struct meshStruct
 
 	vector <unsigned int> transform_Id;
 	vector <unsigned int> material_Id;
-	/*unsigned int vertices_count;*/
 	vector <Vertex> vertices;
-	vector <unsigned int> indices;
 	const char* name;
 
 	void WriteBinary(MeshHeader* header, ofstream& outputfile)
@@ -201,13 +187,6 @@ struct meshStruct
 		{
 			out << obj.material_Id[i] << endl;
 		}
-		//out << "Verticies count: " << obj.vertices_count << endl;
-		//	<< "Indicies count: " << obj.indices.size() << endl;
-		//	
-		//for (unsigned int i = 0; i < obj.indices.size(); i++)
-		//{
-		//	out << obj.indices[i] << endl;
-		//}
 
 		for (unsigned int i = 0; i < obj.position.size(); i++)
 		{
@@ -215,20 +194,19 @@ struct meshStruct
 		}
 		for (unsigned int i = 0; i < obj.uv.size(); i++)
 		{
-			out << "UV: " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << endl;
+			out << "UV " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << endl;
 		}
 		for (unsigned int i = 0; i < obj.normal.size(); i++)
 		{
-			out << "Normal: " << ": " << obj.normal[i][0] << " " << obj.normal[i][1] << " " << obj.normal[i][2] << endl;
+			out << "Normal " << i << ": " << obj.normal[i][0] << " " << obj.normal[i][1] << " " << obj.normal[i][2] << endl;
 		}
 		for (unsigned int i = 0; i < obj.tangent.size(); i++)
 		{
-			out << "Tangent: " << ": " << obj.tangent[i][0] << " " << obj.tangent[i][1] << " " << obj.tangent[i][2] << endl;
-
+			out << "Tangent " << i << ": " << obj.tangent[i][0] << " " << obj.tangent[i][1] << " " << obj.tangent[i][2] << endl;
 		}
 		for (unsigned int i = 0; i < obj.bi_tangent.size(); i++)
 		{
-			out << "Bi-Tangent: " << ": " << obj.bi_tangent[i][0] << " " << obj.bi_tangent[i][1] << " " << obj.bi_tangent[i][2] << endl;
+			out << "Bi-Tangent " << i << ": " << obj.bi_tangent[i][0] << " " << obj.bi_tangent[i][1] << " " << obj.bi_tangent[i][2] << endl;
 		}
 
 		int tmp = 0;
