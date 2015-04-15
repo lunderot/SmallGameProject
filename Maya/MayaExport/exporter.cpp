@@ -1,6 +1,7 @@
 #include "exporter.h"
 #include "mesh.h"
 #include "maya_includes.h"
+#include <maya/MFnBlendShapeDeformer.h>
 
 //--Ayu
 #include "Light.h"
@@ -37,7 +38,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 		MDagPath path;
 		MItDag dagIt(MItDag::kBreadthFirst);
-
 		Mesh mesh;
 
 		//map<const char*, unsigned int> materials;
@@ -170,16 +170,26 @@ MStatus Exporter::doIt(const MArgList& argList)
 					lightbody.push_back(eOLight);
 				} // ---
 
-				if (path.hasFn(MFn::kBlendShape))
+				/*if (path.hasFn(MFn::kBlendShape))
 				{
-					morphAnimationHeader morphHead;
-					MorphAnimation morphAnim;
-					cout << "ALLAHU AKBAR" << endl;
 
-					//morphAnims.exportMorphAnimation();
+					MItDependencyNodes it(MFn::kBlendShape);
+
+					while (!it.isDone())
+					{
+						MFnBlendShapeDeformer(mObject);
+						morphAnimationHeader morphHead;
+						MorphAnimation morphAnim;
+						cout << "ALLAHU AKBAR" << endl;
+
+						morphAnims.exportMorphAnimation(it, morphHead, morphAnim);
+						morphHeader.push_back(morphHead);
+						morphs.push_back(morphAnim);
+						it.next();
 
 
-				}
+					}
+				}*/
 			}
 			dagIt.next(); // without this line, Maya will crash.
 		}
@@ -199,6 +209,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 		output.writeToFiles(jointHeaders.data(), jointHeaders.size());
 		output.writeToFiles(camera_header.data(), camera_header.size());
 		output.writeToFiles(meshHeader.data(), meshHeader.size());
+		//output.writeToFiles(morphHeader.data(), morphHeader.size());
 
 		//Data
 		output.writeToFiles(&mat[0], &mat_headers[0], mat.size());
@@ -206,6 +217,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 		output.writeToFiles(&joints[0], &jointHeaders[0], joints.size());
 		output.writeToFiles(&cameraVec[0], &camera_header[0], cameraVec.size());
 		output.writeToFiles(&meshes[0], &meshHeader[0], meshes.size());
+		//output.writeToFiles(&morphs[0], &morphHeader[0], morphs.size());
 
 		output.CloseFiles();
 		return MStatus::kSuccess;

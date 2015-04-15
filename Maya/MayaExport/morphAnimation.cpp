@@ -3,60 +3,75 @@
 #include <maya/MPlug.h>
 #include <maya/MItGeometry.h>
 
-MStatus MorphAnimations::exportMorphAnimation()
+MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnimationHeader &morphHeader, MorphAnimation &morphAnim)
 {
 	cout << "HEJ MAGNUUUUUUUUUZ ;D ;D" << endl;
 	MStatus status;
-	MItDependencyNodes blendShape(MFn::kBlendShape);
+	unsigned int counter = 0;
+	unsigned int tmpCount = 0;
 
-	while (!blendShape.isDone())
+	//MFnBlendShapeDeformer fn(blendShape.item());
+
+	// disable envelope
+	MFnBlendShapeDeformer fn(it.item());
+	MPlug plug = fn.findPlug("en");
+	plug.setValue(0.0f);
+
+	MObjectArray baseObjects;
+
+	MGlobal::displayInfo(MString() + "Blend Shape: " + fn.name().asChar());
+	morphAnim.blendShapeName = fn.name().asChar();
+	fn.getBaseObjects(baseObjects);
+
+	for (unsigned int i = 0; i < baseObjects.length(); i++)
 	{
-		MFnBlendShapeDeformer fn(blendShape.item());
+		MObject base = baseObjects[i];
+		MFnDependencyNode baseDep(base);
 
-		// disable envelope
-		MPlug plug = fn.findPlug("en");
+		morphAnim.baseName = baseDep.name().asChar();
+		MGlobal::displayInfo(MString() + "Base: " + baseDep.name().asChar());
 
-		plug.setValue(0.0f);
-		MObjectArray baseObjects;
-		cout << "Blend Shape: " << fn.name().asChar() << endl;
-		fn.getBaseObjects(baseObjects);
+		unsigned int weights = fn.numWeights();
 
-		for (unsigned int i = 0; i < baseObjects.length(); i++)
+		morphAnim.nrOfWeights = weights;
+		MGlobal::displayInfo(MString() + "Nr of Weights: " + weights);
+
+		for (unsigned int j = 0; j < weights; j++)
 		{
-			MObject base = baseObjects[i];
-			MFnDependencyNode baseDep(base);
-			cout << "Base: " << baseDep.name().asChar() << endl;
+			MObjectArray targets;
 
-			unsigned int weights = fn.numWeights();
-			cout << "Nr of weights: " << weights << endl;
+			fn.getTargets(base, j, targets);
 
-			for (unsigned int j = 0; j < weights; j++)
+			morphAnim.nrOfTargets = targets.length();
+			MGlobal::displayInfo(MString() + "Nr of targets: " + targets.length());
+
+			for (unsigned int k = 0; k < targets.length(); k++)
 			{
-				MObjectArray targets;
+				MItGeometry targetGeo(targets[k]);
+				
+				if (morphAnim.nrOfTargets == 1)
+					morphAnim.nrOfVertsPerMesh = targetGeo.count() / 2;
+				else
+					morphAnim.nrOfVertsPerMesh = targetGeo.count() / morphAnim.nrOfTargets;
+				tmpCount += targetGeo.count();
+				morphAnim.position.resize(tmpCount);
 
-				fn.getTargets(base, j, targets);
-				cout << "Nr of targets: " << targets.length() << endl;
-
-				for (unsigned int k = 0; k < targets.length(); k++)
+				//MGlobal::displayInfo(MString() + targetGeo.count);
+				while (!targetGeo.isDone())
 				{
-					MItGeometry targetGeo(targets[k]);
-
-					//cout << "Nr of points: " << targetGeo.count << endl;
-					//MGlobal::displayInfo(MString() + targetGeo.count);
-					while (!targetGeo.isDone())
-					{
-						MPoint p = targetGeo.position();
-						cout << p.x << "/" << p.y << "/" << p.z << endl;
-						targetGeo.next();
-					}
+					MPoint p = targetGeo.position();
+					morphAnim.position[counter].push_back(p.x);
+					morphAnim.position[counter].push_back(p.y);
+					morphAnim.position[counter].push_back(p.z);
+					MGlobal::displayInfo(MString() + "Position: " + p.x + "/" + p.y + "/" + p.z);
+					counter++;
+					targetGeo.next();
 				}
 			}
 		}
 
 		// enable envelope
 		plug.setValue(1.0f);
-
-		blendShape.next();
 	}
 
 	return status;

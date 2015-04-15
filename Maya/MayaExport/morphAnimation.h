@@ -7,7 +7,7 @@
 class MorphAnimations
 {
 public:
-	MStatus exportMorphAnimation();
+	MStatus exportMorphAnimation(MItDependencyNodes &it,morphAnimationHeader &morphHeader, MorphAnimation &morphAnim);
 
 };
 #endif
