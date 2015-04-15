@@ -8,23 +8,26 @@ int main()
 	ofstream out("C://ImporterTest.txt");
 	out << importer.headers << endl;
 
-	for (unsigned int i = 0; i < importer.materialHeaders.size(); i++)
+	for (unsigned int i = 0; i < importer.headers.material_count; i++)
 		out << importer.materialHeaders[i] << endl;
 
-	for (unsigned int i = 0; i < importer.transformHeaders.size(); i++)
+	for (unsigned int i = 0; i < importer.headers.group_count; i++)
 		out << importer.transformHeaders[i] << endl;
 
-	for (unsigned int i = 0; i < importer.cameraHeaders.size(); i++)
+	for (unsigned int i = 0; i < importer.headers.camera_count; i++)
 		out << importer.cameraHeaders[i] << endl;
 
-	for (unsigned int i = 0; i < importer.materials.size(); i++)
+	for (unsigned int i = 0; i < importer.headers.material_count; i++)
 		out << importer.materials[i] << endl;
 
-	for (unsigned int i = 0; i < importer.transforms.size(); i++)
+	for (unsigned int i = 0; i < importer.headers.group_count; i++)
 		out << importer.transforms[i] << endl;
 
-	for (unsigned int i = 0; i < importer.cameras.size(); i++)
+	for (unsigned int i = 0; i < importer.headers.camera_count; i++)
 		out << importer.cameras[i] << endl;
+
+	for (unsigned int i = 0; i < importer.headers.material_count; i++)
+		out << importer.meshes[i] << endl;
 
 	return 0;
 }

@@ -109,6 +109,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="CommonDeclaration.cpp" />
     <ClCompile Include="exporter.cpp" />
     <ClCompile Include="JointExporter.cpp" />
     <ClCompile Include="Light.cpp" />

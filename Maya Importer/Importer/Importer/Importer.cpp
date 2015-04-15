@@ -4,18 +4,43 @@
 // magnus is here ;)
 Importer::Importer()
 {
+	meshGeometry = nullptr;
+	transformHeaders = nullptr;
+	meshHeaders = nullptr;
+	cameraHeaders = nullptr;
+	materialHeaders = nullptr;
+	lightHeaders = nullptr;
 
+	transforms = nullptr;
+	meshes = nullptr;
+	cameras = nullptr;
+	materials = nullptr;
+	lights = nullptr;
 };
 
 Importer::~Importer()
 {
+	for (unsigned int i = 0; i < headers.mesh_count; i++)
+		delete[] meshGeometry[i];
+	delete[] meshGeometry;
+	delete[] transformHeaders;
+	delete[] meshHeaders;
+	delete[] cameraHeaders;
+	delete[] materialHeaders;
+	delete[] lightHeaders;
 
+	delete[] transforms;
+	delete[] meshes;
+	delete[] cameras;
+	delete[] materials;
+	delete[] lights;
 };
 
 bool Importer::importFile(string filePathAndName)
 {
 	char* fileData;
 	ifstream in(filePathAndName.c_str(), ios_base::binary|ios_base::ate);
+
 	if (!in.is_open())
 		return false;
 	unsigned int fileByteSize = in.tellg();
@@ -27,62 +52,287 @@ bool Importer::importFile(string filePathAndName)
 
 	unsigned int offset = 0;
 
+	if (!extractMainHeader(offset, fileData, fileByteSize)) return false;
+
+	if (!extractMaterialHeader(offset, fileData, fileByteSize)) return false;
+
+	if (!extractTransformHeader(offset, fileData, fileByteSize)) return false;
+
+	if (!extractCameraHeader(offset, fileData, fileByteSize)) return false;
+
+	if (!extractMeshHeader(offset, fileData, fileByteSize)) return false;
+
+	if (!extractMaterials(offset, fileData, fileByteSize)) return false;
+
+	if (!extractTransforms(offset, fileData, fileByteSize)) return false;
+
+	if (!extractCameras(offset, fileData, fileByteSize)) return false;
+
+	if (!extractMeshes(offset, fileData, fileByteSize)) return false;
+
+	if (!constructVerticiesAndGeometry()) return false;
+
+	if (!constructModels()) return false;
+
+	return true;
+};
+
+bool Importer::extractMainHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	if (sizeof(Header) > fileSize - offset)
+		return false;
+
 	Header extractedHeader;
 	memcpy(&extractedHeader, &fileData[0], sizeof(Header));
 	offset += sizeof(Header);
 	headers = extractedHeader;
 
+	return true;
+}
 
-	for (unsigned int i = 0; i < extractedHeader.material_count; i++)
-	{  
-		MaterialHeader extractedMaterialHeader;
-		memcpy(&extractedMaterialHeader, &fileData[offset], sizeof(MaterialHeader));
-		offset += sizeof(MaterialHeader);
-		materialHeaders.push_back(extractedMaterialHeader);
+bool Importer::extractTransformHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	if (sizeof(TransformHeader) * headers.group_count > fileSize - offset)
+		return false;
 
-		if (extractedMaterialHeader.name_length <= 0)
-			return false;
-	}
-
-	
-	for (unsigned int i = 0; i < extractedHeader.group_count; i++)
-	{	
+	transformHeaders = new TransformHeader[headers.group_count];
+	for (unsigned int i = 0; i < headers.group_count; i++)
+	{
 		TransformHeader extractedTransformHeader;
 		memcpy(&extractedTransformHeader, &fileData[offset], sizeof(TransformHeader));
 		offset += sizeof(TransformHeader);
-		transformHeaders.push_back(extractedTransformHeader);
-
-		if (extractedTransformHeader.name_Length <= 0)
-			return false;
+		transformHeaders[i] = extractedTransformHeader;
 	}
 
-	
-	for (unsigned int i = 0; i < extractedHeader.camera_count; i++)
-	{	
-		CameraHeader extractedCamera;
-		memcpy(&extractedCamera, &fileData[offset], sizeof(CameraHeader));
-		offset += sizeof(CameraHeader);
-		cameraHeaders.push_back(extractedCamera);
+	return true;
+}
 
-		if (extractedCamera.name_length <= 0)
-			return false;
-	}
+bool Importer::extractMeshHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	if (sizeof(MeshHeader) * headers.mesh_count > fileSize - offset)
+		return false;
 
-
-	for (unsigned int i = 0; i < extractedHeader.mesh_count; i++)
+	meshHeaders = new MeshHeader[headers.mesh_count];
+	for (unsigned int i = 0; i < headers.mesh_count; i++)
 	{
 		MeshHeader extractedMesh;
 		memcpy(&extractedMesh, &fileData[offset], sizeof(MeshHeader));
 		offset += sizeof(MeshHeader);
-		meshHeaders.push_back(extractedMesh);
-
-		if (extractedMesh.name_length <= 0)
-			return false;
+		meshHeaders[i] = extractedMesh;
 	}
 
+	return true;
+}
+
+bool Importer::extractCameraHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	if (sizeof(CameraHeader) * headers.camera_count > fileSize - offset)
+		return false;
+
+	cameraHeaders = new CameraHeader[headers.camera_count];
+	for (unsigned int i = 0; i < headers.camera_count; i++)
+	{
+		CameraHeader extractedCamera;
+		memcpy(&extractedCamera, &fileData[offset], sizeof(CameraHeader));
+		offset += sizeof(CameraHeader);
+		cameraHeaders[i] = extractedCamera;
+	}
+
+	return true;
+}
+
+bool Importer::extractMaterialHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	if (sizeof(MaterialHeader) * headers.material_count > fileSize - offset)
+		return false;
+
+	materialHeaders = new MaterialHeader[headers.material_count];
+	for (unsigned int i = 0; i < headers.material_count; i++)
+	{
+		MaterialHeader extractedMaterialHeader;
+		memcpy(&extractedMaterialHeader, &fileData[offset], sizeof(MaterialHeader));
+		offset += sizeof(MaterialHeader);
+		materialHeaders[i] = extractedMaterialHeader;
+	}
 	
-	for (unsigned int i = 0; i < extractedHeader.material_count; i++)
-	{	
+	return true;
+}
+
+bool Importer::extractLightHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	return true;
+}
+
+bool Importer::extractTransforms(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	unsigned int readSize = 0;
+	for (unsigned int i = 0; i < headers.group_count; i++)
+	{
+		readSize += (sizeof(Transform) - sizeof(char*)) + transformHeaders[i].name_Length;
+	}
+
+	if (readSize > fileSize - offset)
+		return false;
+
+	transforms = new Transform[headers.group_count];
+	for (unsigned int i = 0; i < headers.group_count; i++)
+	{
+		Transform extractedTransform;
+		memcpy(&extractedTransform, &fileData[offset], sizeof(Transform) - sizeof(char*));
+		offset += sizeof(Transform) - sizeof(char*) - 4;
+
+		char* node_name = new char[transformHeaders[i].name_Length + 1];
+		node_name[transformHeaders[i].name_Length] = '\0';
+		extractedTransform.name = node_name;
+
+		memcpy((char*)extractedTransform.name, &fileData[offset], transformHeaders[i].name_Length);
+
+		offset += transformHeaders[i].name_Length;
+
+		transforms[i] = extractedTransform;
+	}
+
+	return true;
+}
+
+bool Importer::extractMeshes(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	unsigned int readSize = 0;
+	for (unsigned int i = 0; i < headers.mesh_count; i++)
+	{
+		readSize += meshHeaders[i].position_count * sizeof(double) * 3 + meshHeaders[i].uv_count * sizeof(float) + meshHeaders[i].normal_count * sizeof(double) * 3 +
+					meshHeaders[i].tangent_count * sizeof(double) * 3 + meshHeaders[i].biTangent_count * sizeof(double) * 3 +
+					meshHeaders[i].transform_count * sizeof(int) + meshHeaders[i].material_count * sizeof(int) + meshHeaders[i].triangle_count * sizeof(Vertex) +
+					meshHeaders[i].name_length;
+	}
+
+	if (readSize > fileSize - offset)
+		return false;
+
+	meshes = new meshStruct[headers.mesh_count];
+	for (unsigned int i = 0; i < headers.mesh_count; i++)
+	{
+
+		meshStruct extractedMesh;
+
+		extractedMesh.position.resize(meshHeaders[i].position_count);
+		for (unsigned int j = 0; j < meshHeaders[i].position_count; j++)
+		{
+			extractedMesh.position[j].resize(3);
+
+			memcpy((char*)extractedMesh.position[j].data(), &fileData[offset], extractedMesh.position[j].size() * sizeof(double));
+			offset += extractedMesh.position[j].size() * sizeof(double);
+		}
+
+		extractedMesh.uv.resize(meshHeaders[i].uv_count);
+		for (unsigned int j = 0; j < meshHeaders[i].uv_count; j++)
+		{
+			extractedMesh.uv[j].resize(2);
+
+			memcpy((char*)extractedMesh.uv[j].data(), &fileData[offset], extractedMesh.uv[j].size() * sizeof(float));
+			offset += extractedMesh.uv[j].size() * sizeof(float);
+		}
+
+		extractedMesh.normal.resize(meshHeaders[i].normal_count);
+		for (unsigned int j = 0; j < meshHeaders[i].normal_count; j++)
+		{
+			extractedMesh.normal[j].resize(3);
+
+			memcpy((char*)extractedMesh.normal[j].data(), &fileData[offset], extractedMesh.normal[j].size() * sizeof(double));
+			offset += extractedMesh.normal[j].size() * sizeof(double);
+		}
+
+		extractedMesh.tangent.resize(meshHeaders[i].tangent_count);
+		for (unsigned int j = 0; j < meshHeaders[i].tangent_count; j++)
+		{
+			extractedMesh.tangent[j].resize(3);
+
+			memcpy((char*)extractedMesh.tangent[j].data(), &fileData[offset], extractedMesh.tangent[j].size() * sizeof(double));
+			offset += extractedMesh.tangent[j].size() * sizeof(double);
+		}
+
+		extractedMesh.bi_tangent.resize(meshHeaders[i].biTangent_count);
+		for (unsigned int j = 0; j < meshHeaders[i].biTangent_count; j++)
+		{
+			extractedMesh.bi_tangent[j].resize(3);
+
+			memcpy((char*)extractedMesh.bi_tangent[j].data(), &fileData[offset], extractedMesh.bi_tangent[j].size() * sizeof(double));
+			offset += extractedMesh.bi_tangent[j].size() * sizeof(double);
+		}
+
+		extractedMesh.vertices.resize(meshHeaders[i].triangle_count);
+		extractedMesh.material_Id.resize(meshHeaders[i].material_count);
+		extractedMesh.transform_Id.resize(meshHeaders[i].transform_count);
+		extractedMesh.name = new char[meshHeaders[i].name_length];
+
+		memcpy((char*)extractedMesh.transform_Id.data(), &fileData[offset], meshHeaders[i].transform_count * sizeof(int));
+		offset += meshHeaders[i].transform_count * sizeof(int);
+
+		memcpy((char*)extractedMesh.material_Id.data(), &fileData[offset], meshHeaders[i].material_count * sizeof(int));
+		offset += meshHeaders[i].material_count * sizeof(int);
+
+		memcpy((char*)extractedMesh.vertices.data(), &fileData[offset], meshHeaders[i].triangle_count * sizeof(Vertex));
+		offset += meshHeaders[i].triangle_count * sizeof(Vertex);
+
+		memcpy((char*)extractedMesh.name, &fileData[offset], meshHeaders[i].name_length);
+		offset += meshHeaders[i].name_length;
+
+		meshes[i] = extractedMesh;
+	}
+
+	return true;
+}
+
+bool Importer::extractCameras(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	unsigned int readSize = 0;
+	for (unsigned int i = 0; i < headers.camera_count; i++)
+	{
+		readSize += (sizeof(camera) - sizeof(char*)) + cameraHeaders[i].name_length;
+	}
+
+	if (readSize > fileSize - offset)
+		return false;
+
+
+	cameras = new camera[headers.camera_count];
+	for (unsigned int i = 0; i < headers.camera_count; i++)
+	{
+		camera extractCamera;
+		memcpy(&extractCamera, &fileData[offset], sizeof(camera) - sizeof(char*));
+		offset += sizeof(camera) - sizeof(char*) + 4;
+
+		char* node_name = new char[cameraHeaders[i].name_length + 1];
+		node_name[cameraHeaders[i].name_length] = '\0';
+		extractCamera.name = node_name;
+
+		memcpy((char*)extractCamera.name, &fileData[offset], cameraHeaders[i].name_length);
+
+		offset += cameraHeaders[i].name_length;
+
+		cameras[i] = extractCamera;
+	}
+
+	return true;
+}
+
+bool Importer::extractMaterials(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	unsigned int readSize = 0;
+	for (unsigned int i = 0; i < headers.material_count; i++)
+	{
+		readSize += (sizeof(Material) - sizeof(char*) * 4) +
+			materialHeaders[i].name_length + materialHeaders[i].duffuse_map_length +
+			materialHeaders[i].normal_map_length + materialHeaders[i].specular_map_length;
+	}
+
+	if (readSize > fileSize - offset)
+		return false;
+
+
+	materials = new Material[headers.material_count];
+	for (unsigned int i = 0; i < headers.material_count; i++)
+	{
 		Material extractedMaterial;
 		memcpy(&extractedMaterial, &fileData[offset], sizeof(Material) - sizeof(const char*) * 4);
 		offset += sizeof(Material) - sizeof(const char*) * 4;
@@ -93,9 +343,9 @@ bool Importer::importFile(string filePathAndName)
 
 		memcpy((char*)extractedMaterial.node_name, &fileData[offset], materialHeaders[i].name_length);
 		offset += materialHeaders[i].name_length;
-		
 
-		if (materialHeaders[i].duffuse_map_length == 0)
+
+		if (materialHeaders[i].duffuse_map_length != 0)
 		{
 			char* diffuse_map = new char[materialHeaders[i].duffuse_map_length + 1];
 			diffuse_map[materialHeaders[i].duffuse_map_length] = '\0';
@@ -110,7 +360,7 @@ bool Importer::importFile(string filePathAndName)
 			extractedMaterial.diffuse_map = nullptr;
 		}
 
-		if (materialHeaders[i].normal_map_length == 0)
+		if (materialHeaders[i].normal_map_length != 0)
 		{
 			char* normal_map = new char[materialHeaders[i].normal_map_length + 1];
 			normal_map[materialHeaders[i].normal_map_length] = '\0';
@@ -125,7 +375,7 @@ bool Importer::importFile(string filePathAndName)
 			extractedMaterial.normal_map = nullptr;
 		}
 
-		if (materialHeaders[i].specular_map_length == 0)
+		if (materialHeaders[i].specular_map_length != 0)
 		{
 			char* specular_map = new char[materialHeaders[i].specular_map_length + 1];
 			specular_map[materialHeaders[i].specular_map_length] = '\0';
@@ -140,74 +390,98 @@ bool Importer::importFile(string filePathAndName)
 			extractedMaterial.specular_map = nullptr;
 		}
 
-		materials.push_back(extractedMaterial);
+		materials[i] = extractedMaterial;
 	}
 
-
-	for (unsigned int i = 0; i < extractedHeader.group_count; i++)
-	{	
-		Transform extractedTransform;
-		memcpy(&extractedTransform, &fileData[offset], sizeof(Transform) - sizeof(char*));
-		offset += sizeof(Transform) - sizeof(char*) - 4;
-
-		char* node_name = new char[transformHeaders[i].name_Length + 1];
-		node_name[transformHeaders[i].name_Length] = '\0';
-		extractedTransform.name = node_name; 
-
-		memcpy((char*)extractedTransform.name, &fileData[offset], transformHeaders[i].name_Length);
-
-		offset += transformHeaders[i].name_Length;
-
-		transforms.push_back(extractedTransform);
-	}
-
-	
-	for (unsigned int i = 0; i < extractedHeader.camera_count; i++)
-	{	
-		camera extractCamera;
-		memcpy(&extractCamera, &fileData[offset], sizeof(camera) - sizeof(char*));
-		offset += sizeof(camera) - sizeof(char*) + 4;
-
-		char* node_name = new char[cameraHeaders[i].name_length + 1];
-		node_name[cameraHeaders[i].name_length] = '\0';
-		extractCamera.name = node_name;
-
-		memcpy((char*)extractCamera.name, &fileData[offset], cameraHeaders[i].name_length);
-
-		offset += cameraHeaders[i].name_length;
-
-		cameras.push_back(extractCamera);
-	}
-
-
-	for (unsigned int i = 0; i < extractedHeader.mesh_count; i++)
-	{																						
-		meshStruct extractedMesh;
-		extractedMesh.vertices.resize(meshHeaders[i].vertex_count);
-		extractedMesh.indices.resize(meshHeaders[i].triangle_count);
-		extractedMesh.material_Id.resize(meshHeaders[i].material_count);
-		extractedMesh.transform_Id.resize(meshHeaders[i].transform_count);
-
-		memcpy((char*)extractedMesh.transform_Id.data(), &fileData[offset], meshHeaders[i].transform_count * sizeof(int));
-		offset += meshHeaders[i].transform_count * sizeof(int);
-
-		memcpy((char*)extractedMesh.material_Id.data(), &fileData[offset], meshHeaders[i].material_count * sizeof(int));
-		offset += meshHeaders[i].material_count * sizeof(int);
-
-		memcpy((char*)extractedMesh.vertices.data(), &fileData[offset], meshHeaders[i].vertex_count * sizeof(Vertex));
-		offset += meshHeaders[i].vertex_count * sizeof(int);
-
-		memcpy((char*)extractedMesh.indices.data(), &fileData[offset], meshHeaders[i].triangle_count * sizeof(int));
-		offset += meshHeaders[i].triangle_count * sizeof(int);
-
-		memcpy((char*)extractedMesh.name, &fileData[offset], meshHeaders[i].name_length);
-		offset += meshHeaders[i].name_length;
-
-		meshes.push_back(extractedMesh);
-	}
-
-	//ofstream out("C://ImporterTest.txt", ofstream::ate);
-	//out << realHeader << endl;
-	//out.close();
 	return true;
-};
+}
+
+bool Importer::extractLights(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	return true;
+}
+
+bool Importer::constructVerticiesAndGeometry()
+{
+	meshGeometry = new VertexPositionTexCoordNormalBinormalTangent* [headers.mesh_count];
+
+	for (unsigned int i = 0; i < headers.mesh_count; i++)
+	{
+		meshGeometry[i] = new VertexPositionTexCoordNormalBinormalTangent[meshHeaders[i].triangle_count];
+		for (unsigned int j = 0; j < meshHeaders[i].triangle_count; j++)
+		{
+			unsigned int& positionID = meshes[i].vertices[j].position;
+			unsigned int& uvID = meshes[i].vertices[j].uv;
+			unsigned int& normalID = meshes[i].vertices[j].normal;
+			memcpy(meshGeometry[i][j].position, meshes[i].position[positionID].data(), sizeof(double) * 3);
+			memcpy(meshGeometry[i][j].texCoord, meshes[i].uv[uvID].data(), sizeof(double) * 3);
+			memcpy(meshGeometry[i][j].normal, meshes[i].normal[normalID].data(), sizeof(double) * 3);
+			memcpy(meshGeometry[i][j].biNormal, meshes[i].bi_tangent[normalID].data(), sizeof(double) * 3);
+			memcpy(meshGeometry[i][j].tangent, meshes[i].tangent[normalID].data(), sizeof(double) * 3);
+		}
+	}
+
+	return true;
+}
+
+bool Importer::constructModels()
+{	
+	for (unsigned int i = 0; i < headers.mesh_count; i++)
+		numModels += meshHeaders[i].transform_count;
+
+	models = new Model[numModels];
+	
+	unsigned int modelID = 0;
+
+	for (unsigned int i = 0; i < headers.mesh_count; i++)
+	{
+		for (unsigned int j = 0; j < meshHeaders[i].transform_count; j++)
+		{
+			models[modelID].MeshID = i;
+			models[modelID].MaterialID = j;
+
+			unsigned int& parent = meshes[i].transform_Id[j];
+
+			memcpy(models[modelID].position, transforms[j].position, sizeof(double) * 3);
+			memcpy(models[modelID].rotation, transforms[j].rotation, sizeof(double) * 4);
+			memcpy(models[modelID].scale, transforms[j].scale, sizeof(double) * 3);
+
+			modelID++;
+		}
+	}
+
+	return true;
+}
+
+const Material* Importer::getMatrials() const
+{
+	return materials;
+}
+
+const VertexPositionTexCoordNormalBinormalTangent* Importer::getMesh(unsigned int meshID) const
+{
+	if (0 <= meshID && meshID < headers.mesh_count)
+		return meshGeometry[meshID];
+	else
+		return nullptr;
+}
+
+const Model* Importer::getModels() const
+{
+	return models;
+}
+
+unsigned int Importer::getNumMaterials() const
+{
+	return headers.material_count;
+}
+
+unsigned int Importer::getNumMeshes() const
+{
+	return headers.mesh_count;
+}
+
+unsigned int Importer::getNumModels() const
+{
+	return numModels;
+}
