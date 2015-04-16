@@ -15,7 +15,7 @@ class Materials
 {
 public:
 	//Johan har ändrat lite i input
-	MStatus exportMaterial(vector<struct MaterialHeader>& mat_head_vector, vector<struct Material>& mat_vector, map<const char*, unsigned int>& mat_map);
+	MStatus exportMaterial(vector<struct MaterialHeader>& mat_head_vector, vector<struct Material>& mat_vector, map<const char*, int>& mat_map);
 private:
 	MStatus commonDiffuseValues(MFnDependencyNode& node, struct Material& matStrct, struct MaterialHeader& matHead);
 	MStatus commonReflectValues(MFnDependencyNode& node, struct Material& matStrct);

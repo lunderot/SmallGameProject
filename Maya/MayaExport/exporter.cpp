@@ -35,14 +35,14 @@ MStatus Exporter::doIt(const MArgList& argList)
 	//ofstream outfile("J://Litet spelproj//test.bin", ofstream::binary);
 
 	//--Light
-	exportLight aLight; 
+	exportLight aLight;
 	vector<LightHeader> lighthead;
 	vector<Light> lightbody;
 
-
-	map<const char*, unsigned int> materials;
+	map<const char*, int> materials;
 	map<const char*, int> transformHeiraki;
 	map<const char*, int> jointHeiraki;
+	map<const char*, unsigned int> meshMap;
 	Header header;
 
 	vector<MaterialHeader> mat_headers;
@@ -82,11 +82,24 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MeshHeader mayaMeshHeader;
 				MFnMesh mayaMesh(path);
 
-				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, mayaMeshHeader);
+				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, mayaMeshHeader, meshMap);
 				if (status != MS::kSuccess)
 				{
-					MGlobal::displayInfo("Failure at newMesh::exportMesh()");
-					return status;
+
+					MStatus status;
+					meshStruct newMesh;
+					MeshHeader mayaMeshHeader;
+					MFnMesh mayaMesh(path);
+
+					status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, mayaMeshHeader, meshMap);
+					if (status != MS::kSuccess)
+					{
+						MGlobal::displayInfo("Failure at newMesh::exportMesh()");
+					}
+					meshHeader.push_back(mayaMeshHeader);
+					meshes.push_back(newMesh);
+					header.mesh_count++;
+
 				}
 				meshHeader.push_back(mayaMeshHeader);
 				meshes.push_back(newMesh);
@@ -116,7 +129,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MFnCamera mayaCamera(path);
 				camera camera;
 				CameraHeader camHeader;
-				status = cam.exportCamera(mayaCamera, camera, camHeader);
+				status = cam.exportCamera(mayaCamera, camera, camHeader, transformHeiraki);
 
 				if (status != MS::kSuccess)
 				{
@@ -166,6 +179,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				}
 			} // ---
 
+
 			/*if (path.hasFn(MFn::kBlendShape))
 			{
 
@@ -184,11 +198,31 @@ MStatus Exporter::doIt(const MArgList& argList)
 			it.next();
 
 
+
+
+
 			}
 			}*/
 		}
+
 		dagIt.next(); // without this line, Maya will crash.
 	}
+	// Blend Shapes
+	MItDependencyNodes it(MFn::kBlendShape);
+
+	while (!it.isDone())
+	{
+		MFnBlendShapeDeformer(mObject);
+		morphAnimationHeader morphHead;
+		MorphAnimation morphAnim;
+		cout << "ALLAHU AKBAR" << endl;
+
+		morphAnims.exportMorphAnimation(it, morphHead, morphAnim, meshMap);
+		morphHeader.push_back(morphHead);
+		morphs.push_back(morphAnim);
+		it.next();
+	}
+
 
 	//Printing to files
 	WriteToFile output;

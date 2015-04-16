@@ -1,6 +1,6 @@
 #include "material.h"
 
-MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector, vector<struct Material>& mat_vector, map<const char*, unsigned int>& mat_map)
+MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector, vector<struct Material>& mat_vector, map<const char*, int>& mat_map)
 {
 	MStatus status;
 
