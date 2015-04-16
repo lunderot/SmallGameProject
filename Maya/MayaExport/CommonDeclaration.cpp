@@ -54,9 +54,10 @@ void camera::WriteBinary(CameraHeader* header, ofstream& outputfile)
 
 std::ostream& operator<<(std::ostream& out, const camera& obj)
 {
-	out << "CAMERA" << endl
-		<< "ParentID: " << obj.parentID << endl
-		<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
+	out << "CAMERA" << endl;
+	for (unsigned int i = 0; i < obj.parentID.size(); i++)
+		out	<< "ParentID: " << obj.parentID[i] << endl;
+	out	<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 		<< "Up Vector: " << obj.up_vector[0] << ' ' << obj.up_vector[1] << ' ' << obj.up_vector[2] << endl
 		<< "Intrest position: " << obj.interest_position[0] << ' ' << obj.interest_position[1] << ' ' << obj.interest_position[2] << endl
 		<< "FOV X: " << obj.field_of_view_x << endl
@@ -116,5 +117,28 @@ std::ostream& operator<<(std::ostream& out, const Material& obj)
 	if (obj.diffuse_map != nullptr)
 		out << obj.specular_map;
 	out << endl;
+	return out;
+}
+
+//struct MorphAnimation
+
+void MorphAnimation::WriteBinary(morphAnimationHeader* header, ofstream& outputfile)
+{
+	//char* output = (char*) this;
+	//outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*));
+	for (unsigned int i = 0; i < header->nrOfVertsPerMesh * header->nrOfWeights; i++)
+		outputfile.write((char*)position[i].data(), sizeof(double)* 3);
+
+	outputfile.write(blendShapeName, header->blendShape_name_length);
+}
+
+std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
+{
+	for (unsigned int i = 0; i < obj.position.size(); i++)
+	{
+		out << "Position:" << obj.position[i][0] << "/" << obj.position[i][1] << "/" << obj.position[i][2] << endl;
+	}
+	out << "blendShapeName" << obj.blendShapeName << endl
+		<< "Mesh ID: " << obj.meshID << endl;
 	return out;
 }

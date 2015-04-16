@@ -1,12 +1,13 @@
 #include "mesh.h"
 #include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, MeshHeader& mayaMeshHeader)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, MeshHeader& mayaMeshHeader, map<const char*, unsigned int> meshMap)
 {
 	MStatus status;
 	status = exportMaterial(mesh, materials, meshes, mayaMeshHeader);
 	status = exportVertices(mesh, transformHeiraki, materials, meshes, mayaMeshHeader);
 	status = exportJoints(mesh);
+	meshMap[mesh.name().asChar()] = meshMap.size();
 
 	return status;
 }

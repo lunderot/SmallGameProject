@@ -3,7 +3,7 @@
 #include <maya/MPlug.h>
 #include <maya/MItGeometry.h>
 
-MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnimationHeader &morphHeader, MorphAnimation &morphAnim)
+MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnimationHeader &morphHeader, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap)
 {
 	cout << "HEJ MAGNUUUUUUUUUZ ;D ;D" << endl;
 	MStatus status;
@@ -21,6 +21,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 
 	MGlobal::displayInfo(MString() + "Blend Shape: " + fn.name().asChar());
 	morphAnim.blendShapeName = fn.name().asChar();
+	morphHeader.blendShape_name_length = fn.name().length();
 	fn.getBaseObjects(baseObjects);
 
 	for (unsigned int i = 0; i < baseObjects.length(); i++)
@@ -28,12 +29,16 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 		MObject base = baseObjects[i];
 		MFnDependencyNode baseDep(base);
 
-		morphAnim.baseName = baseDep.name().asChar();
+		//morphAnim.baseName = baseDep.name().asChar();
+		//morphHeader.base_name_length = baseDep.name().length();
+
+		morphAnim.meshID = meshMap[baseDep.name().asChar()];
+
 		MGlobal::displayInfo(MString() + "Base: " + baseDep.name().asChar());
 
 		unsigned int weights = fn.numWeights();
 
-		morphAnim.nrOfWeights = weights;
+		morphHeader.nrOfWeights = weights;
 		MGlobal::displayInfo(MString() + "Nr of Weights: " + weights);
 
 		for (unsigned int j = 0; j < weights; j++)
@@ -42,17 +47,14 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 
 			fn.getTargets(base, j, targets);
 
-			morphAnim.nrOfTargets = targets.length();
+			morphHeader.nrOfTargets = targets.length();
 			MGlobal::displayInfo(MString() + "Nr of targets: " + targets.length());
 
 			for (unsigned int k = 0; k < targets.length(); k++)
 			{
 				MItGeometry targetGeo(targets[k]);
 				
-				if (morphAnim.nrOfTargets == 1)
-					morphAnim.nrOfVertsPerMesh = targetGeo.count() / 2;
-				else
-					morphAnim.nrOfVertsPerMesh = targetGeo.count() / morphAnim.nrOfTargets;
+				morphHeader.nrOfVertsPerMesh = targetGeo.count();
 				tmpCount += targetGeo.count();
 				morphAnim.position.resize(tmpCount);
 

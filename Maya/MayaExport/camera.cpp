@@ -1,7 +1,7 @@
 #include "camera.h"
 #include "CommonDeclaration.h"
 
-MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader& camHeader)
+MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader& camHeader, map<const char*, int> transformHeiraki)
 {
 	MStatus status;
 
@@ -47,5 +47,14 @@ MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader
 	camera.far_plane = mayaCamera.farClippingPlane(&status);
 
 	MGlobal::displayInfo(MString() + "near_plane: " + camera.near_plane + "   far_plane: " + camera.far_plane);
+
+	// Parent
+	camera.parentID.resize(mayaCamera.parentCount());
+	for (unsigned int i = 0; i < mayaCamera.parentCount(); i++)
+	{
+		MObject parent = mayaCamera.parent(i);
+		MFnDagNode storeParent(parent);
+		camera.parentID[i] = transformHeiraki[storeParent.name().asChar()];
+	}
 	return status;
 }

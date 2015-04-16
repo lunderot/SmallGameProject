@@ -227,7 +227,7 @@ struct CameraHeader
 
 struct camera
 {
-	unsigned int parentID;
+	vector <unsigned int> parentID;
 	double position[3];
 	double up_vector[3];
 	double interest_position[3];
@@ -245,47 +245,31 @@ struct camera
 
 struct morphAnimationHeader
 {
-	unsigned int base_name_length;
 	unsigned int blendShape_name_length;
+
+	unsigned int nrOfWeights;
+	unsigned int nrOfTargets;
+	unsigned int nrOfVertsPerMesh;
 
 	friend std::ostream& operator<<(std::ostream& out, const morphAnimationHeader& obj)
 	{
-		out << "base name length: " << obj.base_name_length << endl
-			<< "Blend Shape name length: " << obj.blendShape_name_length << endl;
+		out << "Blend Shape name length: " << obj.blendShape_name_length << endl;
+
+		out << "nrOfWeights: " << obj.nrOfWeights << endl
+			<< "nrOfTargets: " << obj.nrOfTargets << endl
+			<< "nrOfVertsPerWeight: " << obj.nrOfVertsPerMesh << endl;
 		return out;
 	}
 };
 struct MorphAnimation
 {
-	unsigned int nrOfWeights;
-	unsigned int nrOfTargets;
-	unsigned int nrOfVertsPerMesh;
 	vector <vector<double>> position;
-	const char* baseName;
+	unsigned int meshID;
 	const char* blendShapeName;
 
-	void WriteBinary(morphAnimationHeader* header, ofstream& outputfile)
-	{
-		//MGlobal::displayInfo(MString() + header->name_length);
-		char* output = (char*) this;
-		outputfile.write((const char*)output, sizeof(MorphAnimation)-sizeof(const char*));
-		outputfile.write(baseName, header->base_name_length);
-		outputfile.write(blendShapeName, header->blendShape_name_length);
-	}
+	void WriteBinary(morphAnimationHeader* header, ofstream& outputfile);
 
-	friend std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
-	{
-		out << "nrOfWeights: " << obj.nrOfWeights << endl
-			<< "nrOfTargets: " << obj.nrOfTargets << endl
-			<< "nrOfVertsPerMesh: " << obj.nrOfVertsPerMesh << endl;
-		for (unsigned int i = 0; i < obj.position.size(); i++)
-		{
-			out << "Position:" << obj.position[i][0] << "/" << obj.position[i][1] << "/" << obj.position[i][2] << endl;
-		}
-		out << "Base Name:" << obj.baseName << endl
-			<< "blendShapeName" << obj.blendShapeName << endl;
-		return out;
-	}
+	friend std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj);
 	// vertex
 	// color
 };
