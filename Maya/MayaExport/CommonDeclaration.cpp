@@ -118,3 +118,33 @@ std::ostream& operator<<(std::ostream& out, const Material& obj)
 	out << endl;
 	return out;
 }
+
+//LightHeader
+std::ostream& operator<<(std::ostream& out, const LightHeader& obj)
+{
+	out << "Light name length: " << obj.name_Length<< endl;
+	return out;
+}
+
+//Light 
+void Light::WriteBinary(LightHeader* header, ofstream& outputfile)
+{
+	char* output = (char*) this;
+	outputfile.write(output, sizeof(Light)-sizeof(const char*));
+	outputfile.write(name, header->name_Length);
+}
+
+std::ostream& operator<<(std::ostream& out, const Light& obj)
+{
+	out << "LIGHT" << endl
+		<< "Name of light: " << obj.name << endl
+		<< "Light type: " << obj.type << endl
+		<< "Decay type: " << obj.dType << endl
+		<< "Color: " << obj.color[0] << " " << obj.color[1] << " " << obj.color[2] << endl
+		<< "Intensity: " << obj.intensity << endl
+		<< "Cast shadow: " << obj.cast_shadows << endl
+		<< "Shadow color: " << obj.shadow_color[0] << " " << obj.shadow_color[1] << " " << obj.shadow_color[2] << endl;
+
+
+	return out;
+}

@@ -4,9 +4,25 @@
 MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, MeshHeader& mayaMeshHeader)
 {
 	MStatus status;
-	status = exportMaterial(mesh, materials, meshes, mayaMeshHeader);
-	status = exportVertices(mesh, transformHeiraki, materials, meshes, mayaMeshHeader);
-	status = exportJoints(mesh);
+	MString cmdAll = "select -r " + mesh.name();
+	MGlobal::executeCommand(cmdAll);
+	MString cmdF = "polyEvaluate -f";
+	MIntArray faces;
+	MGlobal::executeCommand(cmdF, faces, true, false);
+	cmdF = "polyEvaluate -t";
+	MIntArray triangles;
+	MGlobal::executeCommand(cmdF, triangles, true, false);
+	if (faces[0] == triangles[0])
+	{
+		status = exportMaterial(mesh, materials, meshes, mayaMeshHeader);
+		status = exportVertices(mesh, transformHeiraki, materials, meshes, mayaMeshHeader);
+		status = exportJoints(mesh);
+	}
+	else
+	{
+		MGlobal::displayError("TRIANGULATE " + mesh.name());
+		return MStatus::kFailure;
+	}
 
 	return status;
 }
@@ -51,6 +67,8 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& mate
 MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, unsigned int>& materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
 {
 	MStatus status;
+
+
 
 	// POSITION - get information
 	MPointArray vertex_array;

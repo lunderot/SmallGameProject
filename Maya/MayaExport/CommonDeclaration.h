@@ -349,12 +349,14 @@ struct Animation
 
 struct LightHeader
 {
-	unsigned int name_Lenght;
+	unsigned int name_Length;
+	friend std::ostream& operator<<(std::ostream& out, const LightHeader& obj);
 };
 
 struct Light
 {
 	//char name[];
+
 	enum light_type{ ePoint, eDirectional, eSpot, eArea, eVolume }type;
 	double color[3];
 	float intensity;
@@ -362,9 +364,11 @@ struct Light
 	//short decay_type;
 	bool cast_shadows;
 	double shadow_color[3];
-	// posheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeej
-	// direction
-	// bla bla
+	const char* name;
+
+	void WriteBinary(LightHeader* header, ofstream& outputfile);
+	friend std::ostream& operator<<(std::ostream& out, const Light& obj);
+
 };
 
 #endif

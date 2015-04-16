@@ -6,13 +6,14 @@ MStatus exportLight::exportLightType(MObject& inputLight, LightHeader& Lheader, 
 {
 
 
+	//MGlobal::displayInfo(MString() + camera.name);
+
 	//------------------------------------------------------//
 	//                LIGHT TYPE                            //
 	//                DECAY TYPE                            //
 	//------------------------------------------------------//
 
 	MFnNonAmbientLight mayaLight(inputLight);
-	MFnLight test;
 
 	MStatus status;
 
@@ -52,6 +53,9 @@ MStatus exportLight::exportLightType(MObject& inputLight, LightHeader& Lheader, 
 	else
 		return MS::kFailure;
 
+
+	oneLight.name = mayaLight.name().asChar();
+	Lheader.name_Length = mayaLight.name().length();
 
 	MGlobal::displayInfo("Maya Light Type: " + MString() + mayaLight.typeName());
 	MGlobal::displayInfo("Maya Decay Type: " + MString() + (Light::decay_type)mayaLight.decayRate(&status));
