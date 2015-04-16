@@ -265,6 +265,7 @@ struct MorphAnimation
 {
 	vector <vector<double>> position;
 	unsigned int meshID;
+	unsigned int nrOfKeys;
 	const char* blendShapeName;
 
 	void WriteBinary(morphAnimationHeader* header, ofstream& outputfile);

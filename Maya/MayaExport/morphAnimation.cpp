@@ -2,6 +2,8 @@
 #include <maya/MFnBlendShapeDeformer.h>
 #include <maya/MPlug.h>
 #include <maya/MItGeometry.h>
+#include <maya/MAnimControl.h>
+#include <maya/MItKeyframe.h>
 
 MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnimationHeader &morphHeader, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap)
 {
@@ -14,6 +16,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 
 	// disable envelope
 	MFnBlendShapeDeformer fn(it.item());
+
 	MPlug plug = fn.findPlug("en");
 	plug.setValue(0.0f);
 
@@ -58,6 +61,29 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 				tmpCount += targetGeo.count();
 				morphAnim.position.resize(tmpCount);
 
+				MTime start = MAnimControl::animationStartTime();
+				MTime end = MAnimControl::animationEndTime();
+			
+
+				MGlobal::displayInfo(MString() + "Start: " + start.as(MTime::kPALFrame));
+				MGlobal::displayInfo(MString() + "End: " + end.as(MTime::kPALFrame));
+				int startFrame = start.value();
+				int endFrame = end.value();
+				
+				MDagPath bone;
+				for (int p = startFrame; p < endFrame; p++)
+				{
+					MAnimControl::setCurrentTime(MTime(p, MTime::kPALFrame));
+
+					for (unsigned int w = 0; w < fn.numWeights(); w++)
+					{
+						MGlobal::displayInfo(MString() + "Current Weight: " + fn.weight(w));
+						MGlobal::displayInfo(MString() + p);
+					}
+					
+
+				}
+
 				//MGlobal::displayInfo(MString() + targetGeo.count);
 				while (!targetGeo.isDone())
 				{
@@ -74,6 +100,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 
 		// enable envelope
 		plug.setValue(1.0f);
+
 	}
 
 	return status;
