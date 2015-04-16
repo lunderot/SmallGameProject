@@ -49,7 +49,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 		vector<Light> lightbody;
 
 
-		map<const char*, unsigned int> materials;
+		map<const char*, int> materials;
 		map<const char*, int> transformHeiraki;
 		map<const char*, int> jointHeiraki;
 		map<const char*, unsigned int> meshMap;

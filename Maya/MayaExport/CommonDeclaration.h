@@ -131,7 +131,7 @@ struct meshStruct
 	vector <vector<double>> bi_tangent;
 
 	vector <unsigned int> transform_Id;
-	vector <unsigned int> material_Id;
+	vector <int> material_Id;
 	vector <Vertex> vertices;
 	const char* name;
 

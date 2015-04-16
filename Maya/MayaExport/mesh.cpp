@@ -1,7 +1,7 @@
 #include "mesh.h"
 #include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, MeshHeader& mayaMeshHeader, map<const char*, unsigned int> meshMap)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, MeshHeader& mayaMeshHeader, map<const char*, unsigned int> meshMap)
 {
 	MStatus status;
 	status = exportMaterial(mesh, materials, meshes, mayaMeshHeader);
@@ -12,7 +12,7 @@ MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, unsigned int>& material
 	return status;
 }
 
-MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
+MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
 {
 	MItDependencyNodes it(MFn::kLambert);
 	for (; !it.isDone(); it.next())
@@ -29,27 +29,34 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, unsigned int>& mate
 		MIntArray shaderID_array;
 		mesh.getConnectedShaders(i, shader_array, shaderID_array);
 
-		MObject shading = shader_array[0];
-		MFnDependencyNode fn(shading);
-		MPlug shader = fn.findPlug("surfaceShader");
-		shader.connectedTo(material_array, true, false);
-
-		if (material_array.length())
+		if (shaderID_array[0] != -1)
 		{
-			unsigned int tmp_materialId;
-			MFnDependencyNode fnMat(material_array[0].node());
-			tmp_materialId = materials[fnMat.name().asChar()];
-			meshes.material_Id[i] = tmp_materialId;
 
-			MGlobal::displayInfo(MString() + "Material ID: " + tmp_materialId + " | name: " + fnMat.name().asChar());
+			MObject shading = shader_array[0];
+			MFnDependencyNode fn(shading);
+			MPlug shader = fn.findPlug("surfaceShader");
+			shader.connectedTo(material_array, true, false);
+
+			if (material_array.length())
+			{
+				unsigned int tmp_materialId;
+				MFnDependencyNode fnMat(material_array[0].node());
+				tmp_materialId = materials[fnMat.name().asChar()];
+				meshes.material_Id[i] = tmp_materialId;
+
+				MGlobal::displayInfo(MString() + "Material ID: " + tmp_materialId + " | name: " + fnMat.name().asChar());
+			}
 		}
+		else
+			meshes.material_Id[i] = -1;
+
 		mayaMeshHeader.material_count = mesh.parentCount();
 	}
 
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, unsigned int>& materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, int>& materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
 {
 	MStatus status;
 
