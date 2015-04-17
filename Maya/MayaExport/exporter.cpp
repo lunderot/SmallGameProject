@@ -72,7 +72,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	MDagPath testdag;
 
-	while (!dagIt.isDone())
+	for (; !dagIt.isDone(); dagIt.next())
 	{
 		if (dagIt.getPath(path))
 		{
@@ -173,15 +173,19 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MObject eMayaLight = path.node();
 				status = aLight.exportLightType(eMayaLight, eLHeader, eOLight);
 
-				if (status == MS::kSuccess)
+				if (status != MS::kSuccess)
 				{
-					lighthead.push_back(eLHeader);
-					lightbody.push_back(eOLight);
+					continue;
 				}
+
+				lighthead.push_back(eLHeader);
+				lightbody.push_back(eOLight);
+
+				header.light_count++;
 			} // ---
 		}
 
-		dagIt.next(); // without this line, Maya will crash.
+		//dagIt.next(); // without this line, Maya will crash.
 	}
 	// Blend Shapes
 	MItDependencyNodes it(MFn::kBlendShape);

@@ -62,6 +62,8 @@ bool Importer::importFile(string filePathAndName)
 
 	if (!extractMeshHeader(offset, fileData, fileByteSize)) return false;
 
+	if (!extractLightHeader(offset, fileData, fileByteSize)) return false;
+
 	if (!extractMaterials(offset, fileData, fileByteSize)) return false;
 
 	if (!extractTransforms(offset, fileData, fileByteSize)) return false;
@@ -69,6 +71,8 @@ bool Importer::importFile(string filePathAndName)
 	if (!extractCameras(offset, fileData, fileByteSize)) return false;
 
 	if (!extractMeshes(offset, fileData, fileByteSize)) return false;
+
+	if (!extractLights(offset, fileData, fileByteSize)) return false;
 
 	if (!constructVerticiesAndGeometry()) return false;
 
@@ -160,6 +164,18 @@ bool Importer::extractMaterialHeader(unsigned int& offset, char* fileData, unsig
 
 bool Importer::extractLightHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
 {
+	if (sizeof(LightHeader) * headers.light_count > fileSize - offset)
+		return false;
+
+	lightHeaders = new LightHeader[headers.light_count];
+	for (unsigned int i = 0; i < headers.light_count; i++)
+	{
+		LightHeader extractedLight;
+		memcpy(&extractedLight, &fileData[offset], sizeof(LightHeader));
+		offset += sizeof(LightHeader);
+		lightHeaders[i] = extractedLight;
+	}
+
 	return true;
 }
 
@@ -290,7 +306,7 @@ bool Importer::extractCameras(unsigned int& offset, char* fileData, unsigned int
 	unsigned int readSize = 0;
 	for (unsigned int i = 0; i < headers.camera_count; i++)
 	{
-		readSize += (sizeof(camera) - sizeof(char*)) + cameraHeaders[i].name_length;
+		readSize += (sizeof(camera) - sizeof(char*) - sizeof(char*) + cameraHeaders[i].name_length + cameraHeaders[i].nrOfParents * sizeof(int));
 	}
 
 	if (readSize > fileSize - offset)
@@ -301,8 +317,12 @@ bool Importer::extractCameras(unsigned int& offset, char* fileData, unsigned int
 	for (unsigned int i = 0; i < headers.camera_count; i++)
 	{
 		camera extractCamera;
-		memcpy(&extractCamera, &fileData[offset], sizeof(camera) - sizeof(char*));
-		offset += sizeof(camera) - sizeof(char*) + 4;
+		memcpy(&extractCamera, &fileData[offset], sizeof(camera) - sizeof(char*) - sizeof(unsigned int*));
+		offset += sizeof(camera) - sizeof(char*) - 4;
+
+		extractCamera.parentID = new unsigned int[cameraHeaders[i].nrOfParents];
+		memcpy(extractCamera.parentID, &fileData[offset], sizeof(int) * cameraHeaders[i].nrOfParents);
+		offset += sizeof(unsigned int) * cameraHeaders[i].nrOfParents;
 
 		char* node_name = new char[cameraHeaders[i].name_length + 1];
 		node_name[cameraHeaders[i].name_length] = '\0';
@@ -400,6 +420,40 @@ bool Importer::extractMaterials(unsigned int& offset, char* fileData, unsigned i
 
 bool Importer::extractLights(unsigned int& offset, char* fileData, unsigned int& fileSize)
 {
+	unsigned int readSize = 0;
+	for (unsigned int i = 0; i < headers.light_count; i++)
+	{
+		readSize += (sizeof(lights) - sizeof(char*)) + lightHeaders[i].name_Length;
+	}
+
+	if (readSize > fileSize - offset)
+		return false;
+
+
+	lights = new Light[headers.light_count];
+	for (unsigned int i = 0; i < headers.light_count; i++)
+	{
+		Light extractLight;
+		memcpy(&extractLight, &fileData[offset], sizeof(Light) - sizeof(char*));
+		offset += sizeof(Light) - sizeof(char*) - 4;
+		unsigned int test = sizeof(Transform);
+		unsigned int test2 = sizeof(Material);
+		unsigned int test3 = sizeof(meshStruct);
+		unsigned int test4 = sizeof(vector<vector<double>>);
+		unsigned int test5 = sizeof(vector<int>);
+		unsigned int test6 = sizeof(Light);
+		unsigned int test7 = sizeof(bool);
+		char* name = new char[lightHeaders[i].name_Length + 1];
+		name[lightHeaders[i].name_Length] = '\0';
+		extractLight.name = name;
+
+		memcpy((char*)extractLight.name, &fileData[offset], lightHeaders[i].name_Length);
+
+		offset += lightHeaders[i].name_Length;
+
+		lights[i] = extractLight;
+	}
+
 	return true;
 }
 
