@@ -2,6 +2,7 @@
 #include "mesh.h"
 #include "maya_includes.h"
 #include <maya/MFnBlendShapeDeformer.h>
+#include <maya/MFnAnimCurve.h>
 
 //--Ayu
 #include "Light.h"
@@ -178,31 +179,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 					lightbody.push_back(eOLight);
 				}
 			} // ---
-
-
-			/*if (path.hasFn(MFn::kBlendShape))
-			{
-
-			MItDependencyNodes it(MFn::kBlendShape);
-
-			while (!it.isDone())
-			{
-			MFnBlendShapeDeformer(mObject);
-			morphAnimationHeader morphHead;
-			MorphAnimation morphAnim;
-			cout << "ALLAHU AKBAR" << endl;
-
-			morphAnims.exportMorphAnimation(it, morphHead, morphAnim);
-			morphHeader.push_back(morphHead);
-			morphs.push_back(morphAnim);
-			it.next();
-
-
-
-
-
-			}
-			}*/
 		}
 
 		dagIt.next(); // without this line, Maya will crash.
@@ -212,14 +188,22 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	while (!it.isDone())
 	{
-		MFnBlendShapeDeformer(mObject);
 		morphAnimationHeader morphHead;
 		MorphAnimation morphAnim;
-		cout << "ALLAHU AKBAR" << endl;
+		MObject testing = it.item();
+		MFnDagNode storetest(testing);
+		MFnDependencyNode wuut(testing);
+		MFnAnimCurve anim(testing, &status);
+		
+		//MGlobal::displayInfo(MString() + "FAKAKAKFAKFAKAKFAKFA: " + );
+		MGlobal::displayInfo(MString() + "nanananananame: " + anim.parentNamespace().asChar());
+		MGlobal::displayInfo(MString() + "nanananananame: " + wuut.name());
+		MGlobal::displayInfo(MString() + "nanananananame: " + MString() + anim.numKeys());
 
 		morphAnims.exportMorphAnimation(it, morphHead, morphAnim, meshMap);
 		morphHeader.push_back(morphHead);
 		morphs.push_back(morphAnim);
+
 		it.next();
 	}
 
