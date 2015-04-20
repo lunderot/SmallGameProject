@@ -39,7 +39,8 @@ std::ostream& operator<<(std::ostream& out, const Transform& obj)
 //CameraHeader
 std::ostream& operator<<(std::ostream& out, const CameraHeader& obj)
 {
-	out << "Camera name length: " << obj.name_length << endl;
+	out << "Camera name length: " << obj.name_length << endl
+		<< "Number of parents: " << obj.nrOfParents << endl;
 	return out;
 }
 
@@ -48,15 +49,15 @@ void camera::WriteBinary(CameraHeader* header, ofstream& outputfile)
 {
 	//MGlobal::displayInfo(MString() + header->name_length);
 	char* output = (char*) this;
-	outputfile.write((const char*)output, sizeof(camera) - sizeof(const char*));
+	outputfile.write((const char*)output, sizeof(camera) - sizeof(const char*) - sizeof(unsigned int*));
+	outputfile.write((const char*)parentID, sizeof(int) * header->nrOfParents);
 	outputfile.write(name, header->name_length);
 }
 
 std::ostream& operator<<(std::ostream& out, const camera& obj)
 {
 	out << "CAMERA" << endl;
-	for (unsigned int i = 0; i < obj.parentID.size(); i++)
-		out	<< "ParentID: " << obj.parentID[i] << endl;
+	out	<< "ParentID: " << obj.parentID << endl;
 	out	<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 		<< "Up Vector: " << obj.up_vector[0] << ' ' << obj.up_vector[1] << ' ' << obj.up_vector[2] << endl
 		<< "Intrest position: " << obj.interest_position[0] << ' ' << obj.interest_position[1] << ' ' << obj.interest_position[2] << endl

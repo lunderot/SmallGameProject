@@ -2,6 +2,7 @@
 #include "mesh.h"
 #include "maya_includes.h"
 #include <maya/MFnBlendShapeDeformer.h>
+#include <maya/MFnAnimCurve.h>
 
 
 #include "Light.h"
@@ -76,7 +77,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	MDagPath testdag;
 
-	while (!dagIt.isDone())
+	for (; !dagIt.isDone(); dagIt.next())
 	{
 		if (dagIt.getPath(path))
 		{
@@ -177,11 +178,11 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MObject eMayaLight = path.node();
 				status = aLight.exportLightType(eMayaLight, eLHeader, eOLight);
 
-				if (status == MS::kSuccess)
+				if (status != MS::kSuccess)
 				{
-					lighthead.push_back(eLHeader);
-					lightbody.push_back(eOLight);
+					continue;
 				}
+
 			} // ---
 
 			//NurbSurface
@@ -206,48 +207,31 @@ MStatus Exporter::doIt(const MArgList& argList)
 				}
 
 			}
-	
 
-			/*if (path.hasFn(MFn::kBlendShape))
-			{
-
-			MItDependencyNodes it(MFn::kBlendShape);
-
-			while (!it.isDone())
-			{
-			MFnBlendShapeDeformer(mObject);
-			morphAnimationHeader morphHead;
-			MorphAnimation morphAnim;
-			cout << "ALLAHU AKBAR" << endl;
-
-			morphAnims.exportMorphAnimation(it, morphHead, morphAnim);
-			morphHeader.push_back(morphHead);
-			morphs.push_back(morphAnim);
-			it.next();
-
-
-
-
-
-			}
-			}*/
 		}
-
-		dagIt.next(); // without this line, Maya will crash.
+	
 	}
 	// Blend Shapes
 	MItDependencyNodes it(MFn::kBlendShape);
 
 	while (!it.isDone())
 	{
-		MFnBlendShapeDeformer(mObject);
 		morphAnimationHeader morphHead;
 		MorphAnimation morphAnim;
-		cout << "ALLAHU AKBAR" << endl;
+		MObject testing = it.item();
+		MFnDagNode storetest(testing);
+		MFnDependencyNode wuut(testing);
+		MFnAnimCurve anim(testing, &status);
+		
+		//MGlobal::displayInfo(MString() + "FAKAKAKFAKFAKAKFAKFA: " + );
+		MGlobal::displayInfo(MString() + "nanananananame: " + anim.parentNamespace().asChar());
+		MGlobal::displayInfo(MString() + "nanananananame: " + wuut.name());
+		MGlobal::displayInfo(MString() + "nanananananame: " + MString() + anim.numKeys());
 
 		morphAnims.exportMorphAnimation(it, morphHead, morphAnim, meshMap);
 		morphHeader.push_back(morphHead);
 		morphs.push_back(morphAnim);
+
 		it.next();
 	}
 

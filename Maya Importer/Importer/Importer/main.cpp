@@ -17,6 +17,9 @@ int main()
 	for (unsigned int i = 0; i < importer.headers.camera_count; i++)
 		out << importer.cameraHeaders[i] << endl;
 
+	for (unsigned int i = 0; i < importer.headers.light_count; i++)
+		out << importer.lightHeaders[i] << endl;
+
 	for (unsigned int i = 0; i < importer.headers.material_count; i++)
 		out << importer.materials[i] << endl;
 
@@ -28,6 +31,9 @@ int main()
 
 	for (unsigned int i = 0; i < importer.headers.material_count; i++)
 		out << importer.meshes[i] << endl;
+
+	for (unsigned int i = 0; i < importer.headers.light_count; i++)
+		out << importer.lights[i] << endl;
 
 	out << "getNumModels(): " << importer.getNumModels() << endl;
 	out << "getNumMeshes(): " << importer.getNumMeshes() << endl;

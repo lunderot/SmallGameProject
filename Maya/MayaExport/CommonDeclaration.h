@@ -221,13 +221,13 @@ struct meshStruct
 struct CameraHeader
 {
 	unsigned int name_length;
+	unsigned int nrOfParents;
 
 	friend std::ostream& operator<<(std::ostream& out, const CameraHeader& obj);
 };
 
 struct camera
 {
-	vector <unsigned int> parentID;
 	double position[3];
 	double up_vector[3];
 	double interest_position[3];
@@ -236,6 +236,7 @@ struct camera
 	double near_plane;
 	double far_plane;
 	enum projection_type{ ePerspective, eOrthogonal } projection;
+	unsigned int* parentID;
 	const char* name;
 
 	void WriteBinary(CameraHeader* header, ofstream& outputfile);
@@ -265,6 +266,7 @@ struct MorphAnimation
 {
 	vector <vector<double>> position;
 	unsigned int meshID;
+	unsigned int nrOfKeys;
 	const char* blendShapeName;
 
 	void WriteBinary(morphAnimationHeader* header, ofstream& outputfile);

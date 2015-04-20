@@ -49,7 +49,8 @@ MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader
 	MGlobal::displayInfo(MString() + "near_plane: " + camera.near_plane + "   far_plane: " + camera.far_plane);
 
 	// Parent
-	camera.parentID.resize(mayaCamera.parentCount());
+	camera.parentID = new unsigned int[mayaCamera.parentCount()];
+	camHeader.nrOfParents = mayaCamera.parentCount();
 	for (unsigned int i = 0; i < mayaCamera.parentCount(); i++)
 	{
 		MObject parent = mayaCamera.parent(i);
