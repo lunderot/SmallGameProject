@@ -3,8 +3,9 @@
 #include "maya_includes.h"
 #include <maya/MFnBlendShapeDeformer.h>
 
-//--Ayu
+
 #include "Light.h"
+#include "Nurb.h"
 
 
 #include "CommonDeclaration.h"
@@ -39,12 +40,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 	vector<LightHeader> lighthead;
 	vector<Light> lightbody;
 
+	//--Nurb
+	exportNurb aNurb;
+	vector<NurbHeader> nurbHead;
+	vector<Nurb> nurbBody;
+
 	map<const char*, int> materials;
 	map<const char*, int> transformHeiraki;
 	map<const char*, int> jointHeiraki;
 	map<const char*, unsigned int> meshMap;
 	Header header;
-
 	vector<MaterialHeader> mat_headers;
 	vector<Material> mat;
 	Materials  matExporter;
@@ -179,6 +184,29 @@ MStatus Exporter::doIt(const MArgList& argList)
 				}
 			} // ---
 
+			//NurbSurface
+			if (path.hasFn(MFn::kNurbsSurface))
+			{
+				MS status;
+				NurbHeader nurbHeader;
+				Nurb structNurb;
+
+				//MFnNurbsSurface eNurb(path);
+				//aNurb.exportNurbSphere(eNurb, nurbHeader, structNurb, transformHeiraki);
+
+				MFnNurbsSurface eNurb = path.node();
+				status = aNurb.exportNurbSphere(eNurb, nurbHeader, structNurb, transformHeiraki);
+
+				MGlobal::displayInfo("NURB FINNS");
+
+				if (status == MS::kSuccess)
+				{
+					nurbHead.push_back(nurbHeader);
+					nurbBody.push_back(structNurb);
+				}
+
+			}
+	
 
 			/*if (path.hasFn(MFn::kBlendShape))
 			{
@@ -240,6 +268,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(camera_header.data(), camera_header.size());
 	output.writeToFiles(meshHeader.data(), meshHeader.size());
 	output.writeToFiles(lighthead.data(), lighthead.size());
+	output.writeToFiles(nurbHead.data(), nurbHead.size());
 	//output.writeToFiles(morphHeader.data(), morphHeader.size());
 
 	//Data
@@ -249,6 +278,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&cameraVec[0], &camera_header[0], cameraVec.size());
 	output.writeToFiles(&meshes[0], &meshHeader[0], meshes.size());
 	output.writeToFiles(&lightbody[0], &lighthead[0], lightbody.size());
+	output.writeToFiles(&nurbBody[0], &nurbHead[0], nurbBody.size());
 	//output.writeToFiles(&morphs[0], &morphHeader[0], morphs.size());
 
 	output.CloseFiles();

@@ -121,14 +121,14 @@ std::ostream& operator<<(std::ostream& out, const Material& obj)
 }
 
 
-//LightHeader
+// LightHeader
 std::ostream& operator<<(std::ostream& out, const LightHeader& obj)
 {
 	out << "Light name length: " << obj.name_Length<< endl;
 	return out;
 }
 
-//Light 
+// Light 
 void Light::WriteBinary(LightHeader* header, ofstream& outputfile)
 {
 	char* output = (char*) this;
@@ -147,6 +147,37 @@ std::ostream& operator<<(std::ostream& out, const Light& obj)
 		<< "Cast shadow: " << obj.cast_shadows << endl
 		<< "Shadow color: " << obj.shadow_color[0] << " " << obj.shadow_color[1] << " " << obj.shadow_color[2] << endl;
 	return out;
+}
+
+// NurbHeader
+std::ostream& operator<<(std::ostream& out, const NurbHeader& obj)
+{
+	out << " Nurb name lengtht: " << obj.name_Length << endl
+		<< " Number of nurbs: " << obj.numberOfParent << endl;
+	return out;
+}
+
+// Nurb
+void Nurb::WriteBinary(NurbHeader* header, ofstream& outputfile)
+{
+	char* output = (char*) this;
+	outputfile.write(output, sizeof(Nurb)-sizeof(const char*));
+	outputfile.write(name, header->name_Length);
+}
+
+// Nurb
+std::ostream& operator << (std::ostream& out, const Nurb& obj)
+{
+	out << "NURB" << endl
+		<< "Name of nurb: " << obj.name << endl
+		<< "Radius: " << obj.radius << endl;
+	for (unsigned int i = 0; i < obj.parentID.size(); i++)
+	{		
+		out << "Parent ID: " << obj.parentID[i] << endl;
+	}
+
+	return out;
+
 }
 
 //struct MorphAnimation

@@ -31,8 +31,10 @@
 #include <maya/MAnimUtil.h>
 #include <maya/MFnIkJoint.h>
 #include <maya/MQuaternion.h>
-///--Ayu
+///--Light
 #include <maya/MFnLight.h> //--
+//---Nurbs
+#include <maya/MFnNurbsSurface.h>
 
 // Wrappers
 #include <maya/MGlobal.h>

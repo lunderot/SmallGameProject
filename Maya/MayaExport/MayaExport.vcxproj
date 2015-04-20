@@ -117,6 +117,7 @@
     <ClCompile Include="material.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="morphAnimation.cpp" />
+    <ClCompile Include="Nurb.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="WriteToFile.cpp" />
   </ItemGroup>
@@ -128,6 +129,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="morphAnimation.h" />
+    <ClInclude Include="Nurb.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="maya_includes.h" />
     <ClInclude Include="mesh.h" />

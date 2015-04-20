@@ -355,4 +355,22 @@ struct Light
 
 };
 
+struct NurbHeader
+{
+	unsigned int name_Length;
+	unsigned int numberOfParent;
+	friend std::ostream& operator<<(std::ostream& out, const NurbHeader& obj);
+
+};
+
+struct Nurb
+{
+	float radius;
+	vector<int> parentID;
+	const char* name;
+
+	void WriteBinary(NurbHeader* header, ofstream& outputfile);
+	friend std::ostream& operator<<(std::ostream& out, const Nurb& obj);
+};
+
 #endif
