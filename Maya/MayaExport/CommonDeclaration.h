@@ -9,7 +9,7 @@ struct Header
 {
 	Header()
 	{
-		group_count = mesh_count = material_count = camera_count = light_count = 0;
+		group_count = mesh_count = material_count = camera_count = joint_count = light_count = nurb_count = 0;
 	};
 
 	unsigned int group_count;
@@ -18,6 +18,7 @@ struct Header
 	unsigned int camera_count;
 	unsigned int light_count;
 	unsigned int joint_count;
+	unsigned int nurb_count;
 
 	friend std::ostream& operator<<(std::ostream& out, const Header& obj);
 };
@@ -369,7 +370,7 @@ struct NurbHeader
 struct Nurb
 {
 	float radius;
-	vector<int> parentID;
+	unsigned int* parentID;
 	const char* name;
 
 	void WriteBinary(NurbHeader* header, ofstream& outputfile);

@@ -12,13 +12,40 @@ struct VertexPositionTexCoordNormalBinormalTangent
 	float tangent[3];
 };
 
+struct BoundingSphere
+{
+	BoundingSphere()
+	{
+		position[0] = 0;
+		position[1] = 0;
+		position[2] = 0;
+		radius = 0;
+	};
+	double position[3];
+	float radius;
+};
+
 struct Model
 {
-	
+	Model()
+	{
+		MeshID = 0;
+		MaterialID = 0;
+		position[0] = 0;
+		position[1] = 0;
+		position[2] = 0;
+		rotation[0] = 0;
+		rotation[1] = 0;
+		rotation[2] = 0;
+		rotation[3] = 1;
+		scale[0] = 1;
+		scale[1] = 1;
+		scale[2] = 1;
+	};
 	unsigned int MeshID;
 	unsigned int MaterialID;
 	double position[3];
-	double rotation[4];
+	float rotation[4];
 	double scale[3];
 };
 
@@ -38,6 +65,8 @@ public:
 	unsigned int getNumMeshes() const;
 	unsigned int getNumModels() const;
 	unsigned int getMeshVertexCount(unsigned int meshID) const;
+	unsigned int getNumBoundingSphere() const;
+	const BoundingSphere* getBoundingSphere() const;
 
 	//unsigned int numGroups();
 	const Model* getModels() const;
@@ -52,6 +81,7 @@ public:
 	bool extractMaterialHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractLightHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractJointHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
+	bool extractNurbHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 
 	bool extractTransforms(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractMeshes(unsigned int& offset, char* fileData, unsigned int& fileSize);
@@ -59,12 +89,16 @@ public:
 	bool extractMaterials(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractLights(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractJoint(unsigned int& offset, char* fileData, unsigned int& fileSize);
+	bool extractNurb(unsigned int& offset, char* fileData, unsigned int& fileSize);
 
 	bool constructVerticiesAndGeometry();
 	bool constructModels();
+	bool constructSpere();
 	VertexPositionTexCoordNormalBinormalTangent** meshGeometry;
 	unsigned int numModels;
 	Model* models;
+	unsigned int numSpheres;
+	BoundingSphere* spheres;
 
 	Header headers;
 
@@ -74,6 +108,7 @@ public:
 	MaterialHeader* materialHeaders;
 	LightHeader* lightHeaders;
 	JointHeader* jointHeaders;
+	NurbHeader* nurbHeaders;
 
 	Transform* transforms;
 	meshStruct* meshes;
@@ -81,6 +116,7 @@ public:
 	Material* materials;
 	Light* lights;
 	Joint* joints;
+	Nurb* nurbs;
 };
 
 #endif

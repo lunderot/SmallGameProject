@@ -1,7 +1,7 @@
 #include "camera.h"
 #include "CommonDeclaration.h"
 
-MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader& camHeader, map<const char*, int> transformHeiraki)
+MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader& camHeader, map<const char*, int>& transformHeiraki)
 {
 	MStatus status;
 

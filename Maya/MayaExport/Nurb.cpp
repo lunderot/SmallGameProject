@@ -48,12 +48,12 @@ MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, NurbHeader
 		//					PARENT ID                         //
 		// ---------------------------------------------------//
 
-
+		nurbSphere.parentID = new unsigned int[mayaNurbSphere.parentCount()];
 		for (unsigned int i = 0; i < mayaNurbSphere.parentCount(); i++)
 		{
 			MObject parent = mayaNurbSphere.parent(i);
 			MFnDagNode storeParent(parent);
-			nurbSphere.parentID.push_back(transformHierarchy[storeParent.name().asChar()]);
+			nurbSphere.parentID[i] = transformHierarchy[storeParent.name().asChar()];
 
 			MGlobal::displayInfo(MString() + "PARENT ID: " + nurbSphere.parentID[i]);
 

@@ -27,8 +27,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 {
 	MStatus status;
 
-
-
 	MDagPath path;
 	MItDag dagIt(MItDag::kBreadthFirst);
 	Mesh mesh;
@@ -167,11 +165,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MObject eMayaLight = path.node();
 				status = aLight.exportLightType(eMayaLight, eLHeader, eOLight);
 
-				if (status != MS::kSuccess)
-				{
-					continue;
-				}
-
 			} // ---
 
 			//NurbSurface
@@ -193,6 +186,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				{
 					nurbHead.push_back(nurbHeader);
 					nurbBody.push_back(structNurb);
+					header.nurb_count++;
 				}
 
 			}

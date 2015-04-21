@@ -23,6 +23,9 @@ int main()
 	for (unsigned int i = 0; i < importer.headers.light_count; i++)
 		out << importer.lightHeaders[i] << endl;
 
+	for (unsigned int i = 0; i < importer.headers.nurb_count; i++)
+		out << importer.nurbHeaders[i] << endl;
+
 	for (unsigned int i = 0; i < importer.headers.material_count; i++)
 		out << importer.materials[i] << endl;
 
@@ -35,11 +38,14 @@ int main()
 	for (unsigned int i = 0; i < importer.headers.camera_count; i++)
 		out << importer.cameras[i] << endl;
 
-	for (unsigned int i = 0; i < importer.headers.material_count; i++)
+	for (unsigned int i = 0; i < importer.headers.mesh_count; i++)
 		out << importer.meshes[i] << endl;
 
 	for (unsigned int i = 0; i < importer.headers.light_count; i++)
 		out << importer.lights[i] << endl;
+
+	for (unsigned int i = 0; i < importer.headers.nurb_count; i++)
+		out << importer.nurbs[i] << endl;
 
 	out << "getNumModels(): " << importer.getNumModels() << endl;
 	out << "getNumMeshes(): " << importer.getNumMeshes() << endl;
@@ -89,6 +95,16 @@ int main()
 		out << importer.getMatrials()[i].normal_depth << endl;
 		if (importer.getMatrials()[i].specular_map != nullptr)
 		out << importer.getMatrials()[i].specular_map << endl;
+	}
+
+	out << "getNumBoundingSphere(): " << importer.getNumBoundingSphere() << endl;
+
+	out << "getNumBoundingSphere(): " << endl;
+	for (unsigned int i = 0; i < importer.getNumBoundingSphere(); i++)
+	{
+		out << "Sphere " << i << ": " << endl;
+		out << importer.spheres[i].position[0] << " " << importer.spheres[i].position[1] << " " << importer.spheres[i].position[2] << endl;
+		out << importer.spheres[i].radius << endl;
 	}
 
 	return 0;

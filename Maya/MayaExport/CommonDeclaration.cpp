@@ -8,7 +8,8 @@ std::ostream& operator<<(std::ostream& out, const Header& obj)
 		<< "Number of materials: " << obj.material_count << endl
 		<< "Number of cameras: " << obj.camera_count << endl
 		<< "Number of lights: " << obj.light_count << endl
-		<< "Number of joints: " << obj.joint_count << endl;
+		<< "Number of joints: " << obj.joint_count << endl
+		<< "Number of nurbSurfices: " << obj.nurb_count << endl;
 	return out;
 }
 
@@ -58,7 +59,7 @@ void camera::WriteBinary(CameraHeader* header, ofstream& outputfile)
 std::ostream& operator<<(std::ostream& out, const camera& obj)
 {
 	out << "CAMERA" << endl;
-	out	<< "ParentID: " << obj.parentID << endl;
+	out	<< "ParentID: " << obj.parentID[0] << endl;
 	out	<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 		<< "Up Vector: " << obj.up_vector[0] << ' ' << obj.up_vector[1] << ' ' << obj.up_vector[2] << endl
 		<< "Intrest position: " << obj.interest_position[0] << ' ' << obj.interest_position[1] << ' ' << obj.interest_position[2] << endl
@@ -163,7 +164,8 @@ std::ostream& operator<<(std::ostream& out, const NurbHeader& obj)
 void Nurb::WriteBinary(NurbHeader* header, ofstream& outputfile)
 {
 	char* output = (char*) this;
-	outputfile.write(output, sizeof(Nurb)-sizeof(const char*));
+	outputfile.write(output, sizeof(Nurb) - sizeof(const char*) - sizeof(int*) -4);
+	outputfile.write((const char*)parentID, sizeof(int) * header->numberOfParent);
 	outputfile.write(name, header->name_Length);
 }
 
@@ -172,11 +174,8 @@ std::ostream& operator << (std::ostream& out, const Nurb& obj)
 {
 	out << "NURB" << endl
 		<< "Name of nurb: " << obj.name << endl
-		<< "Radius: " << obj.radius << endl;
-	for (unsigned int i = 0; i < obj.parentID.size(); i++)
-	{		
-		out << "Parent ID: " << obj.parentID[i] << endl;
-	}
+		<< "Radius: " << obj.radius << endl
+		<< "Parent ID: " << obj.parentID[0] << endl;
 
 	return out;
 
