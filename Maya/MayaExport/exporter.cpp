@@ -91,22 +91,10 @@ MStatus Exporter::doIt(const MArgList& argList)
 				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, mayaMeshHeader, meshMap);
 				if (status != MS::kSuccess)
 				{
-
-					MStatus status;
-					meshStruct newMesh;
-					MeshHeader mayaMeshHeader;
-					MFnMesh mayaMesh(path);
-
-					status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, mayaMeshHeader, meshMap);
-					if (status != MS::kSuccess)
-					{
-						MGlobal::displayInfo("Failure at newMesh::exportMesh()");
-					}
-					meshHeader.push_back(mayaMeshHeader);
-					meshes.push_back(newMesh);
-					header.mesh_count++;
-
+					MGlobal::displayInfo("Failure at newMesh::exportMesh()");
+					return status;
 				}
+
 				meshHeader.push_back(mayaMeshHeader);
 				meshes.push_back(newMesh);
 				header.mesh_count++;
@@ -163,6 +151,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 				jointHeaders.push_back(jointHeader);
 				joints.push_back(joint);
+				header.joint_count++;
 			}
 
 			//--ayu
@@ -234,7 +223,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 		it.next();
 	}
-
 
 	//Printing to files
 	WriteToFile output;
