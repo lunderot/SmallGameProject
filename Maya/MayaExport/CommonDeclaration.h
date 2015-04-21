@@ -17,6 +17,7 @@ struct Header
 	unsigned int material_count;
 	unsigned int camera_count;
 	unsigned int light_count;
+	unsigned int joint_count;
 
 	friend std::ostream& operator<<(std::ostream& out, const Header& obj);
 };
@@ -60,7 +61,7 @@ struct Joint
 	void WriteBinary(JointHeader* header, ofstream& outputfile)
 	{
 		char* output = (char*) this;
-		outputfile.write((const char*)output, sizeof(Joint) - sizeof(const char*));
+		outputfile.write((const char*)output, sizeof(double) * 4);
 		transform.WriteBinary(&header->transformHeader, outputfile);
 	}
 

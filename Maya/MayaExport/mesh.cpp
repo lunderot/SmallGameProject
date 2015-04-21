@@ -24,9 +24,6 @@ MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<co
 		return MStatus::kFailure;
 	}
 
-	status = exportMaterial(mesh, materials, meshes, mayaMeshHeader);
-	status = exportVertices(mesh, transformHeiraki, materials, meshes, mayaMeshHeader);
-	status = exportJoints(mesh);
 	meshMap[mesh.name().asChar()] = meshMap.size();
 
 	return status;

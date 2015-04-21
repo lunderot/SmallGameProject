@@ -14,6 +14,9 @@ int main()
 	for (unsigned int i = 0; i < importer.headers.group_count; i++)
 		out << importer.transformHeaders[i] << endl;
 
+	for (unsigned int i = 0; i < importer.headers.joint_count; i++)
+		out << importer.jointHeaders[i] << endl;
+
 	for (unsigned int i = 0; i < importer.headers.camera_count; i++)
 		out << importer.cameraHeaders[i] << endl;
 
@@ -25,6 +28,9 @@ int main()
 
 	for (unsigned int i = 0; i < importer.headers.group_count; i++)
 		out << importer.transforms[i] << endl;
+
+	for (unsigned int i = 0; i < importer.headers.joint_count; i++)
+		out << importer.joints[i] << endl;
 
 	for (unsigned int i = 0; i < importer.headers.camera_count; i++)
 		out << importer.cameras[i] << endl;

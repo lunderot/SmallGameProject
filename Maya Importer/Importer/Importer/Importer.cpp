@@ -58,6 +58,8 @@ bool Importer::importFile(string filePathAndName)
 
 	if (!extractTransformHeader(offset, fileData, fileByteSize)) return false;
 
+	if (!extractJointHeader(offset, fileData, fileByteSize)) return false;
+
 	if (!extractCameraHeader(offset, fileData, fileByteSize)) return false;
 
 	if (!extractMeshHeader(offset, fileData, fileByteSize)) return false;
@@ -67,6 +69,8 @@ bool Importer::importFile(string filePathAndName)
 	if (!extractMaterials(offset, fileData, fileByteSize)) return false;
 
 	if (!extractTransforms(offset, fileData, fileByteSize)) return false;
+
+	if (!extractJoint(offset, fileData, fileByteSize)) return false;
 
 	if (!extractCameras(offset, fileData, fileByteSize)) return false;
 
@@ -177,6 +181,22 @@ bool Importer::extractLightHeader(unsigned int& offset, char* fileData, unsigned
 	}
 
 	return true;
+}
+
+bool Importer::extractJointHeader(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	if (sizeof(JointHeader) * headers.joint_count > fileSize - offset)
+		return false;
+
+	jointHeaders = new JointHeader[headers.joint_count];
+	for (unsigned int i = 0; i < headers.joint_count; i++)
+	{	
+		JointHeader extractesJoint;
+		memcpy(&extractesJoint, &fileData[offset], sizeof(JointHeader));
+		offset += sizeof(JointHeader);
+		jointHeaders[i] = extractesJoint;
+	}
+
 }
 
 bool Importer::extractTransforms(unsigned int& offset, char* fileData, unsigned int& fileSize)
@@ -436,13 +456,7 @@ bool Importer::extractLights(unsigned int& offset, char* fileData, unsigned int&
 		Light extractLight;
 		memcpy(&extractLight, &fileData[offset], sizeof(Light) - sizeof(char*));
 		offset += sizeof(Light) - sizeof(char*) - 4;
-		unsigned int test = sizeof(Transform);
-		unsigned int test2 = sizeof(Material);
-		unsigned int test3 = sizeof(meshStruct);
-		unsigned int test4 = sizeof(vector<vector<double>>);
-		unsigned int test5 = sizeof(vector<int>);
-		unsigned int test6 = sizeof(Light);
-		unsigned int test7 = sizeof(bool);
+
 		char* name = new char[lightHeaders[i].name_Length + 1];
 		name[lightHeaders[i].name_Length] = '\0';
 		extractLight.name = name;
@@ -457,6 +471,39 @@ bool Importer::extractLights(unsigned int& offset, char* fileData, unsigned int&
 	return true;
 }
 
+bool Importer::extractJoint(unsigned int& offset, char* fileData, unsigned int& fileSize)
+{
+	unsigned int readSize = 0;
+	for (unsigned int i = 0; i < headers.light_count; i++)
+	{
+		readSize += (sizeof(Joint) - sizeof(char*) - 4) + jointHeaders[i].transformHeader.name_Length;
+	}
+
+	if (readSize > fileSize - offset)
+		return false;
+
+	joints = new Joint[headers.joint_count];
+	for (unsigned int i = 0; i < headers.joint_count; i++)
+	{
+		Joint extractedJoint;
+		memcpy(&extractedJoint, &fileData[offset], sizeof(Joint) - sizeof(char*));
+		offset += sizeof(Joint) - sizeof(char*) - 4;
+
+		char* name = new char[jointHeaders[i].transformHeader.name_Length + 1];
+		name[jointHeaders[i].transformHeader.name_Length] = '\0';
+		extractedJoint.transform.name = name;
+
+		memcpy((char*)extractedJoint.transform.name, &fileData[offset], jointHeaders[i].transformHeader.name_Length);
+
+		offset += jointHeaders[i].transformHeader.name_Length;
+
+		joints[i] = extractedJoint;
+	}
+
+	return true;
+
+}
+
 bool Importer::constructVerticiesAndGeometry()
 {
 	meshGeometry = new VertexPositionTexCoordNormalBinormalTangent* [headers.mesh_count];
@@ -466,14 +513,22 @@ bool Importer::constructVerticiesAndGeometry()
 		meshGeometry[i] = new VertexPositionTexCoordNormalBinormalTangent[meshHeaders[i].indice_count];
 		for (unsigned int j = 0; j < meshHeaders[i].indice_count; j++)
 		{
-			unsigned int& positionID = meshes[i].vertices[j].position;
-			unsigned int& uvID = meshes[i].vertices[j].uv;
-			unsigned int& normalID = meshes[i].vertices[j].normal;
-			memcpy(meshGeometry[i][j].position, meshes[i].position[positionID].data(), sizeof(double) * 3);
-			memcpy(meshGeometry[i][j].texCoord, meshes[i].uv[uvID].data(), sizeof(double) * 3);
-			memcpy(meshGeometry[i][j].normal, meshes[i].normal[normalID].data(), sizeof(double) * 3);
-			memcpy(meshGeometry[i][j].biNormal, meshes[i].bi_tangent[normalID].data(), sizeof(double) * 3);
-			memcpy(meshGeometry[i][j].tangent, meshes[i].tangent[normalID].data(), sizeof(double) * 3);
+			unsigned int positionID = meshes[i].vertices[j].position;
+			unsigned int uvID = meshes[i].vertices[j].uv;
+			unsigned int normalID = meshes[i].vertices[j].normal;
+			meshGeometry[i][j].position[0] = (float)meshes[i].position[positionID][0];
+			meshGeometry[i][j].position[1] = (float)meshes[i].position[positionID][1];
+			meshGeometry[i][j].position[2] = (float)meshes[i].position[positionID][2];
+			memcpy(meshGeometry[i][j].texCoord, meshes[i].uv[uvID].data(), sizeof(float) * 2);
+			meshGeometry[i][j].normal[0] = (float)meshes[i].normal[normalID][0];
+			meshGeometry[i][j].normal[1] = (float)meshes[i].normal[normalID][1];
+			meshGeometry[i][j].normal[2] = (float)meshes[i].normal[normalID][2];
+			meshGeometry[i][j].biNormal[0] = (float)meshes[i].bi_tangent[normalID][0];
+			meshGeometry[i][j].biNormal[1] = (float)meshes[i].bi_tangent[normalID][1];
+			meshGeometry[i][j].biNormal[2] = (float)meshes[i].bi_tangent[normalID][2];
+			meshGeometry[i][j].tangent[0] = (float)meshes[i].tangent[normalID][0];
+			meshGeometry[i][j].tangent[1] = (float)meshes[i].tangent[normalID][1];
+			meshGeometry[i][j].tangent[2] = (float)meshes[i].tangent[normalID][2];
 		}
 	}
 

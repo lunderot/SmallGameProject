@@ -7,7 +7,8 @@ std::ostream& operator<<(std::ostream& out, const Header& obj)
 		<< "Number of meshes: " << obj.mesh_count << endl
 		<< "Number of materials: " << obj.material_count << endl
 		<< "Number of cameras: " << obj.camera_count << endl
-		<< "Number of lights: " << obj.light_count << endl;
+		<< "Number of lights: " << obj.light_count << endl
+		<< "Number of joints: " << obj.joint_count << endl;
 	return out;
 }
 

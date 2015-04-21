@@ -5,11 +5,11 @@
 
 struct VertexPositionTexCoordNormalBinormalTangent
 {
-	double position[3];
+	float position[3];
 	float texCoord[2];
-	double normal[3];
-	double biNormal[3];
-	double tangent[3];
+	float normal[3];
+	float biNormal[3];
+	float tangent[3];
 };
 
 struct Model
@@ -51,12 +51,14 @@ public:
 	bool extractCameraHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractMaterialHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractLightHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
+	bool extractJointHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 
 	bool extractTransforms(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractMeshes(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractCameras(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractMaterials(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractLights(unsigned int& offset, char* fileData, unsigned int& fileSize);
+	bool extractJoint(unsigned int& offset, char* fileData, unsigned int& fileSize);
 
 	bool constructVerticiesAndGeometry();
 	bool constructModels();
@@ -71,12 +73,14 @@ public:
 	CameraHeader* cameraHeaders;
 	MaterialHeader* materialHeaders;
 	LightHeader* lightHeaders;
+	JointHeader* jointHeaders;
 
 	Transform* transforms;
 	meshStruct* meshes;
 	camera* cameras;
 	Material* materials;
 	Light* lights;
+	Joint* joints;
 };
 
 #endif

@@ -2,7 +2,6 @@
 #include "Transform.h"
 MStatus JointExporter::exportJoint(MFnIkJoint& mayaJoint, std::map<const char*, int>& jointHeiraki, std::map<const char*, int>& transformHeiraki, unsigned int jointCount, JointHeader& jointHeader, Joint& joint)
 {
-	MGlobal::displayInfo("JointExporter::exportJoin()");
 	MS status;
 
 	TransformClass transformExport;
@@ -25,7 +24,6 @@ MStatus JointExporter::exportJoint(MFnIkJoint& mayaJoint, std::map<const char*, 
 
 MStatus JointExporter::exportJointOrientation(MFnIkJoint& mayaJoint, Joint& joint)
 {
-	MGlobal::displayInfo("JointExporter::exportJointOrientation()");
 	MS status = MS::kSuccess;
 	MQuaternion orientation;
 	status = mayaJoint.getOrientation(orientation);
