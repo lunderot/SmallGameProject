@@ -8,7 +8,7 @@
 class MorphAnimations
 {
 public:
-	MStatus exportMorphAnimation(MItDependencyNodes &it, morphAnimationHeader &morphHeader, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap);
+	MStatus exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap);
 
 private:
 	bool AndreasBool = false;

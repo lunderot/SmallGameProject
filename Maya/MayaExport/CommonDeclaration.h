@@ -231,19 +231,6 @@ struct camera
 	friend std::ostream& operator<<(std::ostream& out, const camera& obj);
 };
 
-struct morphAnimationHeader
-{
-
-	friend std::ostream& operator<<(std::ostream& out, const morphAnimationHeader& obj)
-	{
-		out << "Blend Shape name length: " << obj.blendShape_name_length << endl;
-
-		out << "nrOfWeights: " << obj.nrOfWeights << endl
-			<< "nrOfTargets: " << obj.nrOfTargets << endl
-			<< "nrOfVertsPerWeight: " << obj.nrOfVertsPerMesh << endl;
-		return out;
-	}
-};
 struct MorphAnimation
 {
 	unsigned int blendShape_name_length;
@@ -258,7 +245,7 @@ struct MorphAnimation
 	vector <vector<double>> position;
 	const char* blendShapeName;
 
-	void WriteBinary(morphAnimationHeader* header, ofstream& outputfile);
+	void WriteBinary(ofstream& outputfile);
 
 	friend std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj);
 	// vertex

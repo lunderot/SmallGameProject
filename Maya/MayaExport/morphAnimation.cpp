@@ -5,7 +5,7 @@
 #include <maya/MAnimControl.h>
 #include <maya/MItKeyframe.h>
 
-MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnimationHeader &morphHeader, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap)
+MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap)
 {
 	cout << "HEJ MAGNUUUUUUUUUZ ;D ;D" << endl;
 	MStatus status;
@@ -32,7 +32,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 
 	MGlobal::displayInfo(MString() + "Blend Shape: " + fn.name().asChar());
 	morphAnim.blendShapeName = fn.name().asChar();
-	morphHeader.blendShape_name_length = fn.name().length();
+	morphAnim.blendShape_name_length = fn.name().length();
 	fn.getBaseObjects(baseObjects);
 
 	for (unsigned int i = 0; i < baseObjects.length(); i++)
@@ -46,7 +46,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 
 		unsigned int weights = fn.numWeights();
 
-		morphHeader.nrOfWeights = weights;
+		morphAnim.nrOfWeights = weights;
 		MGlobal::displayInfo(MString() + "Nr of Weights: " + weights);
 
 		for (unsigned int j = 0; j < weights; j++)
@@ -55,7 +55,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 
 			fn.getTargets(base, j, targets);
 
-			morphHeader.nrOfTargets = targets.length();
+			morphAnim.nrOfTargets = targets.length();
 			MGlobal::displayInfo(MString() + "Nr of targets: " + targets.length());
 
 			MFnDependencyNode targetDep(targets[j]);
@@ -66,7 +66,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, morphAnima
 			{
 				MItGeometry targetGeo(targets[k]);
 				
-				morphHeader.nrOfVertsPerMesh = targetGeo.count();
+				morphAnim.nrOfVertsPerMesh = targetGeo.count();
 				tmpCount += targetGeo.count();
 				morphAnim.position.resize(tmpCount);
 

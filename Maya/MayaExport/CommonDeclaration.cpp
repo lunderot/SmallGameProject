@@ -38,26 +38,20 @@ std::ostream& operator<<(std::ostream& out, const Transform& obj)
 	return out;
 }
 
-//CameraHeader
-std::ostream& operator<<(std::ostream& out, const CameraHeader& obj)
-{
-	out << "Camera name length: " << obj.name_length << endl
-		<< "Number of parents: " << obj.nrOfParents << endl;
-	return out;
-}
-
 //Camera
-void camera::WriteBinary(CameraHeader* header, ofstream& outputfile)
+void camera::WriteBinary(ofstream& outputfile)
 {
 	//MGlobal::displayInfo(MString() + header->name_length);
 	char* output = (char*) this;
 	outputfile.write((const char*)output, sizeof(camera) - sizeof(const char*) - sizeof(unsigned int*));
-	outputfile.write((const char*)parentID, sizeof(int) * header->nrOfParents);
-	outputfile.write(name, header->name_length);
+	outputfile.write((const char*)parentID, sizeof(int) * nrOfParents);
+	outputfile.write(name, name_length);
 }
 
 std::ostream& operator<<(std::ostream& out, const camera& obj)
 {
+	out << "Camera name length: " << obj.name_length << endl
+		<< "Number of parents: " << obj.nrOfParents << endl;
 	out << "CAMERA" << endl;
 	out	<< "ParentID: " << obj.parentID[0] << endl;
 	out	<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
@@ -183,18 +177,24 @@ std::ostream& operator << (std::ostream& out, const Nurb& obj)
 
 //struct MorphAnimation
 
-void MorphAnimation::WriteBinary(morphAnimationHeader* header, ofstream& outputfile)
+void MorphAnimation::WriteBinary(ofstream& outputfile)
 {
 	//char* output = (char*) this;
 	//outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*));
-	for (unsigned int i = 0; i < header->nrOfVertsPerMesh * header->nrOfWeights; i++)
+	for (unsigned int i = 0; i < nrOfVertsPerMesh * nrOfWeights; i++)
 		outputfile.write((char*)position[i].data(), sizeof(double)* 3);
 
-	outputfile.write(blendShapeName, header->blendShape_name_length);
+	outputfile.write(blendShapeName, blendShape_name_length);
 }
 
 std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 {
+	out << "Blend Shape name length: " << obj.blendShape_name_length << endl;
+
+	out << "nrOfWeights: " << obj.nrOfWeights << endl
+		<< "nrOfTargets: " << obj.nrOfTargets << endl
+		<< "nrOfVertsPerWeight: " << obj.nrOfVertsPerMesh << endl;
+
 	for (unsigned int i = 0; i < obj.position.size(); i++)
 	{
 		out << "Position:" << obj.position[i][0] << "/" << obj.position[i][1] << "/" << obj.position[i][2] << endl;

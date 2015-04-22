@@ -1,7 +1,7 @@
 #include "camera.h"
 #include "CommonDeclaration.h"
 
-MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader& camHeader, map<const char*, int>& transformHeiraki)
+MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, map<const char*, int>& transformHeiraki)
 {
 	MStatus status;
 
@@ -12,7 +12,7 @@ MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader
 		camera.projection = camera.ePerspective;
 
 	// Get the data we need from the camera
-	camHeader.name_length = mayaCamera.name().length();
+	camera.name_length = mayaCamera.name().length();
 	camera.name = mayaCamera.name().asChar();
 
 	MGlobal::displayInfo(MString() + camera.name);
@@ -50,7 +50,7 @@ MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, CameraHeader
 
 	// Parent
 	camera.parentID = new unsigned int[mayaCamera.parentCount()];
-	camHeader.nrOfParents = mayaCamera.parentCount();
+	camera.nrOfParents = mayaCamera.parentCount();
 	for (unsigned int i = 0; i < mayaCamera.parentCount(); i++)
 	{
 		MObject parent = mayaCamera.parent(i);
