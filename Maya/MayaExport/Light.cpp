@@ -2,7 +2,7 @@
 #include "maya/mPlug.h"
 
 //MStatus exportLight::exportLightType(MFnLight& mayaLight, LightHeader& Lheader, Light& oneLight)
-MStatus exportLight::exportLightType(MObject& inputLight, LightHeader& Lheader, Light& oneLight)
+MStatus exportLight::exportLightType(MObject& inputLight, Light& oneLight)
 {
 
 
@@ -55,7 +55,7 @@ MStatus exportLight::exportLightType(MObject& inputLight, LightHeader& Lheader, 
 
 
 	oneLight.name = mayaLight.name().asChar();
-	Lheader.name_Length = mayaLight.name().length();
+	oneLight.name_Length = mayaLight.name().length();
 
 	MGlobal::displayInfo("Maya Light Type: " + MString() + mayaLight.typeName());
 	MGlobal::displayInfo("Maya Decay Type: " + MString() + (Light::decay_type)mayaLight.decayRate(&status));

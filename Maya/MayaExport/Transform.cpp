@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, TransformHeader& transformHeader, Transform& transform)
+MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, Transform& transform)
 {	
 	MStatus status = MS::kSuccess;
 
@@ -18,7 +18,7 @@ MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<co
 		transform.parentID = heiraki[parent.name().asChar()];
 	}
 
-	transformHeader.name_Length = mayaTransform.name(&status).numChars();
+	transform.name_Length = mayaTransform.name(&status).numChars();
 	if (status != MS::kSuccess)
 	{
 		MGlobal::displayInfo("Failure at TransformClass::exportTransform() with 'mayaTransform.name(&status).numChars()'" );

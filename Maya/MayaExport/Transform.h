@@ -9,7 +9,7 @@
 class TransformClass
 {
 public:
-	MStatus exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, TransformHeader& transformHeader, Transform& transform);
+	MStatus exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, Transform& transform);
 private:
 	MStatus exportName(MFnTransform& mayaTransform, Transform& transform);
 	MStatus exportTranslation(MFnTransform& mayaTransform, Transform& transform);

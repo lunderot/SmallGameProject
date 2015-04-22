@@ -8,7 +8,7 @@
 class exportNurb
 {
 public:
-	MStatus exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, NurbHeader& nurbHeader, Nurb& nurbSphere, map<const char*, int> transformHierarchy);
+	MStatus exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, Nurb& nurbSphere, map<const char*, int> transformHierarchy);
 
 };
 

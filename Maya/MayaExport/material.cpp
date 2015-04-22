@@ -1,12 +1,11 @@
 #include "material.h"
 
-MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector, vector<struct Material>& mat_vector, map<const char*, int>& mat_map)
+MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*, int>& mat_map)
 {
 	MStatus status;
 
 	MItDependencyNodes matIt(MFn::kLambert);
 
-	struct MaterialHeader mat_head_struct;
 	struct Material mat_struct;
 
 	while ( !matIt.isDone() ) 
@@ -20,7 +19,7 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 
 			mat_struct.mtrl_type = mat_struct.ePhong;
 			
-			this->commonDiffuseValues(materialFn, mat_struct, mat_head_struct);
+			this->commonDiffuseValues(materialFn, mat_struct);
 			this->commonReflectValues(materialFn, mat_struct);
 
 			plug = materialFn.findPlug("cosinePower");
@@ -28,7 +27,7 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 
 			mat_struct.shininess = 0.0f;
 
-			this->findTextures(materialFn, mat_struct, mat_head_struct);
+			this->findTextures(materialFn, mat_struct);
 			
 		}
 		else if ( matIt.thisNode().hasFn(MFn::kBlinn) )
@@ -40,7 +39,7 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 
 			mat_struct.mtrl_type = mat_struct.eBlinn;
 			
-			this->commonDiffuseValues(materialFn, mat_struct, mat_head_struct);
+			this->commonDiffuseValues(materialFn, mat_struct);
 			this->commonReflectValues(materialFn, mat_struct);
 
 			plug = materialFn.findPlug("eccentricity");
@@ -49,7 +48,7 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 			plug = materialFn.findPlug("specularRollOff");
 			plug.getValue(mat_struct.shininess);
 
-			this->findTextures(materialFn, mat_struct, mat_head_struct);
+			this->findTextures(materialFn, mat_struct);
 			
 		}
 		else if ( matIt.thisNode().hasFn(MFn::kLambert) )
@@ -62,7 +61,7 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 
 			mat_struct.mtrl_type = mat_struct.eLambert;
 			
-			this->commonDiffuseValues(materialFn, mat_struct, mat_head_struct);
+			this->commonDiffuseValues(materialFn, mat_struct);
 
 			mat_struct.shininess = 0.0f;
 			mat_struct.specular[0] = 0.0f;
@@ -74,14 +73,13 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 			mat_struct.reflection[2] = 0.0f;
 			mat_struct.reflection_factor = 0.0f;
 
-			this->findTextures(materialFn, mat_struct, mat_head_struct);
+			this->findTextures(materialFn, mat_struct);
 			
 		}
 		
 		// Write to file or push_back the data here
 		//Johan har lag till
 		MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + mat_vector.size());
-		mat_head_vector.push_back(mat_head_struct);
 		mat_vector.push_back(mat_struct);
 
 		matIt.next();
@@ -90,10 +88,10 @@ MStatus Materials::exportMaterial(vector<struct MaterialHeader>& mat_head_vector
 	return status;
 }
 
-MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, struct Material& matStrct, struct MaterialHeader& matHead)
+MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, Material& matStrct)
 {
 	matStrct.node_name = node.name().asChar();
-	matHead.name_length = node.name().length();
+	matStrct.name_length = node.name().length();
 
 	plug = node.findPlug("colorR");
 	plug.getValue(matStrct.diffuse[0]);
@@ -128,7 +126,7 @@ MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, struct Material&
 	return MStatus::kSuccess;
 }
 
-MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct Material& matStrct)
+MStatus Materials::commonReflectValues(MFnDependencyNode& node, Material& matStrct)
 {
 	plug = node.findPlug("specularColorR");
 	plug.getValue(matStrct.specular[0]);
@@ -149,7 +147,7 @@ MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct Material&
 	return MStatus::kSuccess;
 }
 
-MStatus Materials::findTextures(MFnDependencyNode& node, struct Material& matStrct, struct MaterialHeader& matHead)
+MStatus Materials::findTextures(MFnDependencyNode& node, Material& matStrct)
 {
 	bool asDst = true, asSrc = false;
 	MPlugArray allConnections;
@@ -166,7 +164,7 @@ MStatus Materials::findTextures(MFnDependencyNode& node, struct Material& matStr
 			MFnDependencyNode texture_node(object);
 			MPlug filename = texture_node.findPlug("ftn");
 			matStrct.diffuse_map = filename.name().asChar(); // this might not work
-			matHead.duffuse_map_length = filename.name().length();
+			matStrct.duffuse_map_length = filename.name().length();
 			break;
 		}
 	}
@@ -184,7 +182,7 @@ MStatus Materials::findTextures(MFnDependencyNode& node, struct Material& matStr
 				MFnDependencyNode texture_node(object);
 				MPlug filename = texture_node.findPlug("ftn");
 				matStrct.specular_map = filename.name().asChar(); // this might not work
-				matHead.specular_map_length = filename.name().length();
+				matStrct.specular_map_length = filename.name().length();
 				break;
 			}
 		}
@@ -215,7 +213,7 @@ MStatus Materials::findTextures(MFnDependencyNode& node, struct Material& matStr
 					MFnDependencyNode texture_node(bumpValueObject);
 					MPlug filename = texture_node.findPlug("ftn");
 					matStrct.normal_map = filename.name().asChar(); // this might not work
-					matHead.normal_map_length = filename.name().length();
+					matStrct.normal_map_length = filename.name().length();
 					break;
 				}
 			}

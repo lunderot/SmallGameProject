@@ -36,12 +36,10 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	//--Light
 	exportLight aLight;
-	vector<LightHeader> lighthead;
 	vector<Light> lightbody;
 
 	//--Nurb
 	exportNurb aNurb;
-	vector<NurbHeader> nurbHead;
 	vector<Nurb> nurbBody;
 
 	map<const char*, int> materials;
@@ -49,24 +47,19 @@ MStatus Exporter::doIt(const MArgList& argList)
 	map<const char*, int> jointHeiraki;
 	map<const char*, unsigned int> meshMap;
 	Header header;
-	vector<MaterialHeader> mat_headers;
 	vector<Material> mat;
 	Materials  matExporter;
-	matExporter.exportMaterial(mat_headers, mat, materials);
-	header.material_count = mat_headers.size();
+	matExporter.exportMaterial(mat, materials);
+	header.material_count = mat.size();
 
-	vector<TransformHeader> transformHeaders;
 	vector<Transform> transformData;
 
-	vector<JointHeader> jointHeaders;
 	vector<Joint> joints;
 
 	// camera
 	Camera cam;
-	vector<CameraHeader> camera_header;
 	vector<camera> cameraVec;
 
-	vector <MeshHeader> meshHeader;
 	vector <meshStruct> meshes;
 
 	MorphAnimations morphAnims;
@@ -83,36 +76,32 @@ MStatus Exporter::doIt(const MArgList& argList)
 			{
 				MStatus status;
 				meshStruct newMesh;
-				MeshHeader mayaMeshHeader;
 				MFnMesh mayaMesh(path);
 
-				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, mayaMeshHeader, meshMap);
+				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, meshMap);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at newMesh::exportMesh()");
 					return status;
 				}
 
-				meshHeader.push_back(mayaMeshHeader);
 				meshes.push_back(newMesh);
 				header.mesh_count++;
 			}
 			if (path.apiType() == MFn::kTransform)
 			{
 				//MStatus status;
-				TransformHeader transformHeader;
 				Transform transform;
 
 				TransformClass transformClass;
 
 				MFnTransform mayaTransform(path.node(), &status);
-				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transformHeaders.size(), transformHeader, transform);
+				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transformData.size(), transform);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at TransformClass::exportTransform()");
 					return status;
 				}
-				transformHeaders.push_back(transformHeader);
 				transformData.push_back(transform);
 				header.group_count++;
 			}
@@ -120,15 +109,13 @@ MStatus Exporter::doIt(const MArgList& argList)
 			{
 				MFnCamera mayaCamera(path);
 				camera camera;
-				CameraHeader camHeader;
-				status = cam.exportCamera(mayaCamera, camera, camHeader, transformHeiraki);
+				status = cam.exportCamera(mayaCamera, camera, transformHeiraki);
 
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at Camera::exportCamera()");
 					return status;
 				}
-				camera_header.push_back(camHeader);
 				cameraVec.push_back(camera);
 				header.camera_count++;
 			}
@@ -137,17 +124,15 @@ MStatus Exporter::doIt(const MArgList& argList)
 				MFnIkJoint mayaJoint(path);
 
 				Joint joint;
-				JointHeader jointHeader;
 
 				JointExporter jointExporter;
-				status = jointExporter.exportJoint(mayaJoint, jointHeiraki, transformHeiraki, joints.size(), jointHeader, joint);
+				status = jointExporter.exportJoint(mayaJoint, jointHeiraki, transformHeiraki, joints.size(), joint);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at JointExporter::exportJoint()");
 					return status;
 				}
 
-				jointHeaders.push_back(jointHeader);
 				joints.push_back(joint);
 				header.joint_count++;
 			}
@@ -157,13 +142,12 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.hasFn(MFn::kNonAmbientLight))
 			{
 				MS status;
-				LightHeader eLHeader;
 				Light eOLight;
 
 				//MFnLight eMayaLight(path);
 				//MFnNonAmbientLight eMayaLight(path);
 				MObject eMayaLight = path.node();
-				status = aLight.exportLightType(eMayaLight, eLHeader, eOLight);
+				status = aLight.exportLightType(eMayaLight, eOLight);
 
 			} // ---
 
@@ -171,20 +155,18 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.hasFn(MFn::kNurbsSurface))
 			{
 				MS status;
-				NurbHeader nurbHeader;
 				Nurb structNurb;
 
 				//MFnNurbsSurface eNurb(path);
 				//aNurb.exportNurbSphere(eNurb, nurbHeader, structNurb, transformHeiraki);
 
 				MFnNurbsSurface eNurb = path.node();
-				status = aNurb.exportNurbSphere(eNurb, nurbHeader, structNurb, transformHeiraki);
+				status = aNurb.exportNurbSphere(eNurb, structNurb, transformHeiraki);
 
 				MGlobal::displayInfo("NURB FINNS");
 
 				if (status == MS::kSuccess)
-				{
-					nurbHead.push_back(nurbHeader);
+				{;
 					nurbBody.push_back(structNurb);
 					header.nurb_count++;
 				}
@@ -227,24 +209,14 @@ MStatus Exporter::doIt(const MArgList& argList)
 	//Main header
 	output.writeToFiles(&header, 1);
 
-	//Headers
-	output.writeToFiles(mat_headers.data(), mat_headers.size());
-	output.writeToFiles(transformHeaders.data(), transformHeaders.size());
-	output.writeToFiles(jointHeaders.data(), jointHeaders.size());
-	output.writeToFiles(camera_header.data(), camera_header.size());
-	output.writeToFiles(meshHeader.data(), meshHeader.size());
-	output.writeToFiles(lighthead.data(), lighthead.size());
-	output.writeToFiles(nurbHead.data(), nurbHead.size());
-	//output.writeToFiles(morphHeader.data(), morphHeader.size());
-
 	//Data
-	output.writeToFiles(&mat[0], &mat_headers[0], mat.size());
-	output.writeToFiles(&transformData[0], &transformHeaders[0], transformData.size());
-	output.writeToFiles(&joints[0], &jointHeaders[0], joints.size());
-	output.writeToFiles(&cameraVec[0], &camera_header[0], cameraVec.size());
-	output.writeToFiles(&meshes[0], &meshHeader[0], meshes.size());
-	output.writeToFiles(&lightbody[0], &lighthead[0], lightbody.size());
-	output.writeToFiles(&nurbBody[0], &nurbHead[0], nurbBody.size());
+	output.writeToFiles(&mat[0], mat.size());
+	output.writeToFiles(&transformData[0], transformData.size());
+	output.writeToFiles(&joints[0], joints.size());
+	output.writeToFiles(&cameraVec[0], cameraVec.size());
+	output.writeToFiles(&meshes[0], meshes.size());
+	output.writeToFiles(&lightbody[0], lightbody.size());
+	output.writeToFiles(&nurbBody[0], nurbBody.size());
 	//output.writeToFiles(&morphs[0], &morphHeader[0], morphs.size());
 
 	output.CloseFiles();

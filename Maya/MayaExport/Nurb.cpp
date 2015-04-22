@@ -1,7 +1,7 @@
 #include "Nurb.h"
 #include "maya/mPlug.h"
 
-MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, NurbHeader& nurbHeader, Nurb& nurbSphere, map<const char*, int> transformHierarchy)
+MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, Nurb& nurbSphere, map<const char*, int> transformHierarchy)
 {
 	MS status;
 
@@ -12,7 +12,7 @@ MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, NurbHeader
 	{
 
 		nurbSphere.name = mayaNurbSphere.name().asChar();
-		nurbHeader.name_Length = mayaNurbSphere.name().length();
+		nurbSphere.name_Length = mayaNurbSphere.name().length();
 
 		//oneLight.name = mayaLight.name().asChar();
 		//Lheader.name_Length = mayaLight.name().length();
@@ -59,7 +59,7 @@ MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, NurbHeader
 
 		}
 
-		nurbHeader.numberOfParent = mayaNurbSphere.parentCount();
+		nurbSphere.numberOfParent = mayaNurbSphere.parentCount();
 	}
 
 

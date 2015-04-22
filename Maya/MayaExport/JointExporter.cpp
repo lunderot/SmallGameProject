@@ -1,12 +1,11 @@
 #include "JointExporter.h"
 #include "Transform.h"
-MStatus JointExporter::exportJoint(MFnIkJoint& mayaJoint, std::map<const char*, int>& jointHeiraki, std::map<const char*, int>& transformHeiraki, unsigned int jointCount, JointHeader& jointHeader, Joint& joint)
+MStatus JointExporter::exportJoint(MFnIkJoint& mayaJoint, std::map<const char*, int>& jointHeiraki, std::map<const char*, int>& transformHeiraki, unsigned int jointCount, Joint& joint)
 {
 	MS status;
 
 	TransformClass transformExport;
-	TransformHeader transformHeader;
-	status = transformExport.exportTransform(mayaJoint, jointHeiraki, jointCount, jointHeader.transformHeader, joint.transform );
+	status = transformExport.exportTransform(mayaJoint, jointHeiraki, jointCount, joint.transform );
 	if (status != MS::kSuccess)
 	{
 		MGlobal::displayInfo("Failure at TransformClass::exportTransform()");

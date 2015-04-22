@@ -13,24 +13,18 @@ std::ostream& operator<<(std::ostream& out, const Header& obj)
 	return out;
 }
 
-//TransformHeader
-std::ostream& operator<<(std::ostream& out, const TransformHeader& obj)
-{
-	out << "Transform name length: " << obj.name_Length << endl;
-	return out;
-}
-
 //Transform
-void Transform::WriteBinary(TransformHeader* header, ofstream& outputfile)
+void Transform::WriteBinary(ofstream& outputfile)
 {
 	char* output = (char*) this;
 	outputfile.write(output, sizeof(Transform) - sizeof(const char*));
-	outputfile.write(name, sizeof(const char) * header->name_Length);
+	outputfile.write(name, sizeof(const char) * name_Length);
 }
 
 std::ostream& operator<<(std::ostream& out, const Transform& obj)
 {
-	out << "ParentID: " << obj.parentID << endl
+	out << "Transform name length: " << obj.name_Length << endl
+		<< "ParentID: " << obj.parentID << endl
 		<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 		<< "Rotation: " << obj.rotation[0] << ' ' << obj.rotation[1] << ' ' << obj.rotation[2] << ' ' << obj.rotation[3] << endl
 		<< "Scale: " << obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2] << endl
@@ -66,25 +60,15 @@ std::ostream& operator<<(std::ostream& out, const camera& obj)
 	return out;
 }
 
-//MaterialHeader
-std::ostream& operator<<(std::ostream& out, const MaterialHeader& obj)
-{
-	out << "Material name lenght: " << obj.name_length << endl
-		<< "Diffuse map name lenght: " << obj.duffuse_map_length << endl
-		<< "Normal map name lenght: " << obj.normal_map_length << endl
-		<< "Specular map name lenght: " << obj.specular_map_length << endl;
-	return out;
-}
-
 //Mateial
-void Material::WriteBinary(MaterialHeader* header, ofstream& outputfile)
+void Material::WriteBinary(ofstream& outputfile)
 {
 	char* output = (char*) this;
 	outputfile.write((const char*)output, sizeof(Material) - sizeof(const char*) * 4);
-	outputfile.write(node_name, sizeof(char) * header->name_length);
-	outputfile.write(diffuse_map, sizeof(char) * header->duffuse_map_length);
-	outputfile.write(normal_map, sizeof(char) * header->normal_map_length);
-	outputfile.write(specular_map, sizeof(char) * header->specular_map_length);
+	outputfile.write(node_name, sizeof(char) * name_length);
+	outputfile.write(diffuse_map, sizeof(char) * duffuse_map_length);
+	outputfile.write(normal_map, sizeof(char) * normal_map_length);
+	outputfile.write(specular_map, sizeof(char) * specular_map_length);
 }
 
 std::ostream& operator<<(std::ostream& out, const Material& obj)
@@ -117,25 +101,18 @@ std::ostream& operator<<(std::ostream& out, const Material& obj)
 	return out;
 }
 
-
-// LightHeader
-std::ostream& operator<<(std::ostream& out, const LightHeader& obj)
-{
-	out << "Light name length: " << obj.name_Length<< endl;
-	return out;
-}
-
 // Light 
-void Light::WriteBinary(LightHeader* header, ofstream& outputfile)
+void Light::WriteBinary(ofstream& outputfile)
 {
 	char* output = (char*) this;
 	outputfile.write(output, sizeof(Light)-sizeof(const char*));
-	outputfile.write(name, header->name_Length);
+	outputfile.write(name, name_Length);
 }
 
 std::ostream& operator<<(std::ostream& out, const Light& obj)
 {
 	out << "LIGHT" << endl
+		<< "Light name length: " << obj.name_Length << endl
 		<< "Name of light: " << obj.name << endl
 		<< "Light type: " << obj.type << endl
 		<< "Decay type: " << obj.dType << endl
@@ -146,27 +123,21 @@ std::ostream& operator<<(std::ostream& out, const Light& obj)
 	return out;
 }
 
-// NurbHeader
-std::ostream& operator<<(std::ostream& out, const NurbHeader& obj)
-{
-	out << " Nurb name lengtht: " << obj.name_Length << endl
-		<< " Number of nurbs: " << obj.numberOfParent << endl;
-	return out;
-}
-
 // Nurb
-void Nurb::WriteBinary(NurbHeader* header, ofstream& outputfile)
+void Nurb::WriteBinary( ofstream& outputfile)
 {
 	char* output = (char*) this;
 	outputfile.write(output, sizeof(Nurb) - sizeof(const char*) - sizeof(int*) -4);
-	outputfile.write((const char*)parentID, sizeof(int) * header->numberOfParent);
-	outputfile.write(name, header->name_Length);
+	outputfile.write((const char*)parentID, sizeof(int) * numberOfParent);
+	outputfile.write(name, name_Length);
 }
 
 // Nurb
 std::ostream& operator << (std::ostream& out, const Nurb& obj)
 {
 	out << "NURB" << endl
+		<<" Nurb name lengtht: " << obj.name_Length << endl
+		<< " Number of nurbs: " << obj.numberOfParent << endl
 		<< "Name of nurb: " << obj.name << endl
 		<< "Radius: " << obj.radius << endl
 		<< "Parent ID: " << obj.parentID[0] << endl;
