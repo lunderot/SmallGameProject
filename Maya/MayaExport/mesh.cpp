@@ -1,7 +1,7 @@
 #include "mesh.h"
 #include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, MeshHeader& mayaMeshHeader, map<const char*, unsigned int> meshMap)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, map<const char*, unsigned int> meshMap)
 {
 	MStatus status;
 	MString cmdAll = "select -r " + mesh.name();
@@ -14,8 +14,8 @@ MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<co
 	MGlobal::executeCommand(cmdF, triangles, true, false);
 	if (faces[0] == triangles[0])
 	{
-		status = exportMaterial(mesh, materials, meshes, mayaMeshHeader);
-		status = exportVertices(mesh, transformHeiraki, materials, meshes, mayaMeshHeader);
+		status = exportMaterial(mesh, materials, meshes);
+		status = exportVertices(mesh, transformHeiraki, materials, meshes);
 		status = exportJoints(mesh);
 	}
 	else
@@ -29,7 +29,7 @@ MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<co
 	return status;
 }
 
-MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
+MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, meshStruct& meshes)
 {
 	MItDependencyNodes it(MFn::kLambert);
 	for (; !it.isDone(); it.next())
@@ -39,7 +39,7 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, me
 	}
 
 	MPlugArray material_array;
-	meshes.material_Id.resize(mesh.parentCount());
+	meshes.material_Id = new int[mesh.parentCount()];
 	for (unsigned int i = 0; i < mesh.parentCount(); i++)
 	{
 		MObjectArray shader_array;
@@ -67,13 +67,13 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, me
 		else
 			meshes.material_Id[i] = -1;
 
-		mayaMeshHeader.material_count = mesh.parentCount();
+		meshes.material_count = mesh.parentCount();
 	}
 
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, int>& materials, meshStruct& meshes, MeshHeader& mayaMeshHeader)
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, int>& materials, meshStruct& meshes)
 {
 	MStatus status;
 
@@ -82,12 +82,13 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	// POSITION - get information
 	MPointArray vertex_array;
 	mesh.getPoints(vertex_array, MSpace::kObject);
-	meshes.position.resize(vertex_array.length());
+	meshes.position = new double*[vertex_array.length()];
 	for (unsigned int i = 0; i < vertex_array.length(); i++)
 	{
-		meshes.position[i].push_back(vertex_array[i].x);
-		meshes.position[i].push_back(vertex_array[i].y);
-		meshes.position[i].push_back(vertex_array[i].z);
+		meshes.position[i] = new double[3];
+		meshes.position[i][0] = vertex_array[i].x;
+		meshes.position[i][1] = vertex_array[i].y;
+		meshes.position[i][2] = vertex_array[i].z;
 	}
 	MGlobal::displayInfo("");
 
@@ -95,44 +96,48 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MFloatArray u_array;
 	MFloatArray v_array;
 	mesh.getUVs(u_array, v_array, NULL);
-	meshes.uv.resize(u_array.length());
+	meshes.uv = new float*[u_array.length()];
 	for (unsigned int i = 0; i < u_array.length(); i++)
 	{
-		meshes.uv[i].push_back(u_array[i]);
-		meshes.uv[i].push_back(v_array[i]);
+		meshes.uv[i] = new float[2];
+		meshes.uv[i][0] = u_array[i];
+		meshes.uv[i][1] = v_array[i];
 	}
-	
+
 	// NORMAL - get information
 	MFloatVectorArray normal_array_vector;
 	mesh.getNormals(normal_array_vector, MSpace::kObject);
-	meshes.normal.resize(normal_array_vector.length());
+	meshes.normal = new double*[normal_array_vector.length()];
 	for (unsigned int i = 0; i < normal_array_vector.length(); i++)
 	{
-		meshes.normal[i].push_back(normal_array_vector[i].x);
-		meshes.normal[i].push_back(normal_array_vector[i].y);
-		meshes.normal[i].push_back(normal_array_vector[i].z);
+		meshes.normal[i] = new double[3];
+		meshes.normal[i][0] = normal_array_vector[i].x;
+		meshes.normal[i][1] = normal_array_vector[i].y;
+		meshes.normal[i][2] = normal_array_vector[i].z;
 	}
 
 	// TANGENT - get information
 	MFloatVectorArray tangent_array_vector;
 	mesh.getTangents(tangent_array_vector, MSpace::kObject, NULL);
-	meshes.tangent.resize(tangent_array_vector.length());
+	meshes.tangent = new double*[tangent_array_vector.length()];
 	for (unsigned int i = 0; i < tangent_array_vector.length(); i++)
 	{
-		meshes.tangent[i].push_back(tangent_array_vector[i].x);
-		meshes.tangent[i].push_back(tangent_array_vector[i].y);
-		meshes.tangent[i].push_back(tangent_array_vector[i].z);
+		meshes.tangent[i] = new double[3];
+		meshes.tangent[i][0] = tangent_array_vector[i].x;
+		meshes.tangent[i][1] = tangent_array_vector[i].y;
+		meshes.tangent[i][2] = tangent_array_vector[i].z;
 	}
 
 	// BI-NORMAL "BI-TANGENT" - fix information
 	MFloatVectorArray biNormal_array_vector;
 	mesh.getBinormals(biNormal_array_vector, MSpace::kObject, NULL);
-	meshes.bi_tangent.resize(biNormal_array_vector.length());
+	meshes.bi_tangent = new double*[biNormal_array_vector.length()];
 	for (unsigned int i = 0; i < biNormal_array_vector.length(); i++)
 	{
-		meshes.bi_tangent[i].push_back(biNormal_array_vector[i].x);
-		meshes.bi_tangent[i].push_back(biNormal_array_vector[i].y);
-		meshes.bi_tangent[i].push_back(biNormal_array_vector[i].z);
+		meshes.bi_tangent[i] = new double[3];
+		meshes.bi_tangent[i][0] = biNormal_array_vector[i].x;
+		meshes.bi_tangent[i][1] = biNormal_array_vector[i].y;
+		meshes.bi_tangent[i][2] = biNormal_array_vector[i].z;
 	}
 
 
@@ -158,10 +163,19 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MIntArray normalcount_array;
 	MIntArray normalId_array;
 	mesh.getNormalIds(normalcount_array, normalId_array);
+
+	meshes.name_length = mesh.name().length();
+	meshes.vertex_count = vertex_array.length();
+	meshes.indice_count = indicie_array.length();
+	meshes.position_count = vertex_array.length();
+	meshes.uv_count = u_array.length();
+	meshes.normal_count = normal_array_vector.length();
+	meshes.tangent_count = tangent_array_vector.length();
+	meshes.biTangent_count = biNormal_array_vector.length();
+	meshes.transform_count = mesh.parentCount;
 	
 
-
-	mayaMeshHeader.name_length = mesh.name().length();
+	/*mayaMeshHeader.name_length = mesh.name().length();
 	mayaMeshHeader.vertex_count = vertex_array.length();
 	mayaMeshHeader.indice_count = indicie_array.length();
 	mayaMeshHeader.position_count = vertex_array.length();
@@ -169,18 +183,18 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	mayaMeshHeader.normal_count = normal_array_vector.length();
 	mayaMeshHeader.tangent_count = tangent_array_vector.length();
 	mayaMeshHeader.biTangent_count = biNormal_array_vector.length();
-	mayaMeshHeader.transform_count = mesh.parentCount();
-	
+	mayaMeshHeader.transform_count = mesh.parentCount();*/
+
 	meshes.name = mesh.name().asChar();
-	meshes.vertices.resize(indicie_array.length());
+	meshes.vertices = new Vertex[indicie_array.length()];
 	for (unsigned int i = 0; i < indicie_array.length(); i++)
 	{
 		meshes.vertices[i].position = indicie_array[i];
 		meshes.vertices[i].uv = uvId_array[i];
 		meshes.vertices[i].normal = normalId_array[i];
 	}
-	
-	meshes.transform_Id.resize(mayaMeshHeader.transform_count);
+
+	meshes.transform_Id = new int[meshes.transform_count];
 	for (unsigned int i = 0; i < mesh.parentCount(); i++)
 	{
 		MObject parent = mesh.parent(i);
@@ -192,9 +206,9 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	MGlobal::displayInfo(MString() + "name: " + meshes.name);
 	MGlobal::displayInfo("-----");
 	MGlobal::displayInfo("STRUCT - MESHHEADER");
-	MGlobal::displayInfo(MString() + "name_length: " + mayaMeshHeader.name_length);
-	MGlobal::displayInfo(MString() + "vertex_count: " + mayaMeshHeader.vertex_count);
-	MGlobal::displayInfo(MString() + "indice_count: " + mayaMeshHeader.indice_count);
+	MGlobal::displayInfo(MString() + "name_length: " + meshes.name_length);
+	MGlobal::displayInfo(MString() + "vertex_count: " + meshes.vertex_count);
+	MGlobal::displayInfo(MString() + "indice_count: " + meshes.indice_count);
 
 	return MStatus::kSuccess;
 }

@@ -97,7 +97,7 @@ struct meshStruct
 	unsigned int biTangent_count;
 	unsigned int material_count;
 	unsigned int transform_count;
-	unsigned int joint_count;
+	//unsigned int joint_count;
 	bool has_Animation;
 
 	double** position;
