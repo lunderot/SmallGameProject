@@ -555,7 +555,7 @@ bool Importer::extractNurb(unsigned int& offset, char* fileData, unsigned int& f
 		unsigned int test3 = sizeof(int*);
 		unsigned int test4 = sizeof(float);
 
-		extractedNurb.parentID = new unsigned int[nurbHeaders[i].numberOfParent];
+		extractedNurb.parentID = new int[nurbHeaders[i].numberOfParent];
 		memcpy(extractedNurb.parentID, &fileData[offset], nurbHeaders[i].numberOfParent * sizeof(int));
 		offset += nurbHeaders[i].numberOfParent * sizeof(int);
 
@@ -611,13 +611,13 @@ bool Importer::constructModels()
 
 	models = new Model[numModels];
 	
-	unsigned int modelID = 0;
+	int modelID = 0;
 
 	for (unsigned int i = 0; i < headers.mesh_count; i++)
 	{
 		for (unsigned int j = 0; j < meshHeaders[i].transform_count; j++)
 		{
-			unsigned int& parent = meshes[i].transform_Id[j];
+			int parent = meshes[i].transform_Id[j];
 
 			while (parent != -1)
 			{
@@ -686,7 +686,7 @@ bool Importer::constructSpere()
 	{
 		for (unsigned int j = 0; j < nurbHeaders[i].numberOfParent; j++)
 		{
-			unsigned int& parent = nurbs[i].parentID[j];
+			int parent = nurbs[i].parentID[j];
 
 			while (parent != -1)
 			{

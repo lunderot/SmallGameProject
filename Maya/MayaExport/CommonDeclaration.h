@@ -23,35 +23,22 @@ struct Header
 	friend std::ostream& operator<<(std::ostream& out, const Header& obj);
 };
 
-struct TransformHeader
-{
-	unsigned int name_Length;
-
-	friend std::ostream& operator<<(std::ostream& out, const TransformHeader& obj);
-};
-
 struct Transform
 {
+	~Transform()
+	{
+		delete[] name;
+	};
+	unsigned int name_Length;
 	int parentID;
 	double position[3];
 	double rotation[4];
 	double scale[3];
 	const char* name;
 
-	void WriteBinary(TransformHeader* header, ofstream& outputfile);
+	void WriteBinary(ofstream& outputfile);
 
 	friend std::ostream& operator<<(std::ostream& out, const Transform& obj);
-};
-
-struct JointHeader
-{
-	TransformHeader	transformHeader;
-
-	friend std::ostream& operator<<(std::ostream& out, const JointHeader& obj)
-	{
-		out << "Joint name length: " << obj.transformHeader.name_Length << endl;
-		return out;
-	}
 };
 
 struct Joint
@@ -59,11 +46,11 @@ struct Joint
 	double jointOrientation[4];
 	Transform transform;
 
-	void WriteBinary(JointHeader* header, ofstream& outputfile)
+	void WriteBinary(ofstream& outputfile)
 	{
 		char* output = (char*) this;
 		outputfile.write((const char*)output, sizeof(double) * 4);
-		transform.WriteBinary(&header->transformHeader, outputfile);
+		transform.WriteBinary(outputfile);
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const Joint& obj)
@@ -78,8 +65,28 @@ struct Joint
 	}
 };
 
-struct MeshHeader
+
+struct Vertex
 {
+	unsigned int position;
+	unsigned int uv;
+	unsigned int normal;
+
+	friend std::ostream& operator<<(std::ostream& out, const Vertex& obj)
+	{
+		out << obj.position <<
+			" / " << obj.uv <<
+			" / " << obj.normal;
+		return out;
+	}
+};
+
+struct meshStruct
+{
+	~meshStruct()
+	{
+		delete[] name;
+	};
 	unsigned int name_length;
 	unsigned int vertex_count;
 	unsigned int indice_count;
@@ -93,9 +100,49 @@ struct MeshHeader
 	unsigned int joint_count;
 	bool has_Animation;
 
-	friend std::ostream& operator<<(std::ostream& out, const MeshHeader& obj)
+	double** position;
+	float** uv;
+	double** normal;
+	double** tangent;
+	double** bi_tangent;
+
+	int* transform_Id;
+	int* material_Id;
+	Vertex* vertices;
+	const char* name;
+
+	void WriteBinary(ofstream& outputfile)
 	{
-		out << "Name Length: " << obj.name_length << endl
+		//char* output = (char*) this;
+		//outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*));
+		for (unsigned int i = 0; i < position_count; i++)
+			outputfile.write((char*)position[i], sizeof(double) * 3);
+
+		for (unsigned int i = 0; i < uv_count; i++)
+			outputfile.write((char*)uv[i], sizeof(float) * 2);
+
+		for (unsigned int i = 0; i < normal_count; i++)
+			outputfile.write((char*)normal[i], sizeof(double) * 3);
+
+		for (unsigned int i = 0; i < tangent_count; i++)
+			outputfile.write((char*)tangent[i], sizeof(double) * 3);
+
+		for (unsigned int i = 0; i < biTangent_count; i++)
+			outputfile.write((char*)bi_tangent[i], sizeof(double) * 3);
+
+		outputfile.write((char*)transform_Id, transform_count * sizeof(int));
+
+		outputfile.write((char*)material_Id, material_count * sizeof(int));
+
+		outputfile.write((char*)vertices, indice_count * sizeof(Vertex));
+
+		outputfile.write(name, name_length);
+	}
+
+	friend std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
+	{
+		out << "Mesh Name: " << obj.name << endl
+			<< "Name Length: " << obj.name_length << endl
 			<< "Vertex Count: " << obj.vertex_count << endl
 			<< "Indices Count: " << obj.indice_count << endl
 			<< "Position Count: " << obj.position_count << endl
@@ -104,71 +151,9 @@ struct MeshHeader
 			<< "tangent Count: " << obj.tangent_count << endl
 			<< "bi-Tangent Count: " << obj.biTangent_count << endl
 			<< "Material Count: " << obj.material_count << endl
-			<< "Transform Count: " << obj.transform_count << endl;
-		return out;
-	}
-};
-
-struct Vertex
-{
-	unsigned int position;
-	unsigned int uv;
-	unsigned int normal;
-
-	friend std::ostream& operator<<(std::ostream& out, const Vertex& obj)
-	{
-		out	<< obj.position << 
-			" / " << obj.uv <<
-			" / " << obj.normal;
-		return out;
-	}
-};
-
-struct meshStruct
-{
-	vector <vector<double>> position;
-	vector <vector<float>> uv;
-	vector <vector<double>> normal;
-	vector <vector<double>> tangent;
-	vector <vector<double>> bi_tangent;
-
-	vector <unsigned int> transform_Id;
-	vector <int> material_Id;
-	vector <Vertex> vertices;
-	const char* name;
-
-	void WriteBinary(MeshHeader* header, ofstream& outputfile)
-	{
-		//char* output = (char*) this;
-		//outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*));
-		for (unsigned int i = 0; i < header->position_count; i++)
-			outputfile.write((char*) position[i].data(), sizeof(double) * 3);
-
-		for (unsigned int i = 0; i < header->uv_count; i++)
-			outputfile.write((char*)uv[i].data(), sizeof(float) * 2);
-
-		for (unsigned int i = 0; i < header->normal_count; i++)
-			outputfile.write((char*)normal[i].data(), sizeof(double) * 3);
-
-		for (unsigned int i = 0; i < header->tangent_count; i++)
-			outputfile.write((char*)tangent[i].data(), sizeof(double) * 3);
-
-		for (unsigned int i = 0; i < header->biTangent_count; i++)
-			outputfile.write((char*)bi_tangent[i].data(), sizeof(double) * 3);
-
-		outputfile.write((char*)transform_Id.data(), header->transform_count * sizeof(int));
-
-		outputfile.write((char*)material_Id.data(), header->material_count * sizeof(int));
-
-		outputfile.write((char*)vertices.data(), header->indice_count * sizeof(Vertex));
-
-		outputfile.write(name, header->name_length);
-	}
-
-	friend std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
-	{
-		out << "Mesh Name: " << obj.name << endl
+			<< "Transform Count: " << obj.transform_count << endl
 			<< "Transform id: " << endl;
+
 		for (unsigned int i = 0; i < obj.transform_Id.size(); i++)
 		{
 			out << obj.transform_Id[i] << endl;
@@ -208,7 +193,7 @@ struct meshStruct
 		{
 			if (tmp == 0 || tmp == 3)
 			{
-				out << "Face " <<  tmp_faceCounter << ": " << endl;
+				out << "Face " << tmp_faceCounter << ": " << endl;
 				tmp_faceCounter++;
 				tmp = 0;
 			}
@@ -220,16 +205,16 @@ struct meshStruct
 	}
 };
 
-struct CameraHeader
-{
-	unsigned int name_length;
-	unsigned int nrOfParents;
-
-	friend std::ostream& operator<<(std::ostream& out, const CameraHeader& obj);
-};
-
 struct camera
 {
+	~camera()
+	{
+		delete[] parentID;
+		delete[] name;
+	};
+
+	unsigned int name_length;
+	unsigned int nrOfParents;
 	double position[3];
 	double up_vector[3];
 	double interest_position[3];
@@ -241,18 +226,13 @@ struct camera
 	unsigned int* parentID;
 	const char* name;
 
-	void WriteBinary(CameraHeader* header, ofstream& outputfile);
+	void WriteBinary(ofstream& outputfile);
 
 	friend std::ostream& operator<<(std::ostream& out, const camera& obj);
 };
 
 struct morphAnimationHeader
 {
-	unsigned int blendShape_name_length;
-
-	unsigned int nrOfWeights;
-	unsigned int nrOfTargets;
-	unsigned int nrOfVertsPerMesh;
 
 	friend std::ostream& operator<<(std::ostream& out, const morphAnimationHeader& obj)
 	{
@@ -266,9 +246,16 @@ struct morphAnimationHeader
 };
 struct MorphAnimation
 {
-	vector <vector<double>> position;
+	unsigned int blendShape_name_length;
+
+	unsigned int nrOfWeights;
+	unsigned int nrOfTargets;
+	unsigned int nrOfVertsPerMesh;
+
 	unsigned int meshID;
 	unsigned int nrOfKeys;
+
+	vector <vector<double>> position;
 	const char* blendShapeName;
 
 	void WriteBinary(morphAnimationHeader* header, ofstream& outputfile);
@@ -278,24 +265,11 @@ struct MorphAnimation
 	// color
 };
 
-struct MaterialHeader
-{
-	MaterialHeader()
-	{
-		name_length = duffuse_map_length = normal_map_length = specular_map_length = 0;
-	}
-	unsigned int name_length;
-	unsigned int duffuse_map_length;
-	unsigned int normal_map_length;
-	unsigned int specular_map_length;
-
-	friend std::ostream& operator<<(std::ostream& out, const MaterialHeader& obj);
-};
-
 struct Material
 {
 	Material()
 	{
+		name_length = duffuse_map_length = normal_map_length = specular_map_length = 0;
 		mtrl_type = eLambert;
 		normal_depth = specular_factor = shininess = reflection_factor = diffuse_factor = 0;
 		specular[3] = reflection[3] = ambient[3] = diffuse[3] = transparency_color[3] = incandescence[3] = { 0.0f };
@@ -304,6 +278,19 @@ struct Material
 		normal_map = nullptr;
 		specular_map = nullptr;
 	}
+
+	~Material()
+	{
+		delete[] node_name;
+		delete[] diffuse_map;
+		delete[] normal_map;
+		delete[] specular_map;
+	};
+
+	unsigned int name_length;
+	unsigned int duffuse_map_length;
+	unsigned int normal_map_length;
+	unsigned int specular_map_length;
 	enum material_type { eLambert, eBlinn, ePhong } mtrl_type;
 	double normal_depth;
 	double specular[3];
@@ -321,7 +308,7 @@ struct Material
 	const char* normal_map;
 	const char* specular_map;
 
-	void WriteBinary(MaterialHeader* header, ofstream& outputfile);
+	void WriteBinary(ofstream& outputfile);
 
 	friend std::ostream& operator<<(std::ostream& out, const Material& obj);
 };
@@ -335,16 +322,15 @@ struct Animation
 	// bla bla
 };
 
-struct LightHeader
-{
-	unsigned int name_Length;
-	friend std::ostream& operator<<(std::ostream& out, const LightHeader& obj);
-};
-
 struct Light
 {
 	//char name[];
+	~Light()
+	{
+		delete[] name;
+	};
 
+	unsigned int name_Length;
 	enum light_type{ ePoint, eDirectional, eSpot, eArea, eVolume }type;
 	double color[3];
 	float intensity;
@@ -354,26 +340,25 @@ struct Light
 	double shadow_color[3];
 	const char* name;
 
-	void WriteBinary(LightHeader* header, ofstream& outputfile);
+	void WriteBinary(ofstream& outputfile);
 	friend std::ostream& operator<<(std::ostream& out, const Light& obj);
-
-};
-
-struct NurbHeader
-{
-	unsigned int name_Length;
-	unsigned int numberOfParent;
-	friend std::ostream& operator<<(std::ostream& out, const NurbHeader& obj);
 
 };
 
 struct Nurb
 {
+	//~Nurb()
+	//{
+	//	delete[] parentID;
+	//	delete[] name;
+	//};
+	unsigned int name_Length;
+	unsigned int numberOfParent;
 	float radius;
-	unsigned int* parentID;
+	int* parentID;
 	const char* name;
 
-	void WriteBinary(NurbHeader* header, ofstream& outputfile);
+	void WriteBinary(ofstream& outputfile);
 	friend std::ostream& operator<<(std::ostream& out, const Nurb& obj);
 };
 

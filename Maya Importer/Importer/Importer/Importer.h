@@ -16,10 +16,10 @@ struct BoundingSphere
 {
 	BoundingSphere()
 	{
-		position[0] = 0;
-		position[1] = 0;
-		position[2] = 0;
-		radius = 0;
+		position[0] = 0.0;
+		position[1] = 0.0;
+		position[2] = 0.0;
+		radius = 0.0f;
 	};
 	double position[3];
 	float radius;
@@ -31,16 +31,16 @@ struct Model
 	{
 		MeshID = 0;
 		MaterialID = 0;
-		position[0] = 0;
-		position[1] = 0;
-		position[2] = 0;
-		rotation[0] = 0;
-		rotation[1] = 0;
-		rotation[2] = 0;
-		rotation[3] = 1;
-		scale[0] = 1;
-		scale[1] = 1;
-		scale[2] = 1;
+		position[0] = 0.0;
+		position[1] = 0.0;
+		position[2] = 0.0;
+		rotation[0] = 0.0f;
+		rotation[1] = 0.0f;
+		rotation[2] = 0.0f;
+		rotation[3] = 1.0f;
+		scale[0] = 1.0;
+		scale[1] = 1.0;
+		scale[2] = 1.0;
 	};
 	unsigned int MeshID;
 	unsigned int MaterialID;

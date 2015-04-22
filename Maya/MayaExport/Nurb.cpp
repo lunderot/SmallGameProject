@@ -48,7 +48,7 @@ MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, NurbHeader
 		//					PARENT ID                         //
 		// ---------------------------------------------------//
 
-		nurbSphere.parentID = new unsigned int[mayaNurbSphere.parentCount()];
+		nurbSphere.parentID = new int[mayaNurbSphere.parentCount()];
 		for (unsigned int i = 0; i < mayaNurbSphere.parentCount(); i++)
 		{
 			MObject parent = mayaNurbSphere.parent(i);
