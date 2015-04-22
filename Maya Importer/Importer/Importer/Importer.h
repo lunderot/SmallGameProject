@@ -75,13 +75,6 @@ public:
 
 //Allt här under lär bli private
 	bool extractMainHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
-	bool extractTransformHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
-	bool extractMeshHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
-	bool extractCameraHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
-	bool extractMaterialHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
-	bool extractLightHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
-	bool extractJointHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
-	bool extractNurbHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 
 	bool extractTransforms(unsigned int& offset, char* fileData, unsigned int& fileSize);
 	bool extractMeshes(unsigned int& offset, char* fileData, unsigned int& fileSize);
@@ -101,14 +94,6 @@ public:
 	BoundingSphere* spheres;
 
 	Header headers;
-
-	TransformHeader* transformHeaders;
-	MeshHeader* meshHeaders;
-	CameraHeader* cameraHeaders;
-	MaterialHeader* materialHeaders;
-	LightHeader* lightHeaders;
-	JointHeader* jointHeaders;
-	NurbHeader* nurbHeaders;
 
 	Transform* transforms;
 	meshStruct* meshes;

@@ -172,7 +172,7 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeira
 	meshes.normal_count = normal_array_vector.length();
 	meshes.tangent_count = tangent_array_vector.length();
 	meshes.biTangent_count = biNormal_array_vector.length();
-	meshes.transform_count = mesh.parentCount;
+	meshes.transform_count = mesh.parentCount();
 	
 
 	/*mayaMeshHeader.name_length = mesh.name().length();

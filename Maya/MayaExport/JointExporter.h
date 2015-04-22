@@ -4,6 +4,7 @@
 #include "maya_includes.h"
 #include <vector>
 #include <map>
+#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 
 using namespace std;

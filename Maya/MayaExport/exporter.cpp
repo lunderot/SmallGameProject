@@ -8,7 +8,7 @@
 #include "Light.h"
 #include "Nurb.h"
 
-
+#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 #include "material.h"
 #include "Transform.h"
@@ -63,7 +63,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 	vector <meshStruct> meshes;
 
 	MorphAnimations morphAnims;
-	vector<morphAnimationHeader> morphHeader;
 	vector <MorphAnimation> morphs;
 
 	MDagPath testdag;
@@ -181,7 +180,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	while (!it.isDone())
 	{
-		morphAnimationHeader morphHead;
 		MorphAnimation morphAnim;
 		MObject testing = it.item();
 		MFnDagNode storetest(testing);
@@ -193,8 +191,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 		MGlobal::displayInfo(MString() + "nanananananame: " + wuut.name());
 		MGlobal::displayInfo(MString() + "nanananananame: " + MString() + anim.numKeys());
 
-		morphAnims.exportMorphAnimation(it, morphHead, morphAnim, meshMap);
-		morphHeader.push_back(morphHead);
+		morphAnims.exportMorphAnimation(it, morphAnim, meshMap);
 		morphs.push_back(morphAnim);
 
 		it.next();

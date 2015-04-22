@@ -2,6 +2,7 @@
 #define WRITETOFILE_H
 
 #include "maya_includes.h"
+#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 #include <fstream>
 #include <string>
@@ -33,26 +34,6 @@ public:
 			MGlobal::displayInfo("Writhing to binaryfile");
 			for (unsigned int i = startIndex; i < numOfElementToWrite + startIndex; i++)
 				toWrite[i].WriteBinary(binFile);
-		}
-	}
-
-	template <typename dataType>
-	//Used for non-pointers
-	void writeToFiles(dataType* toWrite, unsigned int numOfElementToWrite = 1, unsigned int startIndex = 0)
-	{
-		MGlobal::displayInfo("WriteToFile::writeToFiles()");
-		if (binFile.is_open())
-		{
-			MGlobal::displayInfo("Writhing to binaryfile");
-			for (unsigned int i = startIndex; i < numOfElementToWrite + startIndex; i++)
-				binFile.write((const char*)&toWrite[i], sizeof(dataType));
-		}
-
-		if (ASCIIFile.is_open())
-		{
-			MGlobal::displayInfo("Writhing to ASCIIfile");
-			for (unsigned int i = startIndex; i < numOfElementToWrite + startIndex; i++)
-				ASCIIFile << toWrite[i] << endl;
 		}
 	}
 

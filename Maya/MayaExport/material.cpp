@@ -1,24 +1,24 @@
 #include "material.h"
 
-MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*, int>& mat_map)
+MStatus Materials::exportMaterial( vector<Material>& mat_vector, map<const char*, int>& mat_map)
 {
-	MStatus status;
+	MStatus status = MStatus::kSuccess;
 
 	MItDependencyNodes matIt(MFn::kLambert);
 
-	struct Material mat_struct;
+	Material mat_struct;
 
-	while ( !matIt.isDone() ) 
+	while (!matIt.isDone())
 	{
-		if ( matIt.thisNode().hasFn(MFn::kPhong) )
+		if (matIt.thisNode().hasFn(MFn::kPhong))
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
-			MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + materialFn.name().asChar());
+
 			//Johan har lag till
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.ePhong;
-			
+
 			this->commonDiffuseValues(materialFn, mat_struct);
 			this->commonReflectValues(materialFn, mat_struct);
 
@@ -28,17 +28,17 @@ MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*,
 			mat_struct.shininess = 0.0f;
 
 			this->findTextures(materialFn, mat_struct);
-			
+
 		}
-		else if ( matIt.thisNode().hasFn(MFn::kBlinn) )
+		else if (matIt.thisNode().hasFn(MFn::kBlinn))
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
-			MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + materialFn.name().asChar());
+
 			//Johan har lag till
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.eBlinn;
-			
+
 			this->commonDiffuseValues(materialFn, mat_struct);
 			this->commonReflectValues(materialFn, mat_struct);
 
@@ -49,18 +49,17 @@ MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*,
 			plug.getValue(mat_struct.shininess);
 
 			this->findTextures(materialFn, mat_struct);
-			
+
 		}
-		else if ( matIt.thisNode().hasFn(MFn::kLambert) )
+		else if (matIt.thisNode().hasFn(MFn::kLambert))
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
 
-			MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + materialFn.name().asChar());
 			//Johan har lag till
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.eLambert;
-			
+
 			this->commonDiffuseValues(materialFn, mat_struct);
 
 			mat_struct.shininess = 0.0f;
@@ -74,12 +73,11 @@ MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*,
 			mat_struct.reflection_factor = 0.0f;
 
 			this->findTextures(materialFn, mat_struct);
-			
+
 		}
-		
+
 		// Write to file or push_back the data here
 		//Johan har lag till
-		MGlobal::displayInfo(MString() + "gewfiuygweuyfgew2e31iuy: " + mat_vector.size());
 		mat_vector.push_back(mat_struct);
 
 		matIt.next();
@@ -126,7 +124,7 @@ MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, Material& matStr
 	return MStatus::kSuccess;
 }
 
-MStatus Materials::commonReflectValues(MFnDependencyNode& node, Material& matStrct)
+MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct Material& matStrct)
 {
 	plug = node.findPlug("specularColorR");
 	plug.getValue(matStrct.specular[0]);
@@ -223,4 +221,3 @@ MStatus Materials::findTextures(MFnDependencyNode& node, Material& matStrct)
 
 	return MStatus::kSuccess;
 }
-

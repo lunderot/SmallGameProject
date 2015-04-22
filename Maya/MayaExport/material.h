@@ -1,12 +1,12 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
-
 #include "maya_includes.h"
 #include <maya/MPlug.h>
 
 #include <string>
 #include <vector>
 #include <map>
+#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 
 using namespace std;

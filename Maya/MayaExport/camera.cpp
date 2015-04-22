@@ -1,4 +1,5 @@
 #include "camera.h"
+#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 
 MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, map<const char*, int>& transformHeiraki)

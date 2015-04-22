@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 #include "maya_includes.h"
+#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 #include "Transform.h"
 #include <fstream>

@@ -9,24 +9,6 @@ int main()
 	out << importer.headers << endl;
 
 	for (unsigned int i = 0; i < importer.headers.material_count; i++)
-		out << importer.materialHeaders[i] << endl;
-
-	for (unsigned int i = 0; i < importer.headers.group_count; i++)
-		out << importer.transformHeaders[i] << endl;
-
-	for (unsigned int i = 0; i < importer.headers.joint_count; i++)
-		out << importer.jointHeaders[i] << endl;
-
-	for (unsigned int i = 0; i < importer.headers.camera_count; i++)
-		out << importer.cameraHeaders[i] << endl;
-
-	for (unsigned int i = 0; i < importer.headers.light_count; i++)
-		out << importer.lightHeaders[i] << endl;
-
-	for (unsigned int i = 0; i < importer.headers.nurb_count; i++)
-		out << importer.nurbHeaders[i] << endl;
-
-	for (unsigned int i = 0; i < importer.headers.material_count; i++)
 		out << importer.materials[i] << endl;
 
 	for (unsigned int i = 0; i < importer.headers.group_count; i++)

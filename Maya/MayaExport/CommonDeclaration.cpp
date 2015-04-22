@@ -1,6 +1,13 @@
 #include "CommonDeclaration.h"
 
 //Header
+
+void Header::WriteBinary(ofstream& outputfile)
+{
+	char* output = (char*) this;
+	outputfile.write(output, sizeof(Header));
+}
+
 std::ostream& operator<<(std::ostream& out, const Header& obj)
 {
 	out << "Number of groups: " << obj.group_count << endl
@@ -126,8 +133,9 @@ std::ostream& operator<<(std::ostream& out, const Light& obj)
 // Nurb
 void Nurb::WriteBinary( ofstream& outputfile)
 {
+
 	char* output = (char*) this;
-	outputfile.write(output, sizeof(Nurb) - sizeof(const char*) - sizeof(int*) -4);
+	outputfile.write(output, sizeof(Nurb) - sizeof(const char*) - sizeof(int*));
 	outputfile.write((const char*)parentID, sizeof(int) * numberOfParent);
 	outputfile.write(name, name_Length);
 }
@@ -172,6 +180,101 @@ std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 	}
 	out << "blendShapeName" << obj.blendShapeName << endl
 		<< "Mesh ID: " << obj.meshID << endl;
+
+	return out;
+}
+
+//meshStruct
+void meshStruct::WriteBinary(ofstream& outputfile)
+{
+	char* output = (char*) this;
+	outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*) * 9 - 3);
+
+	for (unsigned int i = 0; i < position_count; i++)
+		outputfile.write((char*)position[i], sizeof(double) * 3);
+
+	for (unsigned int i = 0; i < uv_count; i++)
+		outputfile.write((char*)uv[i], sizeof(float) * 2);
+
+	for (unsigned int i = 0; i < normal_count; i++)
+		outputfile.write((char*)normal[i], sizeof(double) * 3);
+
+	for (unsigned int i = 0; i < tangent_count; i++)
+		outputfile.write((char*)tangent[i], sizeof(double) * 3);
+
+	for (unsigned int i = 0; i < biTangent_count; i++)
+		outputfile.write((char*)bi_tangent[i], sizeof(double) * 3);
+
+	outputfile.write((char*)transform_Id, transform_count * sizeof(int));
+
+	outputfile.write((char*)material_Id, material_count * sizeof(int));
+
+	outputfile.write((char*)vertices, indice_count * sizeof(Vertex));
+
+	outputfile.write(name, name_length);
+}
+
+std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
+{
+	out << "Mesh Name: " << obj.name << endl
+		<< "Name Length: " << obj.name_length << endl
+		<< "Vertex Count: " << obj.vertex_count << endl
+		<< "Indices Count: " << obj.indice_count << endl
+		<< "Position Count: " << obj.position_count << endl
+		<< "Uv Count: " << obj.uv_count << endl
+		<< "Normal Count: " << obj.normal_count << endl
+		<< "tangent Count: " << obj.tangent_count << endl
+		<< "bi-Tangent Count: " << obj.biTangent_count << endl
+		<< "Material Count: " << obj.material_count << endl
+		<< "Transform Count: " << obj.transform_count << endl
+		<< "Transform id: " << endl;
+
+	for (unsigned int i = 0; i < obj.transform_count; i++)
+	{
+		out << obj.transform_Id[i] << endl;
+	}
+
+	out << "Material id: " << endl;
+
+	for (unsigned int i = 0; i < obj.material_count; i++)
+	{
+		out << obj.material_Id[i] << endl;
+	}
+
+	for (unsigned int i = 0; i < obj.position_count; i++)
+	{
+		out << "Position " << i << ": " << obj.position[i][0] << " " << obj.position[i][1] << " " << obj.position[i][2] << endl;
+	}
+	for (unsigned int i = 0; i < obj.uv_count; i++)
+	{
+		out << "UV " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << endl;
+	}
+	for (unsigned int i = 0; i < obj.normal_count; i++)
+	{
+		out << "Normal " << i << ": " << obj.normal[i][0] << " " << obj.normal[i][1] << " " << obj.normal[i][2] << endl;
+	}
+	for (unsigned int i = 0; i < obj.tangent_count; i++)
+	{
+		out << "Tangent " << i << ": " << obj.tangent[i][0] << " " << obj.tangent[i][1] << " " << obj.tangent[i][2] << endl;
+	}
+	for (unsigned int i = 0; i < obj.biTangent_count; i++)
+	{
+		out << "Bi-Tangent " << i << ": " << obj.bi_tangent[i][0] << " " << obj.bi_tangent[i][1] << " " << obj.bi_tangent[i][2] << endl;
+	}
+
+	int tmp = 0;
+	int tmp_faceCounter = 0;
+	for (unsigned int i = 0; i < obj.indice_count; i++)
+	{
+		if (tmp == 0 || tmp == 3)
+		{
+			out << "Face " << tmp_faceCounter << ": " << endl;
+			tmp_faceCounter++;
+			tmp = 0;
+		}
+		out << obj.vertices[i] << endl;
+		tmp++;
+	}
 
 	return out;
 }
