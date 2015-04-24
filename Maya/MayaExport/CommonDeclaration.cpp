@@ -98,11 +98,11 @@ std::ostream& operator<<(std::ostream& out, const Material& obj)
 		out << obj.diffuse_map;
 	out << endl
 		<< "Normal map: ";
-	if (obj.diffuse_map != nullptr)
+	if (obj.normal_map != nullptr)
 		out << obj.normal_map;
 	out << endl
 		<< "Specular map: ";
-	if (obj.diffuse_map != nullptr)
+	if (obj.specular_map != nullptr)
 		out << obj.specular_map;
 	out << endl;
 	return out;
