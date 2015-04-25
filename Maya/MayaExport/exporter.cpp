@@ -15,6 +15,8 @@
 #include "camera.h"
 #include "JointExporter.h"
 #include "morphAnimation.h"
+#include "Keyframe.h"
+#include "SkeletonAnimation.h"
 #include "writeToFile.h"
 
 #include <iostream>
@@ -64,6 +66,11 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	MorphAnimations morphAnims;
 	vector <MorphAnimation> morphs;
+
+	Keyframe keyFrame;
+	SkeletonAnimation skelAnim;
+	vector<Keyframes> keysStorage;
+	vector<SkinAnimation> skinStorage;
 
 	MDagPath testdag;
 
@@ -185,16 +192,52 @@ MStatus Exporter::doIt(const MArgList& argList)
 		MFnDagNode storetest(testing);
 		MFnDependencyNode wuut(testing);
 		MFnAnimCurve anim(testing, &status);
-		
-		//MGlobal::displayInfo(MString() + "FAKAKAKFAKFAKAKFAKFA: " + );
-		MGlobal::displayInfo(MString() + "nanananananame: " + anim.parentNamespace().asChar());
-		MGlobal::displayInfo(MString() + "nanananananame: " + wuut.name());
-		MGlobal::displayInfo(MString() + "nanananananame: " + MString() + anim.numKeys());
 
 		morphAnims.exportMorphAnimation(it, morphAnim, meshMap);
 		morphs.push_back(morphAnim);
 
 		it.next();
+	}
+
+
+	MGlobal::displayInfo(MString() + "=============================================");
+	// Skin animation
+	MItDependencyNodes skinLoop(MFn::kSkinClusterFilter);
+
+	while (!skinLoop.isDone())
+	{
+		MS status = MS::kSuccess;
+		SkinAnimation skin;
+
+		MObject animSkin = skinLoop.item();
+
+		skelAnim.exportSkin(animSkin, skin, jointHeiraki, meshMap);
+		//for (int c = 0; c < skin.skinVertexCount; c++)
+		//	MGlobal::displayInfo(MString() + skin.influenceWeights[c].influenceObject[0] + " " + skin.influenceWeights[c].weight[0]);
+
+		skinStorage.push_back(skin);
+
+		skinLoop.next();
+	}
+
+	// Keyframes
+	MItDependencyNodes curveLoop(MFn::kAnimCurve);
+
+	while (!curveLoop.isDone())
+	{
+		MS status = MS::kSuccess;
+		Keyframes key;
+
+		MObject animCurve = curveLoop.item();
+
+		status = keyFrame.exportKeyframes(animCurve, key, transformHeiraki, jointHeiraki);
+
+		if (status == MS::kSuccess)
+		{
+			keysStorage.push_back(key);
+		}
+
+		curveLoop.next();
 	}
 
 	//Printing to files
@@ -214,7 +257,9 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&meshes[0], meshes.size());
 	output.writeToFiles(&lightbody[0], lightbody.size());
 	output.writeToFiles(&nurbBody[0], nurbBody.size());
-	//output.writeToFiles(&morphs[0], &morphHeader[0], morphs.size());
+	output.writeToFiles(&morphs[0], morphs.size());
+	output.writeToFiles(&skinStorage[0], skinStorage.size());
+	output.writeToFiles(&keysStorage[0], keysStorage.size());
 
 	output.CloseFiles();
 	return MStatus::kSuccess;

@@ -68,7 +68,6 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnima
 				
 				morphAnim.nrOfVertsPerMesh = targetGeo.count();
 				tmpCount += targetGeo.count();
-				morphAnim.position.resize(tmpCount);
 
 				MTime start = MAnimControl::animationStartTime();
 				MTime end = MAnimControl::animationEndTime();
@@ -106,17 +105,21 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnima
 				}
 
 				//MGlobal::displayInfo(MString() + targetGeo.count);
+				morphAnim.position = new double*[morphAnim.nrOfVertsPerMesh];
 				while (!targetGeo.isDone())
 				{
 					MPoint p = targetGeo.position();
-					morphAnim.position[counter].push_back(p.x);
-					morphAnim.position[counter].push_back(p.y);
-					morphAnim.position[counter].push_back(p.z);
+					morphAnim.position[counter] = new double[3];
+					morphAnim.position[counter][0] = p.x;
+					morphAnim.position[counter][1] = p.y;
+					morphAnim.position[counter][2] = p.z;
+
 					MGlobal::displayInfo(MString() + "Position: " + p.x + "/" + p.y + "/" + p.z);
 					counter++;
 					targetGeo.next();
 				}
 			}
+			morphAnim.nrOfPositions = tmpCount;
 		}
 
 		// enable envelope

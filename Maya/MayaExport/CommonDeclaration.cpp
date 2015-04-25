@@ -160,8 +160,8 @@ void MorphAnimation::WriteBinary(ofstream& outputfile)
 {
 	//char* output = (char*) this;
 	//outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*));
-	for (unsigned int i = 0; i < nrOfVertsPerMesh * nrOfWeights; i++)
-		outputfile.write((char*)position[i].data(), sizeof(double)* 3);
+	for (unsigned int i = 0; i < nrOfPositions; i++)
+		outputfile.write((char*)position[i], sizeof(double) * 3);
 
 	outputfile.write(blendShapeName, blendShape_name_length);
 }
@@ -174,9 +174,9 @@ std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 		<< "nrOfTargets: " << obj.nrOfTargets << endl
 		<< "nrOfVertsPerWeight: " << obj.nrOfVertsPerMesh << endl;
 
-	for (unsigned int i = 0; i < obj.position.size(); i++)
+	for (unsigned int i = 0; i < obj.nrOfPositions; i++)
 	{
-		out << "Position:" << obj.position[i][0] << "/" << obj.position[i][1] << "/" << obj.position[i][2] << endl;
+		out << "Position " << i << ": " << obj.position[i][0] << " " << obj.position[i][1] << " " << obj.position[i][2] << endl;
 	}
 	out << "blendShapeName" << obj.blendShapeName << endl
 		<< "Mesh ID: " << obj.meshID << endl;
@@ -274,6 +274,63 @@ std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 		}
 		out << obj.vertices[i] << endl;
 		tmp++;
+	}
+
+	return out;
+}
+
+void SkinAnimation::WriteBinary(ofstream& outputfile)
+{
+	char* output = (char*) this;
+	outputfile.write(output, sizeof(SkinAnimation) - sizeof(VertexInfluence*) - sizeof(int*));
+	outputfile.write((const char*)influenceIndices, sizeof(int) * numberOfInfluences);
+	outputfile.write((const char*)influenceWeights, sizeof(VertexInfluence) * skinVertexCount);
+}
+
+std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj)
+{
+	out << "Number of influences: " << obj.numberOfInfluences << endl
+		<< "Skin mesh index: " << obj.skinMeshIndex << endl
+		<< "Skin vertex count: " << obj.skinVertexCount << endl;
+
+	for (unsigned int i = 0; i < obj.numberOfInfluences; i++)
+	{
+		out << "Influence object " << i + 1 << " index: " << obj.influenceIndices[i] << endl;
+	}
+
+	for (unsigned int i = 0; i < obj.skinVertexCount; i++)
+	{
+		out << "Vertex " << i + 1 << ": " << endl
+			<< obj.influenceWeights[i];
+	}
+
+	return out;
+}
+
+void Keyframes::WriteBinary(ofstream& outputfile)
+{
+	char* output = (char*) this;
+	outputfile.write(output, sizeof(Keyframes) - sizeof(KeyframePoint*) - sizeof(const char*) * 2);
+	outputfile.write(curveName, curveNameLength);
+	outputfile.write(attachToName, attachToNameLength);
+	outputfile.write((const char*)points, sizeof(KeyframePoint) * numberOfKeyframes);
+}
+
+std::ostream& operator<<(std::ostream& out, const Keyframes& obj)
+{
+	out << "Curve name:" << obj.curveName << endl
+		<< "Attribute name: " << obj.attachToName << endl
+		<< "Curve name length: " << obj.curveNameLength << endl
+		<< "Attribute name length: " << obj.attachToNameLength << endl
+		<< "Loop the animation: " << obj.loopAnimation << endl
+		<< "Affected object type: " << obj.affectedObjectType << endl
+		<< "Affected object index: " << obj.affectedObjectIndex << endl
+		<< "Number of keyframes: " << obj.numberOfKeyframes << endl;
+
+	for (unsigned int i = 0; i < obj.numberOfKeyframes; i++)
+	{
+		out << "Keyframe " << i + 1 << ": " << endl
+			<< obj.points[i];
 	}
 
 	return out;

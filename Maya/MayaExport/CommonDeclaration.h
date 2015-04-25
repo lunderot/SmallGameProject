@@ -192,7 +192,8 @@ struct MorphAnimation
 	unsigned int meshID;
 	unsigned int nrOfKeys;
 
-	vector <vector<double>> position;
+	double** position;
+	unsigned int nrOfPositions;
 	const char* blendShapeName;
 
 	void WriteBinary(ofstream& outputfile);
@@ -251,15 +252,6 @@ struct Material
 	friend std::ostream& operator<<(std::ostream& out, const Material& obj);
 };
 
-struct Animation
-{
-	unsigned int joint_ID[4];
-	double joint_weight[4];
-	// bone-id
-	// weight
-	// bla bla
-};
-
 struct Light
 {
 	//char name[];
@@ -303,4 +295,119 @@ struct Nurb
 	friend std::ostream& operator<<(std::ostream& out, const Nurb& obj);
 };
 
+// Handles a single point on the Graph Editor's curve. This represents a single keyframe.
+struct KeyframePoint
+{
+	// Time of the point in seconds
+	double time;
+	// The attribute's value
+	double value;
+	// The point's in and out tangent positions in X and Y direction.
+	float tangentInX;
+	float tangentInY;
+	float tangentOutX;
+	float tangentOutY;
+	// Which type of input and output curve the point has.
+	enum type { 
+		kTangentGlobal,
+		kTangentFixed,
+		kTangentLinear,
+		kTangentFlat,
+		kTangentSmooth,
+		kTangentStep,
+		kTangentSlow,
+		kTangentFast,
+		kTangentClamped,
+		kTangentPlateau,
+		kTangentStepNext
+	} inputTangentType;
+	enum type outputTangentType;
+
+	friend std::ostream& operator<<(std::ostream& out, const KeyframePoint& obj)
+	{
+		out << "Located at " << obj.time << " seconds" << endl
+			<< "Value: " << obj.value << endl
+			<< "Input tangent at:  X = " << obj.tangentInX << " Y = " << obj.tangentInY << endl
+			<< "Output tangent at: X = " << obj.tangentOutX << " Y = " << obj.tangentOutY << endl
+			<< "Input tangent type:  " << obj.inputTangentType << endl
+			<< "Output tangent type: " << obj.outputTangentType << endl;
+
+		return out;
+	}
+};
+
+struct Keyframes
+{
+#ifndef MAYA_EXPORT
+	~Keyframes()
+	{
+		delete[] points;
+		delete[] curveName;
+		delete[] attachToName;
+	};
 #endif
+	unsigned int curveNameLength;
+	// Whether the animation should loop indefinitely.
+	bool loopAnimation;
+	// What type of object the keyframes are linked to.
+	enum type { kJoint, kTransform, kBlendShape, kOther } affectedObjectType;
+	// Which index the linked object has.
+	unsigned int affectedObjectIndex;
+	unsigned int numberOfKeyframes;
+	unsigned int attachToNameLength;
+	KeyframePoint* points;
+	const char* curveName;
+	// Which attribute to attach to. Needs to be non-const because *Maya*.
+	char* attachToName;
+
+	void WriteBinary(ofstream& outputfile);
+	friend std::ostream& operator<<(std::ostream& out, const Keyframes& obj);
+};
+
+// Holds the four influence objects' indices and their weights for a single vertex.
+// The first index is paired with the first weight. The second with the second, and so on. 
+// An index of -1 should be ignored when parsed.
+struct VertexInfluence
+{
+	// The index of the influence object.
+	int influenceObject[4];
+	// The weight of the respective index. Is normalized.
+	double weight[4];
+
+	friend std::ostream& operator<<(std::ostream& out, const VertexInfluence& obj)
+	{
+		out << "Influence object index " << obj.influenceObject[0] << " weight: " << obj.weight[0] << endl
+			<< "Influence object index " << obj.influenceObject[1] << " weight: " << obj.weight[1] << endl
+			<< "Influence object index " << obj.influenceObject[2] << " weight: " << obj.weight[2] << endl
+			<< "Influence object index " << obj.influenceObject[3] << " weight: " << obj.weight[3] << endl;
+
+		return out;
+	}
+};
+
+struct SkinAnimation
+{
+#ifndef MAYA_EXPORT
+	~SkinAnimation()
+	{
+		delete[] influenceWeights;
+		delete[] influenceIndices;
+	};
+#endif
+	// The number of influence objects (e.g. the number of joints).
+	unsigned int numberOfInfluences;
+	// The index of the mesh to influence.
+	unsigned int skinMeshIndex;
+	// The number of vertices (and therefore weights) on the mesh.
+	unsigned int skinVertexCount;
+
+	// The data of weights for every vertex. Are as many as there are verts on the mesh.
+	VertexInfluence* influenceWeights;
+	// The indices for the influence objects (e.g. the indices for the joints).
+	int* influenceIndices;
+
+	void WriteBinary(ofstream& outputfile);
+	friend std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj);
+};
+
+#endif // COMMONDECLARATION_H

@@ -1,7 +1,7 @@
 #include "mesh.h"
 #include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int> transformHeiraki, meshStruct& meshes, map<const char*, unsigned int> meshMap)
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int>& transformHeiraki, meshStruct& meshes, map<const char*, unsigned int>& meshMap)
 {
 	MStatus status;
 	MString cmdAll = "select -r " + mesh.name();
@@ -73,7 +73,7 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, me
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int> transformHeiraki, map<const char*, int>& materials, meshStruct& meshes)
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeiraki, map<const char*, int>& materials, meshStruct& meshes)
 {
 	MStatus status;
 
