@@ -243,9 +243,9 @@ struct Material
 	double transparency_color[3];
 	double incandescence[3];
 	const char* node_name;
-	const char* diffuse_map;
-	const char* normal_map;
-	const char* specular_map;
+	char* diffuse_map;
+	char* normal_map;
+	char* specular_map;
 
 	void WriteBinary(ofstream& outputfile);
 

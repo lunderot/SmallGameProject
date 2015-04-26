@@ -71,7 +71,7 @@ std::ostream& operator<<(std::ostream& out, const camera& obj)
 void Material::WriteBinary(ofstream& outputfile)
 {
 	char* output = (char*) this;
-	outputfile.write((const char*)output, sizeof(Material) - sizeof(const char*) * 4);
+	outputfile.write((const char*)output, sizeof(Material) - sizeof(const char*) - sizeof(char*) * 3);
 	outputfile.write(node_name, sizeof(char) * name_length);
 	outputfile.write(diffuse_map, sizeof(char) * duffuse_map_length);
 	outputfile.write(normal_map, sizeof(char) * normal_map_length);

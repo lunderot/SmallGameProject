@@ -78,7 +78,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	Header header;
 	vector<Material> mat;
 	Materials  matExporter;
-	matExporter.exportMaterial(mat, materials);
+	matExporter.exportMaterial(mat, materials, outputDir);
 	header.material_count = mat.size();
 
 	vector<Transform> transformData;

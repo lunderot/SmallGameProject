@@ -1,8 +1,13 @@
 #include "material.h"
+#include <Windows.h>
 
-MStatus Materials::exportMaterial( vector<Material>& mat_vector, map<const char*, int>& mat_map)
+using namespace std;
+
+MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*, int>& mat_map, std::string output_dir)
 {
 	MStatus status = MStatus::kSuccess;
+
+	this->outputDir = output_dir;
 
 	MItDependencyNodes matIt(MFn::kLambert);
 
@@ -14,7 +19,6 @@ MStatus Materials::exportMaterial( vector<Material>& mat_vector, map<const char*
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
 
-			//Johan har lag till
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.ePhong;
@@ -34,7 +38,6 @@ MStatus Materials::exportMaterial( vector<Material>& mat_vector, map<const char*
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
 
-			//Johan har lag till
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.eBlinn;
@@ -55,7 +58,6 @@ MStatus Materials::exportMaterial( vector<Material>& mat_vector, map<const char*
 		{
 			MFnDependencyNode materialFn(matIt.thisNode());
 
-			//Johan har lag till
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
 			mat_struct.mtrl_type = mat_struct.eLambert;
@@ -77,7 +79,6 @@ MStatus Materials::exportMaterial( vector<Material>& mat_vector, map<const char*
 		}
 
 		// Write to file or push_back the data here
-		//Johan har lag till
 		mat_vector.push_back(mat_struct);
 
 		matIt.next();
@@ -161,8 +162,26 @@ MStatus Materials::findTextures(MFnDependencyNode& node, Material& matStrct)
 		{
 			MFnDependencyNode texture_node(object);
 			MPlug filename = texture_node.findPlug("ftn");
-			matStrct.diffuse_map = filename.name().asChar(); // this might not work
-			matStrct.duffuse_map_length = filename.name().length();
+
+			string temp = filename.asString().asChar();
+			int lastSlash = temp.find_last_of("/");
+			string fileName = temp.substr(lastSlash + 1);
+
+			matStrct.duffuse_map_length = fileName.size();
+
+			string tempOut = this->outputDir;
+			tempOut.append("/");
+			tempOut.append(fileName);
+
+			matStrct.diffuse_map = new char[fileName.size() + 1];
+			for (unsigned int x = 0; x < matStrct.duffuse_map_length; x++)
+			{
+				matStrct.diffuse_map[x] = fileName[x];
+			}
+			matStrct.diffuse_map[matStrct.duffuse_map_length] = '\0';
+
+			CopyFile(temp.c_str(), tempOut.c_str(), TRUE);
+
 			break;
 		}
 	}
@@ -179,8 +198,26 @@ MStatus Materials::findTextures(MFnDependencyNode& node, Material& matStrct)
 			{
 				MFnDependencyNode texture_node(object);
 				MPlug filename = texture_node.findPlug("ftn");
-				matStrct.specular_map = filename.name().asChar(); // this might not work
-				matStrct.specular_map_length = filename.name().length();
+
+				string temp = filename.asString().asChar();
+				int lastSlash = temp.find_last_of("/");
+				string fileName = temp.substr(lastSlash + 1);
+
+				matStrct.specular_map_length = fileName.size();
+
+				string tempOut = this->outputDir;
+				tempOut.append("/");
+				tempOut.append(fileName);
+
+				matStrct.specular_map = new char[fileName.size() + 1];
+				for (unsigned int x = 0; x < matStrct.specular_map_length; x++)
+				{
+					matStrct.specular_map[x] = fileName[x];
+				}
+				matStrct.specular_map[matStrct.specular_map_length] = '\0';
+
+				CopyFile(temp.c_str(), tempOut.c_str(), TRUE);
+
 				break;
 			}
 		}
@@ -210,8 +247,26 @@ MStatus Materials::findTextures(MFnDependencyNode& node, Material& matStrct)
 				{
 					MFnDependencyNode texture_node(bumpValueObject);
 					MPlug filename = texture_node.findPlug("ftn");
-					matStrct.normal_map = filename.name().asChar(); // this might not work
-					matStrct.normal_map_length = filename.name().length();
+
+					string temp = filename.asString().asChar();
+					int lastSlash = temp.find_last_of("/");
+					string fileName = temp.substr(lastSlash + 1);
+
+					matStrct.normal_map_length = fileName.size();
+
+					string tempOut = this->outputDir;
+					tempOut.append("/");
+					tempOut.append(fileName);
+
+					matStrct.normal_map = new char[fileName.size() + 1];
+					for (unsigned int x = 0; x < matStrct.normal_map_length; x++)
+					{
+						matStrct.normal_map[x] = fileName[x];
+					}
+					matStrct.normal_map[matStrct.normal_map_length] = '\0';
+
+					CopyFile(temp.c_str(), tempOut.c_str(), TRUE);
+
 					break;
 				}
 			}
