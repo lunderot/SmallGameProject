@@ -3,6 +3,9 @@
 #include "maya_includes.h"
 #include <maya/MFnBlendShapeDeformer.h>
 #include <maya/MFnAnimCurve.h>
+#include <maya/MSyntax.h>
+#include <maya/MArgDatabase.h>
+#include <maya/MArgList.h>
 
 
 #include "Light.h"
@@ -27,6 +30,30 @@ using namespace std;
 
 MStatus Exporter::doIt(const MArgList& argList)
 {
+	MArgDatabase argData(newSyntax(), argList);
+
+	if (argData.isFlagSet("-outputDir"))
+	{
+		MString tempString;
+		argData.getFlagArgument("-outputDir", 0, tempString);
+		this->outputDir = tempString.asChar();
+	}
+	else
+	{
+		this->outputDir = "";
+	}
+
+	if (argData.isFlagSet("-fileName"))
+	{
+		MString tempString;
+		argData.getFlagArgument("-fileName", 0, tempString);
+		this->fileName = tempString.asChar();
+	}
+	else
+	{
+		this->fileName = "";
+	}
+
 	MStatus status;
 
 	MDagPath path;
@@ -199,8 +226,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 		it.next();
 	}
 
-
-	MGlobal::displayInfo(MString() + "=============================================");
 	// Skin animation
 	MItDependencyNodes skinLoop(MFn::kSkinClusterFilter);
 
@@ -242,8 +267,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	//Printing to files
 	WriteToFile output;
-	output.binaryFilePath("C://test.bin");
-	output.ASCIIFilePath("C://testASCII.txt");
+	output.binaryFilePath(this->outputDir + "/" + this->fileName + ".bin");
+	output.ASCIIFilePath(this->outputDir + "/" + this->fileName + "ASCII.txt");
 	output.OpenFiles();
 
 	//Main header
@@ -263,7 +288,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	output.CloseFiles();
 	return MStatus::kSuccess;
+}
 
+MSyntax Exporter::newSyntax()
+{
+	MSyntax syntax;
+
+	syntax.addFlag("-od", "-outputDir", MSyntax::kString);
+	syntax.addFlag("-fn", "-fileName", MSyntax::kString);
+
+	return syntax;
 }
 
 void* Exporter::creator()

@@ -5,29 +5,6 @@
 
 using namespace std;
 
-
-class MyCommand : public MPxCommand
-{
-public:
-	MyCommand() {};
-	virtual MStatus doIt(const MArgList& argList);
-	static void* creator();
-protected:
-private:
-};
-
-void* MyCommand::creator()
-{
-	return new MyCommand; 
-}
-
-MStatus MyCommand::doIt(const MArgList& argList)
-{
-	MGlobal::displayInfo("Hello World!");
-	return MS::kSuccess;
-}
-
-
 EXPORT MStatus initializePlugin(MObject obj)
 {
 	MStatus res = MS::kSuccess;
@@ -37,7 +14,7 @@ EXPORT MStatus initializePlugin(MObject obj)
 	{
 		CHECK_MSTATUS(res);
 	}
-	res = myPlugin.registerCommand("myCommand", Exporter::creator);
+	res = myPlugin.registerCommand("exportToBin", Exporter::creator);
 
 	MGlobal::displayInfo("Maya plugin loaded!");
 
@@ -48,7 +25,7 @@ EXPORT MStatus uninitializePlugin(MObject obj)
 {
 	MFnPlugin plugin(obj);
 
-	MStatus res = plugin.deregisterCommand("myCommand");
+	MStatus res = plugin.deregisterCommand("exportToBin");
 	MGlobal::displayInfo("Maya plugin unloaded!");
 
 	return MS::kSuccess;
