@@ -181,6 +181,11 @@ MStatus Exporter::doIt(const MArgList& argList)
 				//MFnNonAmbientLight eMayaLight(path);
 				MObject eMayaLight = path.node();
 				status = aLight.exportLightType(eMayaLight, eOLight);
+				if (status == MS::kSuccess)
+				{
+					lightbody.push_back(eOLight);
+					header.light_count++;
+				}
 
 			} // ---
 
