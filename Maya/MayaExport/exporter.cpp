@@ -242,10 +242,10 @@ MStatus Exporter::doIt(const MArgList& argList)
 		MObject animSkin = skinLoop.item();
 
 		skelAnim.exportSkin(animSkin, skin, jointHeiraki, meshMap);
-		//for (int c = 0; c < skin.skinVertexCount; c++)
-		//	MGlobal::displayInfo(MString() + skin.influenceWeights[c].influenceObject[0] + " " + skin.influenceWeights[c].weight[0]);
 
 		skinStorage.push_back(skin);
+
+		header.skin_count++;
 
 		skinLoop.next();
 	}
@@ -265,6 +265,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 		if (status == MS::kSuccess)
 		{
 			keysStorage.push_back(key);
+			header.anim_curve_count++;
 		}
 
 		curveLoop.next();

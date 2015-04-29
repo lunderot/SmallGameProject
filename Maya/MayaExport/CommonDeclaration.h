@@ -9,7 +9,7 @@ struct Header
 {
 	Header()
 	{
-		group_count = mesh_count = material_count = camera_count = joint_count = light_count = nurb_count = 0;
+		group_count = mesh_count = material_count = camera_count = joint_count = light_count = nurb_count = anim_curve_count = skin_count = 0;
 	};
 
 	unsigned int group_count;
@@ -19,6 +19,8 @@ struct Header
 	unsigned int light_count;
 	unsigned int joint_count;
 	unsigned int nurb_count;
+	unsigned int anim_curve_count;
+	unsigned int skin_count;
 
 	void WriteBinary(ofstream& outputfile);
 	friend std::ostream& operator<<(std::ostream& out, const Header& obj);
