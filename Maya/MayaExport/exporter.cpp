@@ -227,6 +227,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 		morphAnims.exportMorphAnimation(it, morphAnim, meshMap);
 		morphs.push_back(morphAnim);
+		header.morph_count++;
 
 		it.next();
 	}

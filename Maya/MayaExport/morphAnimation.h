@@ -9,9 +9,5 @@ class MorphAnimations
 {
 public:
 	MStatus exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap);
-
-private:
-	bool AndreasBool = false;
-	double rainbow;
 };
 #endif

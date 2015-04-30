@@ -7,7 +7,6 @@
 
 MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap)
 {
-	cout << "HEJ MAGNUUUUUUUUUZ ;D ;D" << endl;
 	MStatus status;
 	unsigned int counter = 0;
 	unsigned int tmpCount = 0;
@@ -26,7 +25,6 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnima
 
 	MObject test = shapePlug.asMObject();
 	MFnMesh testMesh(test);
-	MGlobal::displayInfo(MString() + "Super duper test mesh name: " + testMesh.name().asChar());
 
 	MObjectArray baseObjects;
 

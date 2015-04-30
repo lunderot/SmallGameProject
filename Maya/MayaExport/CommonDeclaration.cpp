@@ -18,7 +18,8 @@ std::ostream& operator<<(std::ostream& out, const Header& obj)
 		<< "Number of joints: " << obj.joint_count << endl
 		<< "Number of nurbSurfices: " << obj.nurb_count << endl
 		<< "Number of animation curves: " << obj.anim_curve_count << endl
-		<< "Number of skins: " << obj.skin_count << endl;
+		<< "Number of skins: " << obj.skin_count << endl
+		<< "Number of morph animations: " << obj.morph_count << endl;
 	return out;
 }
 
