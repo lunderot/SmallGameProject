@@ -1,13 +1,6 @@
 #include "CommonDeclaration.h"
 
 //Header
-
-void Header::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write(output, sizeof(Header));
-}
-
 std::ostream& operator<<(std::ostream& out, const Header& obj)
 {
 	out << "Number of groups: " << obj.group_count << endl
@@ -24,34 +17,17 @@ std::ostream& operator<<(std::ostream& out, const Header& obj)
 }
 
 //Transform
-void Transform::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write(output, sizeof(Transform) - sizeof(const char*));
-	outputfile.write(name, sizeof(const char) * name_Length);
-}
-
 std::ostream& operator<<(std::ostream& out, const Transform& obj)
 {
 	out << "Transform name length: " << obj.name_Length << endl
 		<< "ParentID: " << obj.parentID << endl
 		<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 		<< "Rotation: " << obj.rotation[0] << ' ' << obj.rotation[1] << ' ' << obj.rotation[2] << ' ' << obj.rotation[3] << endl
-		<< "Scale: " << obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2] << endl
-		<< "Transform Name: " << obj.name << endl;
+		<< "Scale: " << obj.scale[0] << ' ' << obj.scale[1] << ' ' << obj.scale[2] << endl;
 	return out;
 }
 
 //Camera
-void camera::WriteBinary(ofstream& outputfile)
-{
-	//MGlobal::displayInfo(MString() + header->name_length);
-	char* output = (char*) this;
-	outputfile.write((const char*)output, sizeof(camera) - sizeof(const char*) - sizeof(unsigned int*));
-	outputfile.write((const char*)parentID, sizeof(int) * nrOfParents);
-	outputfile.write(name, name_length);
-}
-
 std::ostream& operator<<(std::ostream& out, const camera& obj)
 {
 	out << "Camera name length: " << obj.name_length << endl
@@ -71,16 +47,6 @@ std::ostream& operator<<(std::ostream& out, const camera& obj)
 }
 
 //Mateial
-void MaterialData::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write((const char*)output, sizeof(MaterialData) - sizeof(const char*) - sizeof(char*) * 3);
-	outputfile.write(node_name, sizeof(char) * name_length);
-	outputfile.write(diffuse_map, sizeof(char) * duffuse_map_length);
-	outputfile.write(normal_map, sizeof(char) * normal_map_length);
-	outputfile.write(specular_map, sizeof(char) * specular_map_length);
-}
-
 std::ostream& operator<<(std::ostream& out, const MaterialData& obj)
 {
 	out << "Material type: " << obj.mtrl_type << endl
@@ -112,13 +78,6 @@ std::ostream& operator<<(std::ostream& out, const MaterialData& obj)
 }
 
 // Light 
-void Light::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write(output, sizeof(Light)-sizeof(const char*));
-	outputfile.write(name, name_Length);
-}
-
 std::ostream& operator<<(std::ostream& out, const Light& obj)
 {
 	out << "LIGHT" << endl
@@ -131,16 +90,6 @@ std::ostream& operator<<(std::ostream& out, const Light& obj)
 		<< "Cast shadow: " << obj.cast_shadows << endl
 		<< "Shadow color: " << obj.shadow_color[0] << " " << obj.shadow_color[1] << " " << obj.shadow_color[2] << endl;
 	return out;
-}
-
-// Nurb
-void Nurb::WriteBinary( ofstream& outputfile)
-{
-
-	char* output = (char*) this;
-	outputfile.write(output, sizeof(Nurb) - sizeof(const char*) - sizeof(int*));
-	outputfile.write((const char*)parentID, sizeof(int) * numberOfParent);
-	outputfile.write(name, name_Length);
 }
 
 // Nurb
@@ -158,17 +107,6 @@ std::ostream& operator << (std::ostream& out, const Nurb& obj)
 }
 
 //struct MorphAnimation
-
-void MorphAnimation::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write((const char*)output, sizeof(MorphAnimation) - sizeof(const char*) * 2);
-	for (unsigned int i = 0; i < nrOfPositions; i++)
-		outputfile.write((char*)position[i], sizeof(double) * 3);
-
-	outputfile.write(blendShapeName, blendShape_name_length);
-}
-
 std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 {
 	out << "Blend Shape name length: " << obj.blendShape_name_length << endl;
@@ -189,35 +127,6 @@ std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 }
 
 //meshStruct
-void meshStruct::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*) * 9 - 3);
-
-	for (unsigned int i = 0; i < position_count; i++)
-		outputfile.write((char*)position[i], sizeof(double) * 3);
-
-	for (unsigned int i = 0; i < uv_count; i++)
-		outputfile.write((char*)uv[i], sizeof(float) * 2);
-
-	for (unsigned int i = 0; i < normal_count; i++)
-		outputfile.write((char*)normal[i], sizeof(double) * 3);
-
-	for (unsigned int i = 0; i < tangent_count; i++)
-		outputfile.write((char*)tangent[i], sizeof(double) * 3);
-
-	for (unsigned int i = 0; i < biTangent_count; i++)
-		outputfile.write((char*)bi_tangent[i], sizeof(double) * 3);
-
-	outputfile.write((char*)transform_Id, transform_count * sizeof(int));
-
-	outputfile.write((char*)material_Id, material_count * sizeof(int));
-
-	outputfile.write((char*)vertices, indice_count * sizeof(Vertex));
-
-	outputfile.write(name, name_length);
-}
-
 std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 {
 	out << "Mesh Name: " << obj.name << endl
@@ -283,14 +192,6 @@ std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 	return out;
 }
 
-void SkinAnimation::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write(output, sizeof(SkinAnimation) - sizeof(VertexInfluence*) - sizeof(int*));
-	outputfile.write((const char*)influenceIndices, sizeof(int) * numberOfInfluences);
-	outputfile.write((const char*)influenceWeights, sizeof(VertexInfluence) * skinVertexCount);
-}
-
 std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj)
 {
 	out << "Number of influences: " << obj.numberOfInfluences << endl
@@ -309,15 +210,6 @@ std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj)
 	}
 
 	return out;
-}
-
-void Keyframes::WriteBinary(ofstream& outputfile)
-{
-	char* output = (char*) this;
-	outputfile.write(output, sizeof(Keyframes) - sizeof(KeyframePoint*) - sizeof(const char*) * 2);
-	outputfile.write(curveName, curveNameLength);
-	outputfile.write(attachToName, attachToNameLength);
-	outputfile.write((const char*)points, sizeof(KeyframePoint) * numberOfKeyframes);
 }
 
 std::ostream& operator<<(std::ostream& out, const Keyframes& obj)

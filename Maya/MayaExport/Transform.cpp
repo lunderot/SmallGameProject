@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, Transform& transform)
+MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, Transform& transform, vector<const char*>& names)
 {	
 	MStatus status = MS::kSuccess;
 
@@ -25,7 +25,7 @@ MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<co
 		return status;
 	}
 
-	status = exportName(mayaTransform, transform);
+	status = exportName(mayaTransform, names);
 	if (status != MS::kSuccess)
 	{
 		MGlobal::displayInfo("Failure at TransformClass::exportName()");
@@ -55,10 +55,11 @@ MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<co
 	return status;
 }
 
-MStatus TransformClass::exportName(MFnTransform& mayaTransform, Transform& transform)
+MStatus TransformClass::exportName(MFnTransform& mayaTransform, vector<const char*>& names)
 {
 	MS status;
-	transform.name = mayaTransform.name(&status).asChar();
+	const char* name = mayaTransform.name(&status).asChar();
+	names.push_back(name);
 	MGlobal::displayInfo(mayaTransform.name());
 	return status;
 }

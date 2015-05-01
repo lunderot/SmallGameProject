@@ -81,8 +81,10 @@ MStatus Exporter::doIt(const MArgList& argList)
 	matExporter.exportMaterial(mat, materials, outputDir);
 	header.material_count = mat.size();
 
+	vector<const char*> transformNames;
 	vector<Transform> transformData;
 
+	vector<const char*> jointNames;
 	vector<Joint> joints;
 
 	// camera
@@ -129,7 +131,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				TransformClass transformClass;
 
 				MFnTransform mayaTransform(path.node(), &status);
-				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transformData.size(), transform);
+				status = transformClass.exportTransform(mayaTransform, transformHeiraki, transformData.size(), transform, transformNames);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at TransformClass::exportTransform()");
@@ -159,7 +161,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				Joint joint;
 
 				JointExporter jointExporter;
-				status = jointExporter.exportJoint(mayaJoint, jointHeiraki, transformHeiraki, joints.size(), joint);
+				status = jointExporter.exportJoint(mayaJoint, jointHeiraki, transformHeiraki, joints.size(), joint, jointNames);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at JointExporter::exportJoint()");
@@ -272,17 +274,23 @@ MStatus Exporter::doIt(const MArgList& argList)
 		curveLoop.next();
 	}
 
-	//Printing to files
+	//Create and Open files
 	WriteToFile output;
 	output.binaryFilePath(this->outputDir + "/" + this->fileName + ".bin");
 	output.ASCIIFilePath(this->outputDir + "/" + this->fileName + "ASCII.txt");
 	output.OpenFiles();
 
 	//Main header
-	output.writeToFiles(&header, 1);
+	output.writeToFiles(&header);
 
 	//Data
-	output.writeToFiles(&mat[0], mat.size());
+	for (unsigned int i = 0; i < transformData.size(); i++)
+	{	
+		output.writeToFiles(&transformNames[i]);
+		output.writeToFiles(&transformData[i]);
+	}
+
+	/*output.writeToFiles(&mat[0], mat.size());
 	output.writeToFiles(&transformData[0], transformData.size());
 	output.writeToFiles(&joints[0], joints.size());
 	output.writeToFiles(&cameraVec[0], cameraVec.size());
@@ -291,7 +299,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&nurbBody[0], nurbBody.size());
 	output.writeToFiles(&morphs[0], morphs.size());
 	output.writeToFiles(&skinStorage[0], skinStorage.size());
-	output.writeToFiles(&keysStorage[0], keysStorage.size());
+	output.writeToFiles(&keysStorage[0], keysStorage.size());*/
 
 	output.CloseFiles();
 	return MStatus::kSuccess;

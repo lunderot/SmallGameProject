@@ -26,9 +26,9 @@ bool WriteToFile::ASCIIFilePath(string filePathAndFileName)
 void WriteToFile::OpenFiles()
 {
 	if (binFile)
-		binFile.open(binFileName, ofstream::binary | ofstream::ate);
+		binFile.open(binFileName, ofstream::binary);
 	if (ASCIIFile)
-		ASCIIFile.open(ASCIIFileName, ofstream::ate);
+		ASCIIFile.open(ASCIIFileName);
 }
 
 void WriteToFile::CloseFiles()
