@@ -2,7 +2,7 @@
 #include "maya/mPlug.h"
 
 //MStatus exportLight::exportLightType(MFnLight& mayaLight, LightHeader& Lheader, Light& oneLight)
-MStatus exportLight::exportLightType(MObject& inputLight, Light& oneLight)
+MStatus exportLight::exportLightType(MObject& inputLight, Light& oneLight, vector<const char*>& name)
 {
 
 
@@ -54,7 +54,7 @@ MStatus exportLight::exportLightType(MObject& inputLight, Light& oneLight)
 		return MS::kFailure;
 
 
-	oneLight.name = mayaLight.name().asChar();
+	name.push_back(mayaLight.name().asChar());
 	oneLight.name_Length = mayaLight.name().length();
 
 	MGlobal::displayInfo("Maya Light Type: " + MString() + mayaLight.typeName());

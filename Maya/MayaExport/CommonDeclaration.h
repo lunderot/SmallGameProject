@@ -184,7 +184,7 @@ struct Light
 	//short decay_type;
 	bool cast_shadows;
 	double shadow_color[3];
-	const char* name;
+	//const char* name;
 
 	friend std::ostream& operator<<(std::ostream& out, const Light& obj);
 
@@ -195,8 +195,8 @@ struct Nurb
 	unsigned int name_Length;
 	unsigned int numberOfParent;
 	float radius;
-	int* parentID;
-	const char* name;
+	//int* parentID;
+	//const char* name;
 
 	friend std::ostream& operator<<(std::ostream& out, const Nurb& obj);
 };

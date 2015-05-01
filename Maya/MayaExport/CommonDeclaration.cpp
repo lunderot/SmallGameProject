@@ -82,7 +82,6 @@ std::ostream& operator<<(std::ostream& out, const Light& obj)
 {
 	out << "LIGHT" << endl
 		<< "Light name length: " << obj.name_Length << endl
-		<< "Name of light: " << obj.name << endl
 		<< "Light type: " << obj.type << endl
 		<< "Decay type: " << obj.dType << endl
 		<< "Color: " << obj.color[0] << " " << obj.color[1] << " " << obj.color[2] << endl
@@ -96,11 +95,9 @@ std::ostream& operator<<(std::ostream& out, const Light& obj)
 std::ostream& operator << (std::ostream& out, const Nurb& obj)
 {
 	out << "NURB" << endl
-		<<" Nurb name lengtht: " << obj.name_Length << endl
+		<< " Nurb name lengtht: " << obj.name_Length << endl
 		<< " Number of nurbs: " << obj.numberOfParent << endl
-		<< "Name of nurb: " << obj.name << endl
-		<< "Radius: " << obj.radius << endl
-		<< "Parent ID: " << obj.parentID[0] << endl;
+		<< "Radius: " << obj.radius << endl;
 
 	return out;
 
