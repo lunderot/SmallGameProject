@@ -3,7 +3,7 @@
 
 using namespace std;
 
-MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*, int>& mat_map, std::string output_dir)
+MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const char*, int>& mat_map, std::string output_dir)
 {
 	MStatus status = MStatus::kSuccess;
 
@@ -11,7 +11,7 @@ MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*,
 
 	MItDependencyNodes matIt(MFn::kLambert);
 
-	Material mat_struct;
+	MaterialData mat_struct;
 
 	while (!matIt.isDone())
 	{
@@ -87,7 +87,7 @@ MStatus Materials::exportMaterial(vector<Material>& mat_vector, map<const char*,
 	return status;
 }
 
-MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, Material& matStrct)
+MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, MaterialData& matStrct)
 {
 	matStrct.node_name = node.name().asChar();
 	matStrct.name_length = node.name().length();
@@ -125,7 +125,7 @@ MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, Material& matStr
 	return MStatus::kSuccess;
 }
 
-MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct Material& matStrct)
+MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct MaterialData& matStrct)
 {
 	plug = node.findPlug("specularColorR");
 	plug.getValue(matStrct.specular[0]);
@@ -146,7 +146,7 @@ MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct Material&
 	return MStatus::kSuccess;
 }
 
-MStatus Materials::findTextures(MFnDependencyNode& node, Material& matStrct)
+MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct)
 {
 	bool asDst = true, asSrc = false;
 	MPlugArray allConnections;

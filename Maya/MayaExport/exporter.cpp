@@ -76,7 +76,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	map<const char*, int> jointHeiraki;
 	map<const char*, unsigned int> meshMap;
 	Header header;
-	vector<Material> mat;
+	vector<MaterialData> mat;
 	Materials  matExporter;
 	matExporter.exportMaterial(mat, materials, outputDir);
 	header.material_count = mat.size();

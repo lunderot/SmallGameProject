@@ -71,17 +71,17 @@ std::ostream& operator<<(std::ostream& out, const camera& obj)
 }
 
 //Mateial
-void Material::WriteBinary(ofstream& outputfile)
+void MaterialData::WriteBinary(ofstream& outputfile)
 {
 	char* output = (char*) this;
-	outputfile.write((const char*)output, sizeof(Material) - sizeof(const char*) - sizeof(char*) * 3);
+	outputfile.write((const char*)output, sizeof(MaterialData) - sizeof(const char*) - sizeof(char*) * 3);
 	outputfile.write(node_name, sizeof(char) * name_length);
 	outputfile.write(diffuse_map, sizeof(char) * duffuse_map_length);
 	outputfile.write(normal_map, sizeof(char) * normal_map_length);
 	outputfile.write(specular_map, sizeof(char) * specular_map_length);
 }
 
-std::ostream& operator<<(std::ostream& out, const Material& obj)
+std::ostream& operator<<(std::ostream& out, const MaterialData& obj)
 {
 	out << "Material type: " << obj.mtrl_type << endl
 		<< "Normal depth: " << obj.normal_depth << endl
@@ -161,8 +161,8 @@ std::ostream& operator << (std::ostream& out, const Nurb& obj)
 
 void MorphAnimation::WriteBinary(ofstream& outputfile)
 {
-	//char* output = (char*) this;
-	//outputfile.write((const char*)output, sizeof(meshStruct) - sizeof(const char*));
+	char* output = (char*) this;
+	outputfile.write((const char*)output, sizeof(MorphAnimation) - sizeof(const char*) * 2);
 	for (unsigned int i = 0; i < nrOfPositions; i++)
 		outputfile.write((char*)position[i], sizeof(double) * 3);
 
@@ -175,7 +175,8 @@ std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 
 	out << "nrOfWeights: " << obj.nrOfWeights << endl
 		<< "nrOfTargets: " << obj.nrOfTargets << endl
-		<< "nrOfVertsPerWeight: " << obj.nrOfVertsPerMesh << endl;
+		<< "nrOfVertsPerWeight: " << obj.nrOfVertsPerMesh << endl
+		<< "nrOfPositions: " << obj.nrOfPositions << endl;
 
 	for (unsigned int i = 0; i < obj.nrOfPositions; i++)
 	{

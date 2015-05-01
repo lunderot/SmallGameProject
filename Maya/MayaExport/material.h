@@ -12,11 +12,11 @@
 class Materials
 {
 public:
-	MStatus exportMaterial(vector<Material>& mat_vector, map<const char*, int>& mat_map, std::string output_dir);
+	MStatus exportMaterial(vector<MaterialData>& mat_vector, map<const char*, int>& mat_map, std::string output_dir);
 private:
-	MStatus commonDiffuseValues(MFnDependencyNode& node, Material& matStrct);
-	MStatus commonReflectValues(MFnDependencyNode& node, Material& matStrct);
-	MStatus findTextures(MFnDependencyNode& node, Material& matStrct);
+	MStatus commonDiffuseValues(MFnDependencyNode& node, MaterialData& matStrct);
+	MStatus commonReflectValues(MFnDependencyNode& node, MaterialData& matStrct);
+	MStatus findTextures(MFnDependencyNode& node, MaterialData& matStrct);
 
 	MPlug plug;
 	std::string outputDir;

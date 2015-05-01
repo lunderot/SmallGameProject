@@ -3,7 +3,7 @@
 int main()
 {
 	Importer importer;
-	importer.importFile("C://test.bin");
+	importer.importFile("C://TESTTEST.bin");
 
 	ofstream out("C://ImporterTest.txt");
 	out << importer.headers << endl;
@@ -29,54 +29,63 @@ int main()
 	for (unsigned int i = 0; i < importer.headers.nurb_count; i++)
 		out << importer.nurbs[i] << endl;
 
-	out << "getNumModels(): " << importer.getNumModels() << endl;
+	for (unsigned int i = 0; i < importer.headers.morph_count; i++)
+		out << importer.morph[i] << endl;
+
+	for (unsigned int i = 0; i < importer.headers.skin_count; i++)
+		out << importer.skins[i] << endl;
+
+	for (unsigned int i = 0; i < importer.headers.anim_curve_count; i++)
+		out << importer.keys[i] << endl;
+
+	/*out << "getNumModels(): " << importer.getNumModels() << endl;
 	out << "getNumMeshes(): " << importer.getNumMeshes() << endl;
 	out << "getNumMaterials(): " << importer.getNumMaterials() << endl;
 	out << "getModels(): " << endl;
 	for (unsigned int i = 0; i < importer.getNumModels(); i++)
 	{
-		out << "Model " << i << ": " << endl;
-		out << importer.getModels()[i].MaterialID << endl;
-		out << importer.getModels()[i].MeshID << endl;
-		out << importer.getModels()[i].position[0] << " " << importer.getModels()[i].position[1] << " " << importer.getModels()[i].position[2] << endl;
-		out << importer.getModels()[i].rotation[0] << " " << importer.getModels()[i].rotation[1] << " " << importer.getModels()[i].rotation[2] << " " << importer.getModels()[i].rotation[3] << endl;
-		out << importer.getModels()[i].scale[0] << " " << importer.getModels()[i].scale[1] << " " << importer.getModels()[i].scale[2] << endl;
+	out << "Model " << i << ": " << endl;
+	out << importer.getModels()[i].MaterialID << endl;
+	out << importer.getModels()[i].MeshID << endl;
+	out << importer.getModels()[i].position[0] << " " << importer.getModels()[i].position[1] << " " << importer.getModels()[i].position[2] << endl;
+	out << importer.getModels()[i].rotation[0] << " " << importer.getModels()[i].rotation[1] << " " << importer.getModels()[i].rotation[2] << " " << importer.getModels()[i].rotation[3] << endl;
+	out << importer.getModels()[i].scale[0] << " " << importer.getModels()[i].scale[1] << " " << importer.getModels()[i].scale[2] << endl;
 	}
 
 	for (unsigned int i = 0; i < importer.getNumMeshes(); i++)
 	{
-		out << "Mesh " << i << ": " << endl;
-		for (unsigned int j = 0; j < importer.getMeshVertexCount(i); j++)
-		{
-			out << "Vertex " << j << ": " << endl;
-			out << importer.getMesh(i)[j].position[0] << " " << importer.getMesh(i)[j].position[1] << " " << importer.getMesh(i)[j].position[2] << endl;
-			out << importer.getMesh(i)[j].texCoord[0] << " " << importer.getMesh(i)[j].texCoord[1] << endl;
-			out << importer.getMesh(i)[j].normal[0] << " " << importer.getMesh(i)[j].normal[1] << " " << importer.getMesh(i)[j].normal[2] << endl;
-			out << importer.getMesh(i)[j].biNormal[0] << " " << importer.getMesh(i)[j].biNormal[1] << " " << importer.getMesh(i)[j].biNormal[2] << endl;
-			out << importer.getMesh(i)[j].tangent[0] << " " << importer.getMesh(i)[j].tangent[1] << " " << importer.getMesh(i)[j].tangent[2] << endl;
-		}
+	out << "Mesh " << i << ": " << endl;
+	for (unsigned int j = 0; j < importer.getMeshVertexCount(i); j++)
+	{
+	out << "Vertex " << j << ": " << endl;
+	out << importer.getMesh(i)[j].position[0] << " " << importer.getMesh(i)[j].position[1] << " " << importer.getMesh(i)[j].position[2] << endl;
+	out << importer.getMesh(i)[j].texCoord[0] << " " << importer.getMesh(i)[j].texCoord[1] << endl;
+	out << importer.getMesh(i)[j].normal[0] << " " << importer.getMesh(i)[j].normal[1] << " " << importer.getMesh(i)[j].normal[2] << endl;
+	out << importer.getMesh(i)[j].biNormal[0] << " " << importer.getMesh(i)[j].biNormal[1] << " " << importer.getMesh(i)[j].biNormal[2] << endl;
+	out << importer.getMesh(i)[j].tangent[0] << " " << importer.getMesh(i)[j].tangent[1] << " " << importer.getMesh(i)[j].tangent[2] << endl;
+	}
 	}
 
 	for (unsigned int i = 0; i < importer.getNumMaterials(); i++)
 	{
-		out << "Material " << i << ": " << endl;
-		out << importer.getMatrials()[i].diffuse[0] << " " << importer.getMatrials()[i].diffuse[1] << " " << importer.getMatrials()[i].diffuse[2] << endl;
-		out << importer.getMatrials()[i].diffuse_factor << endl;
-		out << importer.getMatrials()[i].ambient[0] << " " << importer.getMatrials()[i].ambient[1] << " " << importer.getMatrials()[i].ambient[2] << endl;
-		out << importer.getMatrials()[i].specular[0] << " " << importer.getMatrials()[i].specular[1] << " " << importer.getMatrials()[i].specular[2] << endl;
-		out << importer.getMatrials()[i].specular_factor << endl;
-		out << importer.getMatrials()[i].shininess << endl;
-		out << importer.getMatrials()[i].incandescence[0] << " " << importer.getMatrials()[i].incandescence[1] << " " << importer.getMatrials()[i].incandescence[2] << endl;
-		out << importer.getMatrials()[i].transparency_color[0] << " " << importer.getMatrials()[i].transparency_color[1] << " " << importer.getMatrials()[i].transparency_color[2] << endl;
-		out << importer.getMatrials()[i].mtrl_type << endl;
-		out << importer.getMatrials()[i].reflection[0] << " " << importer.getMatrials()[i].reflection[1] << " " << importer.getMatrials()[i].reflection[2] << endl;
-		out << importer.getMatrials()[i].reflection_factor << endl;
-		out << importer.getMatrials()[i].node_name << endl;
-		if (importer.getMatrials()[i].normal_map != nullptr)
-			out << importer.getMatrials()[i].normal_map << endl;
-		out << importer.getMatrials()[i].normal_depth << endl;
-		if (importer.getMatrials()[i].specular_map != nullptr)
-		out << importer.getMatrials()[i].specular_map << endl;
+	out << "Material " << i << ": " << endl;
+	out << importer.getMatrials()[i].diffuse[0] << " " << importer.getMatrials()[i].diffuse[1] << " " << importer.getMatrials()[i].diffuse[2] << endl;
+	out << importer.getMatrials()[i].diffuse_factor << endl;
+	out << importer.getMatrials()[i].ambient[0] << " " << importer.getMatrials()[i].ambient[1] << " " << importer.getMatrials()[i].ambient[2] << endl;
+	out << importer.getMatrials()[i].specular[0] << " " << importer.getMatrials()[i].specular[1] << " " << importer.getMatrials()[i].specular[2] << endl;
+	out << importer.getMatrials()[i].specular_factor << endl;
+	out << importer.getMatrials()[i].shininess << endl;
+	out << importer.getMatrials()[i].incandescence[0] << " " << importer.getMatrials()[i].incandescence[1] << " " << importer.getMatrials()[i].incandescence[2] << endl;
+	out << importer.getMatrials()[i].transparency_color[0] << " " << importer.getMatrials()[i].transparency_color[1] << " " << importer.getMatrials()[i].transparency_color[2] << endl;
+	out << importer.getMatrials()[i].mtrl_type << endl;
+	out << importer.getMatrials()[i].reflection[0] << " " << importer.getMatrials()[i].reflection[1] << " " << importer.getMatrials()[i].reflection[2] << endl;
+	out << importer.getMatrials()[i].reflection_factor << endl;
+	out << importer.getMatrials()[i].node_name << endl;
+	if (importer.getMatrials()[i].normal_map != nullptr)
+	out << importer.getMatrials()[i].normal_map << endl;
+	out << importer.getMatrials()[i].normal_depth << endl;
+	if (importer.getMatrials()[i].specular_map != nullptr)
+	out << importer.getMatrials()[i].specular_map << endl;
 	}
 
 	out << "getNumBoundingSphere(): " << importer.getNumBoundingSphere() << endl;
@@ -84,10 +93,10 @@ int main()
 	out << "getNumBoundingSphere(): " << endl;
 	for (unsigned int i = 0; i < importer.getNumBoundingSphere(); i++)
 	{
-		out << "Sphere " << i << ": " << endl;
-		out << importer.spheres[i].position[0] << " " << importer.spheres[i].position[1] << " " << importer.spheres[i].position[2] << endl;
-		out << importer.spheres[i].radius << endl;
-	}
+	out << "Sphere " << i << ": " << endl;
+	out << importer.spheres[i].position[0] << " " << importer.spheres[i].position[1] << " " << importer.spheres[i].position[2] << endl;
+	out << importer.spheres[i].radius << endl;
+	}*/
 
 	return 0;
 }

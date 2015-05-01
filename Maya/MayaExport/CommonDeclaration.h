@@ -193,10 +193,10 @@ struct MorphAnimation
 	unsigned int nrOfVertsPerMesh;
 
 	unsigned int meshID;
-	unsigned int nrOfKeys;
+
+	unsigned int nrOfPositions;
 
 	double** position;
-	unsigned int nrOfPositions;
 	const char* blendShapeName;
 
 	void WriteBinary(ofstream& outputfile);
@@ -206,9 +206,9 @@ struct MorphAnimation
 	// color
 };
 
-struct Material
+struct MaterialData
 {
-	Material()
+	MaterialData()
 	{
 		name_length = duffuse_map_length = normal_map_length = specular_map_length = 0;
 		mtrl_type = eLambert;
@@ -220,7 +220,7 @@ struct Material
 		specular_map = nullptr;
 	}
 #ifndef MAYA_EXPORT
-	~Material()
+	~MaterialData()
 	{
 		delete[] node_name;
 		delete[] diffuse_map;
@@ -252,7 +252,7 @@ struct Material
 
 	void WriteBinary(ofstream& outputfile);
 
-	friend std::ostream& operator<<(std::ostream& out, const Material& obj);
+	friend std::ostream& operator<<(std::ostream& out, const MaterialData& obj);
 };
 
 struct Light
@@ -404,10 +404,11 @@ struct SkinAnimation
 	// The number of vertices (and therefore weights) on the mesh.
 	unsigned int skinVertexCount;
 
-	// The data of weights for every vertex. Are as many as there are verts on the mesh.
-	VertexInfluence* influenceWeights;
 	// The indices for the influence objects (e.g. the indices for the joints).
 	int* influenceIndices;
+	// The data of weights for every vertex. Are as many as there are verts on the mesh.
+	VertexInfluence* influenceWeights;
+
 
 	void WriteBinary(ofstream& outputfile);
 	friend std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj);
