@@ -126,7 +126,7 @@ std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 //meshStruct
 std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 {
-	out << "Mesh Name: " << obj.name << endl
+	out //<< "Mesh Name: " << obj.name << endl
 		<< "Name Length: " << obj.name_length << endl
 		<< "Vertex Count: " << obj.vertex_count << endl
 		<< "Indices Count: " << obj.indice_count << endl
@@ -139,7 +139,7 @@ std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 		<< "Transform Count: " << obj.transform_count << endl
 		<< "Transform id: " << endl;
 
-	for (unsigned int i = 0; i < obj.transform_count; i++)
+	/*for (unsigned int i = 0; i < obj.transform_count; i++)
 	{
 		out << obj.transform_Id[i] << endl;
 	}
@@ -170,9 +170,9 @@ std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 	for (unsigned int i = 0; i < obj.biTangent_count; i++)
 	{
 		out << "Bi-Tangent " << i << ": " << obj.bi_tangent[i][0] << " " << obj.bi_tangent[i][1] << " " << obj.bi_tangent[i][2] << endl;
-	}
+	}*/
 
-	int tmp = 0;
+	/*int tmp = 0;
 	int tmp_faceCounter = 0;
 	for (unsigned int i = 0; i < obj.indice_count; i++)
 	{
@@ -184,7 +184,7 @@ std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
 		}
 		out << obj.vertices[i] << endl;
 		tmp++;
-	}
+	}*/
 
 	return out;
 }

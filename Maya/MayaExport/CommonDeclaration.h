@@ -84,16 +84,16 @@ struct meshStruct
 	//unsigned int joint_count;
 	bool has_Animation;
 
-	double** position;
-	float** uv;
-	double** normal;
-	double** tangent;
-	double** bi_tangent;
+	//double** position;
+	//float** uv;
+	//double** normal;
+	//double** tangent;
+	//double** bi_tangent;
 
-	int* transform_Id;
-	int* material_Id;
-	Vertex* vertices;
-	const char* name;
+	//int* transform_Id;
+	//int* material_Id;
+	//Vertex* vertices;
+	//const char* name;
 
 	friend std::ostream& operator<<(std::ostream& out, const meshStruct& obj);
 };

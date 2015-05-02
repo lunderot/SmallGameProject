@@ -94,7 +94,19 @@ MStatus Exporter::doIt(const MArgList& argList)
 	Camera cam;
 	vector<camera> cameraVec;
 
+	// mesh
 	vector <meshStruct> meshes;
+	vector<vector<double>> position;
+	vector<vector<float>> uv;
+	vector<vector<double>> normal;
+	vector<vector<double>> tangent;
+	vector<vector<double>> bi_tangent;
+
+	vector<vector<int>> transform_Id;
+	vector<vector<int>> material_Id;
+	vector<vector<Vertex>> vertices;
+	vector<const char*> name;
+
 
 	MorphAnimations morphAnims;
 	vector <MorphAnimation> morphs;
@@ -116,7 +128,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 				meshStruct newMesh;
 				MFnMesh mayaMesh(path);
 
-				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, meshMap);
+				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, meshMap,
+					position, uv, normal, tangent, bi_tangent, transform_Id, material_Id, vertices, name);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at newMesh::exportMesh()");
@@ -287,31 +300,35 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&header);
 
 	//Data
-	for (unsigned int i = 0; i < transformData.size(); i++)
+	/*for (unsigned int i = 0; i < transformData.size(); i++)
 	{	
 		output.writeToFiles(&transformNames[i]);
 		output.writeToFiles(&transformData[i]);
-	}
+	}*/
 
+	for (unsigned int i = 0; i < meshes.size(); i++)
+	{
+		output.writeToFiles(&name[i]);
+	}
 	/*output.writeToFiles(&mat[0], mat.size());
 	output.writeToFiles(&transformData[0], transformData.size());
 	output.writeToFiles(&joints[0], joints.size());
 	output.writeToFiles(&cameraVec[0], cameraVec.size());
 	output.writeToFiles(&meshes[0], meshes.size());*/
 
-	for (unsigned int i = 0; i < lightbody.size(); i++)
-	{
-		output.writeToFiles(&expLightName[i]);
-		output.writeToFiles(&lightbody[i]);
-	}
+	//for (unsigned int i = 0; i < lightbody.size(); i++)
+	//{
+	//	output.writeToFiles(&expLightName[i]);
+	//	output.writeToFiles(&lightbody[i]);
+	//}
 
-	for (unsigned int i = 0; i < nurbBody.size(); i++)
-	{
-		output.writeToFiles(&expNurbName[i]);
-		output.writeToFiles(&nurbBody[i]);
-		//for (unsigned int j = 0; j < expParentID[i].size(); j++)
-			output.writeToFiles(expParentID[i].data(), expParentID[i].size());
-	}
+	//for (unsigned int i = 0; i < nurbBody.size(); i++)
+	//{
+	//	output.writeToFiles(&expNurbName[i]);
+	//	output.writeToFiles(&nurbBody[i]);
+	//	//for (unsigned int j = 0; j < expParentID[i].size(); j++)
+	//		output.writeToFiles(expParentID[i].data(), expParentID[i].size());
+	//}
 
 
 
