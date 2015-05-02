@@ -36,7 +36,7 @@ public:
 
 	}
 
-	void writeToFiles(char* toWrite, unsigned int numOfElementToWrite = 1, unsigned int startIndex = 0)
+	void writeToFiles(const char** toWrite, unsigned int numOfElementToWrite = 1, unsigned int startIndex = 0)
 	{
 		MGlobal::displayInfo("WriteToFile::writeToFiles()");
 
@@ -50,10 +50,10 @@ public:
 		if (binFile.is_open())
 		{
 			MGlobal::displayInfo("Writhing to binaryfile");
-			std::string tmp;
+
 			for (unsigned int i = startIndex; i < numOfElementToWrite + startIndex; i++)
 			{
-				tmp = toWrite[0];
+				std::string tmp = toWrite[i];
 				binFile.write((char*)&tmp, tmp.size());
 			}
 		}

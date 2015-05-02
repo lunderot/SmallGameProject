@@ -233,11 +233,11 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeir
 	mayaMeshHeader.transform_count = mesh.parentCount();*/
 
 	name.push_back(mesh.name().asChar());
-	vector<Vertex> test;
-	vector<int> test_indicie;
-	vector<int> test_uvId;
-	vector<int> test_normalId;
-	test.resize(indicie_array.length());
+	vector<Vertex> vector_tmp_vertices;
+	//vector<int> test_indicie;
+	//vector<int> test_uvId;
+	//vector<int> test_normalId;
+	vector_tmp_vertices.resize(indicie_array.length());
 	//meshes.name = mesh.name().asChar();
 	//meshes.vertices = new Vertex[indicie_array.length()];
 	for (unsigned int i = 0; i < indicie_array.length(); i++)
@@ -245,9 +245,9 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeir
 		//test_indicie.push_back(indicie_array[i]);
 		//test_uvId.push_back(uvId_array[i]);
 		//test_normalId.push_back(normalId_array[i]);
-		test[i].position = indicie_array[i];
-		test[i].uv = uvId_array[i];
-		test[i].normal = normalId_array[i];
+		vector_tmp_vertices[i].position = indicie_array[i];
+		vector_tmp_vertices[i].uv = uvId_array[i];
+		vector_tmp_vertices[i].normal = normalId_array[i];
 		//test[i].normal = indicie_array[i];
 		//test[i].position = uvId_array[i];
 		//test[i].uv = normalId_array[i];
@@ -255,7 +255,7 @@ MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeir
 		//meshes.vertices[i].uv = uvId_array[i];
 		//meshes.vertices[i].normal = normalId_array[i];
 	}
-	vertices.push_back(test);
+	vertices.push_back(vector_tmp_vertices);
 
 	vector<int> vector_Transform_Id(mesh.parentCount());
 	//meshes.transform_Id = new int[meshes.transform_count];

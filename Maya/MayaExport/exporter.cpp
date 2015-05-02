@@ -11,7 +11,6 @@
 #include "Light.h"
 #include "Nurb.h"
 
-#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 #include "material.h"
 #include "Transform.h"
@@ -93,6 +92,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 	// camera
 	Camera cam;
 	vector<camera> cameraVec;
+	vector<const char*> camreNames;
+	vector<vector<unsigned int>> cameraParentIDs;
 
 	// mesh
 	vector <meshStruct> meshes;
@@ -160,7 +161,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			{
 				MFnCamera mayaCamera(path);
 				camera camera;
-				status = cam.exportCamera(mayaCamera, camera, transformHeiraki);
+				status = cam.exportCamera(mayaCamera, camera, transformHeiraki, camreNames, cameraParentIDs);
 
 				if (status != MS::kSuccess)
 				{
@@ -188,7 +189,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				header.joint_count++;
 			}
 
-			//--ayu
 			// && !path.hasFn(MFn::defaultlight
 			if (path.hasFn(MFn::kNonAmbientLight))
 			{
@@ -300,21 +300,38 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&header);
 
 	//Data
-	/*for (unsigned int i = 0; i < transformData.size(); i++)
-	{	
-		output.writeToFiles(&transformNames[i]);
-		output.writeToFiles(&transformData[i]);
-	}*/
-
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
+		output.writeToFiles(position[i].data(), position[i].size());
+		output.writeToFiles(uv[i].data(), uv[i].size());
+		output.writeToFiles(normal[i].data(), normal[i].size());
+		output.writeToFiles(tangent[i].data(), tangent[i].size());
+		output.writeToFiles(bi_tangent[i].data(), bi_tangent[i].size());
+		output.writeToFiles(transform_Id[i].data(), transform_Id[i].size());
+		output.writeToFiles(material_Id[i].data(), material_Id[i].size());
+		output.writeToFiles(vertices[i].data(), vertices[i].size());
 		output.writeToFiles(&name[i]);
 	}
-	/*output.writeToFiles(&mat[0], mat.size());
-	output.writeToFiles(&transformData[0], transformData.size());
-	output.writeToFiles(&joints[0], joints.size());
-	output.writeToFiles(&cameraVec[0], cameraVec.size());
-	output.writeToFiles(&meshes[0], meshes.size());*/
+
+	for (unsigned int i = 0; i < transformData.size(); i++)
+	{
+		output.writeToFiles(&transformData[i]);
+		output.writeToFiles(&transformNames[i]);
+	}
+
+	for (unsigned int i = 0; i < joints.size(); i++)
+	{
+		output.writeToFiles(&joints[i]);
+		output.writeToFiles(&jointNames[i]);
+	}
+
+	for (unsigned int i = 0; i < cameraVec.size(); i++)
+	{
+		output.writeToFiles(&cameraVec[i]);
+		output.writeToFiles(&camreNames[i]);
+	}
+
+	/*output.writeToFiles(&meshes[0], meshes.size());*/
 
 	//for (unsigned int i = 0; i < lightbody.size(); i++)
 	//{
@@ -329,8 +346,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 	//	//for (unsigned int j = 0; j < expParentID[i].size(); j++)
 	//		output.writeToFiles(expParentID[i].data(), expParentID[i].size());
 	//}
-
-
 
 	//output.writeToFiles(&morphs[0], morphs.size());
 	//output.writeToFiles(&skinStorage[0], skinStorage.size());
