@@ -33,16 +33,14 @@ std::ostream& operator<<(std::ostream& out, const camera& obj)
 	out << "Camera name length: " << obj.name_length << endl
 		<< "Number of parents: " << obj.nrOfParents << endl;
 	out << "CAMERA" << endl;
-	out	<< "ParentID: " << obj.parentID[0] << endl;
-	out	<< "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
+	out << "Position: " << obj.position[0] << ' ' << obj.position[1] << ' ' << obj.position[3] << endl
 		<< "Up Vector: " << obj.up_vector[0] << ' ' << obj.up_vector[1] << ' ' << obj.up_vector[2] << endl
 		<< "Intrest position: " << obj.interest_position[0] << ' ' << obj.interest_position[1] << ' ' << obj.interest_position[2] << endl
 		<< "FOV X: " << obj.field_of_view_x << endl
 		<< "FOV Y: " << obj.field_of_view_y << endl
 		<< "Near Plane: " << obj.near_plane << endl
 		<< "Far Plane: " << obj.far_plane << endl
-		<< "Projection type: " << obj.projection << endl
-		<< "Name: " << obj.name << endl;
+		<< "Projection type: " << obj.projection << endl;
 	return out;
 }
 

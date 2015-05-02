@@ -2,7 +2,7 @@
 #define MAYA_EXPORT
 #include "CommonDeclaration.h"
 
-MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, map<const char*, int>& transformHeiraki)
+MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, map<const char*, int>& transformHeiraki, vector<const char*>& names, vector<vector<unsigned int>>& parentIDs)
 {
 	MStatus status;
 
@@ -14,9 +14,9 @@ MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, map<const ch
 
 	// Get the data we need from the camera
 	camera.name_length = mayaCamera.name().length();
-	camera.name = mayaCamera.name().asChar();
+	names.push_back(mayaCamera.name().asChar());
 
-	MGlobal::displayInfo(MString() + camera.name);
+	MGlobal::displayInfo(MString() + names[names.size() - 1]);
 
 	// Position
 	camera.position[0] = mayaCamera.eyePoint().x;
@@ -50,13 +50,15 @@ MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, map<const ch
 	MGlobal::displayInfo(MString() + "near_plane: " + camera.near_plane + "   far_plane: " + camera.far_plane);
 
 	// Parent
-	camera.parentID = new unsigned int[mayaCamera.parentCount()];
+	vector<unsigned int> pIDs(mayaCamera.parentCount());
 	camera.nrOfParents = mayaCamera.parentCount();
 	for (unsigned int i = 0; i < mayaCamera.parentCount(); i++)
 	{
 		MObject parent = mayaCamera.parent(i);
 		MFnDagNode storeParent(parent);
-		camera.parentID[i] = transformHeiraki[storeParent.name().asChar()];
+		pIDs[i] = transformHeiraki[storeParent.name().asChar()];
 	}
+	parentIDs.push_back(pIDs);
+
 	return status;
 }

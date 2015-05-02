@@ -11,7 +11,6 @@
 #include "Light.h"
 #include "Nurb.h"
 
-#define MAYA_EXPORT
 #include "CommonDeclaration.h"
 #include "material.h"
 #include "Transform.h"
@@ -90,6 +89,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 	// camera
 	Camera cam;
 	vector<camera> cameraVec;
+	vector<const char*> camreNames;
+	vector<vector<unsigned int>> cameraParentIDs;
 
 	vector <meshStruct> meshes;
 
@@ -144,7 +145,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			{
 				MFnCamera mayaCamera(path);
 				camera camera;
-				status = cam.exportCamera(mayaCamera, camera, transformHeiraki);
+				status = cam.exportCamera(mayaCamera, camera, transformHeiraki, camreNames, cameraParentIDs);
 
 				if (status != MS::kSuccess)
 				{
@@ -172,7 +173,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 				header.joint_count++;
 			}
 
-			//--ayu
 			// && !path.hasFn(MFn::defaultlight
 			if (path.hasFn(MFn::kNonAmbientLight))
 			{
@@ -286,14 +286,19 @@ MStatus Exporter::doIt(const MArgList& argList)
 	//Data
 	for (unsigned int i = 0; i < transformData.size(); i++)
 	{	
-		output.writeToFiles(&transformNames[i]);
 		output.writeToFiles(&transformData[i]);
+		output.writeToFiles(&transformNames[i]);
 	}
 
-	/*output.writeToFiles(&mat[0], mat.size());
-	output.writeToFiles(&transformData[0], transformData.size());
-	output.writeToFiles(&joints[0], joints.size());
-	output.writeToFiles(&cameraVec[0], cameraVec.size());
+	/*output.writeToFiles(&mat[0], mat.size());*/
+
+	/*output.writeToFiles(&joints[0], joints.size());*/
+	for (unsigned int i = 0; i < cameraVec.size(); i++)
+	{
+		output.writeToFiles(&cameraVec[i]);
+		output.writeToFiles(&camreNames[i]);
+	}
+	/*
 	output.writeToFiles(&meshes[0], meshes.size());
 	output.writeToFiles(&lightbody[0], lightbody.size());
 	output.writeToFiles(&nurbBody[0], nurbBody.size());

@@ -110,8 +110,6 @@ struct camera
 	double near_plane;
 	double far_plane;
 	enum projection_type{ ePerspective, eOrthogonal } projection;
-	unsigned int* parentID;
-	const char* name;
 
 	friend std::ostream& operator<<(std::ostream& out, const camera& obj);
 };
