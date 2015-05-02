@@ -295,12 +295,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 		output.writeToFiles(&transformNames[i]);
 	}
 
-	/*output.writeToFiles(&joints[0], joints.size());*/
+	for (unsigned int i = 0; i < joints.size(); i++)
+	{
+		output.writeToFiles(&joints[i]);
+		output.writeToFiles(&jointNames[i]);
+	}
 
 	for (unsigned int i = 0; i < cameraVec.size(); i++)
 	{
-	output.writeToFiles(&cameraVec[i]);
-	output.writeToFiles(&camreNames[i]);
+		output.writeToFiles(&cameraVec[i]);
+		output.writeToFiles(&camreNames[i]);
 	}
 
 	/*output.writeToFiles(&meshes[0], meshes.size());*/
