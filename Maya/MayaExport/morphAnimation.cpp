@@ -5,7 +5,7 @@
 #include <maya/MAnimControl.h>
 #include <maya/MItKeyframe.h>
 
-MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap)
+MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, vector<vector<double>>& positions, vector <const char*>& blendShapeName, map<const char*, unsigned int> meshMap)
 {
 	MStatus status;
 	unsigned int counter = 0;
@@ -29,7 +29,7 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnima
 	MObjectArray baseObjects;
 
 	MGlobal::displayInfo(MString() + "Blend Shape: " + fn.name().asChar());
-	morphAnim.blendShapeName = fn.name().asChar();
+	blendShapeName.push_back(fn.name().asChar());
 	morphAnim.blendShape_name_length = fn.name().length();
 	fn.getBaseObjects(baseObjects);
 
@@ -103,19 +103,19 @@ MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnima
 				}
 
 				//MGlobal::displayInfo(MString() + targetGeo.count);
-				morphAnim.position = new double*[morphAnim.nrOfVertsPerMesh];
+				vector<double>pos;
 				while (!targetGeo.isDone())
 				{
 					MPoint p = targetGeo.position();
-					morphAnim.position[counter] = new double[3];
-					morphAnim.position[counter][0] = p.x;
-					morphAnim.position[counter][1] = p.y;
-					morphAnim.position[counter][2] = p.z;
+					pos.push_back(p.x);
+					pos.push_back(p.y);
+					pos.push_back(p.z);
 
 					MGlobal::displayInfo(MString() + "Position: " + p.x + "/" + p.y + "/" + p.z);
 					counter++;
 					targetGeo.next();
 				}
+				positions.push_back(pos);
 			}
 			morphAnim.nrOfPositions = tmpCount;
 		}

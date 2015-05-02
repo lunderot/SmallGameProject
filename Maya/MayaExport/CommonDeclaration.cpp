@@ -109,13 +109,7 @@ std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 	out << "nrOfWeights: " << obj.nrOfWeights << endl
 		<< "nrOfTargets: " << obj.nrOfTargets << endl
 		<< "nrOfVertsPerWeight: " << obj.nrOfVertsPerMesh << endl
-		<< "nrOfPositions: " << obj.nrOfPositions << endl;
-
-	for (unsigned int i = 0; i < obj.nrOfPositions; i++)
-	{
-		out << "Position " << i << ": " << obj.position[i][0] << " " << obj.position[i][1] << " " << obj.position[i][2] << endl;
-	}
-	out << "blendShapeName" << obj.blendShapeName << endl
+		<< "nrOfPositions: " << obj.nrOfPositions << endl
 		<< "Mesh ID: " << obj.meshID << endl;
 
 	return out;

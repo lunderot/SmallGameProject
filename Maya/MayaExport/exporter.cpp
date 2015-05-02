@@ -99,6 +99,8 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	MorphAnimations morphAnims;
 	vector <MorphAnimation> morphs;
+	vector<vector<double>> morphsPositions;
+	vector <const char*> moprhsNames;
 
 	Keyframe keyFrame;
 	SkeletonAnimation skelAnim;
@@ -230,7 +232,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 		MFnDependencyNode wuut(testing);
 		MFnAnimCurve anim(testing, &status);
 
-		morphAnims.exportMorphAnimation(it, morphAnim, meshMap);
+		morphAnims.exportMorphAnimation(it, morphAnim, morphsPositions, moprhsNames, meshMap);
 		morphs.push_back(morphAnim);
 		header.morph_count++;
 
@@ -322,8 +324,12 @@ MStatus Exporter::doIt(const MArgList& argList)
 		//for (unsigned int j = 0; j < expParentID[i].size(); j++)
 			output.writeToFiles(expParentID[i].data(), expParentID[i].size());
 	}
-
-	//output.writeToFiles(&morphs[0], morphs.size());
+	for (unsigned int i = 0; i < morphs.size(); i++)
+	{
+		output.writeToFiles(&morphs[i]);
+		output.writeToFiles(morphsPositions[i].data(), morphsPositions[i].size());
+		output.writeToFiles(&moprhsNames[i]);
+	}
 	//output.writeToFiles(&skinStorage[0], skinStorage.size());
 	//output.writeToFiles(&keysStorage[0], keysStorage.size());
 

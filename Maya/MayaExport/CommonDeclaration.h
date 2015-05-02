@@ -126,9 +126,6 @@ struct MorphAnimation
 
 	unsigned int nrOfPositions;
 
-	double** position;
-	const char* blendShapeName;
-
 	friend std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj);
 	// vertex
 	// color
