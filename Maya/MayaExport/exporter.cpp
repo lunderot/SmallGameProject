@@ -65,10 +65,13 @@ MStatus Exporter::doIt(const MArgList& argList)
 	//--Light
 	exportLight aLight;
 	vector<Light> lightbody;
+	vector<const char*> expLightName;
 
 	//--Nurb
 	exportNurb aNurb;
 	vector<Nurb> nurbBody;
+	vector<const char*> expNurbName;
+	vector<vector <int>> expParentID;
 
 	map<const char*, int> materials;
 	map<const char*, int> transformHeiraki;
@@ -182,7 +185,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				//MFnLight eMayaLight(path);
 				//MFnNonAmbientLight eMayaLight(path);
 				MObject eMayaLight = path.node();
-				status = aLight.exportLightType(eMayaLight, eOLight);
+				status = aLight.exportLightType(eMayaLight, eOLight, expLightName);
 				if (status == MS::kSuccess)
 				{
 					lightbody.push_back(eOLight);
@@ -201,7 +204,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				//aNurb.exportNurbSphere(eNurb, nurbHeader, structNurb, transformHeiraki);
 
 				MFnNurbsSurface eNurb = path.node();
-				status = aNurb.exportNurbSphere(eNurb, structNurb, transformHeiraki);
+				status = aNurb.exportNurbSphere(eNurb, structNurb, transformHeiraki, expNurbName, expParentID);
 
 				MGlobal::displayInfo("NURB FINNS");
 
@@ -284,27 +287,41 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&header);
 
 	//Data
+	/*output.writeToFiles(&mat[0], mat.size());*/
+
 	for (unsigned int i = 0; i < transformData.size(); i++)
-	{	
+	{
 		output.writeToFiles(&transformData[i]);
 		output.writeToFiles(&transformNames[i]);
 	}
 
-	/*output.writeToFiles(&mat[0], mat.size());*/
-
 	/*output.writeToFiles(&joints[0], joints.size());*/
+
 	for (unsigned int i = 0; i < cameraVec.size(); i++)
 	{
-		output.writeToFiles(&cameraVec[i]);
-		output.writeToFiles(&camreNames[i]);
+	output.writeToFiles(&cameraVec[i]);
+	output.writeToFiles(&camreNames[i]);
 	}
-	/*
-	output.writeToFiles(&meshes[0], meshes.size());
-	output.writeToFiles(&lightbody[0], lightbody.size());
-	output.writeToFiles(&nurbBody[0], nurbBody.size());
-	output.writeToFiles(&morphs[0], morphs.size());
-	output.writeToFiles(&skinStorage[0], skinStorage.size());
-	output.writeToFiles(&keysStorage[0], keysStorage.size());*/
+
+	/*output.writeToFiles(&meshes[0], meshes.size());*/
+
+	for (unsigned int i = 0; i < lightbody.size(); i++)
+	{
+		output.writeToFiles(&expLightName[i]);
+		output.writeToFiles(&lightbody[i]);
+	}
+
+	for (unsigned int i = 0; i < nurbBody.size(); i++)
+	{
+		output.writeToFiles(&expNurbName[i]);
+		output.writeToFiles(&nurbBody[i]);
+		//for (unsigned int j = 0; j < expParentID[i].size(); j++)
+			output.writeToFiles(expParentID[i].data(), expParentID[i].size());
+	}
+
+	//output.writeToFiles(&morphs[0], morphs.size());
+	//output.writeToFiles(&skinStorage[0], skinStorage.size());
+	//output.writeToFiles(&keysStorage[0], keysStorage.size());
 
 	output.CloseFiles();
 	return MStatus::kSuccess;

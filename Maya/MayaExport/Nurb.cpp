@@ -1,7 +1,7 @@
 #include "Nurb.h"
 #include "maya/mPlug.h"
 
-MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, Nurb& nurbSphere, map<const char*, int> transformHierarchy)
+MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, Nurb& nurbSphere, map<const char*, int> transformHierarchy, vector<const char*>& name, vector<vector <int> >& parentID)
 {
 	MS status;
 
@@ -11,7 +11,8 @@ MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, Nurb& nurb
 	if (status == MS::kSuccess)
 	{
 
-		nurbSphere.name = mayaNurbSphere.name().asChar();
+		//nurbSphere.name = mayaNurbSphere.name().asChar();
+		name.push_back(mayaNurbSphere.name().asChar());
 		nurbSphere.name_Length = mayaNurbSphere.name().length();
 
 		//oneLight.name = mayaLight.name().asChar();
@@ -48,18 +49,22 @@ MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, Nurb& nurb
 		//					PARENT ID                         //
 		// ---------------------------------------------------//
 
-		nurbSphere.parentID = new int[mayaNurbSphere.parentCount()];
+		//nurbSphere.parentID = new int[mayaNurbSphere.parentCount()];
+		vector<int> parentIndex(mayaNurbSphere.parentCount());
+
 		for (unsigned int i = 0; i < mayaNurbSphere.parentCount(); i++)
 		{
 			MObject parent = mayaNurbSphere.parent(i);
 			MFnDagNode storeParent(parent);
-			nurbSphere.parentID[i] = transformHierarchy[storeParent.name().asChar()];
+			//nurbSphere.parentID[i] = transformHierarchy[storeParent.name().asChar()];
+			parentIndex[i] = transformHierarchy[storeParent.name().asChar()];
 
-			MGlobal::displayInfo(MString() + "PARENT ID: " + nurbSphere.parentID[i]);
+			//MGlobal::displayInfo(MString() + "PARENT ID: " + nurbSphere.parentID[i]);
 
 		}
 
 		nurbSphere.numberOfParent = mayaNurbSphere.parentCount();
+		parentID.push_back(parentIndex);
 	}
 
 
