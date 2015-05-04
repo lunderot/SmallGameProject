@@ -13,7 +13,7 @@
 class Keyframe
 {
 public:
-	MStatus exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve, map<const char*, int>& transMap, map<const char*, int>& jointMap);
+	MStatus exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve, map<const char*, int>& transMap, map<const char*, int>& jointMap, vector<vector<KeyframePoint>> &points, vector<const char*> &curveName, vector<const char*> &attachToName);
 protected:
 private:
 	bool asDst = false, asSrc = true;

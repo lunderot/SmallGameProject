@@ -19,7 +19,6 @@ public:
 	void writeToFiles(dataType* toWrite, unsigned int numOfElementToWrite = 1, unsigned int startIndex = 0)
 	{
 		MGlobal::displayInfo("WriteToFile::writeToFiles()");
-
 		if (ASCIIFile.is_open())
 		{
 			MGlobal::displayInfo("Writhing to ASCIIfile");
@@ -39,25 +38,23 @@ public:
 	void writeToFiles(const char** toWrite, unsigned int numOfElementToWrite = 1, unsigned int startIndex = 0)
 	{
 		MGlobal::displayInfo("WriteToFile::writeToFiles()");
-
 		if (ASCIIFile.is_open())
 		{
-			MGlobal::displayInfo("Writhing to ASCIIfile");
+			MGlobal::displayInfo("Writhing to ASCIIfile char");
 			for (unsigned int i = startIndex; i < numOfElementToWrite + startIndex; i++)
 				ASCIIFile << toWrite[i] << endl;
 		}
 
 		if (binFile.is_open())
 		{
-			MGlobal::displayInfo("Writhing to binaryfile");
+			MGlobal::displayInfo("Writhing to binaryfile char");
 
 			for (unsigned int i = startIndex; i < numOfElementToWrite + startIndex; i++)
 			{
 				std::string tmp = toWrite[i];
-				binFile.write((char*)&tmp, tmp.size());
+				binFile.write(tmp.c_str(), tmp.size());
 			}
 		}
-
 	}
 
 	void OpenFiles();

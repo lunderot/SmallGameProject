@@ -12,11 +12,36 @@
 class Materials
 {
 public:
-	MStatus exportMaterial(vector<MaterialData>& mat_vector, map<const char*, int>& mat_map, std::string output_dir);
+	MStatus exportMaterial(
+		vector<MaterialData>& mat_vector, 
+		map<const char*, int>& mat_map, 
+		std::string output_dir, 
+		vector<const char*> &node_name, 
+		vector<const char*> &diffuse_map,
+		vector<const char*> &normal_map,
+		vector<const char*> &specular_map);
 private:
-	MStatus commonDiffuseValues(MFnDependencyNode& node, MaterialData& matStrct);
-	MStatus commonReflectValues(MFnDependencyNode& node, MaterialData& matStrct);
-	MStatus findTextures(MFnDependencyNode& node, MaterialData& matStrct);
+	MStatus commonDiffuseValues(
+		MFnDependencyNode& node, 
+		MaterialData& matStrct,
+		vector<const char*> &node_name,
+		vector<const char*> &diffuse_map,
+		vector<const char*> &normal_map,
+		vector<const char*> &specular_map);
+	MStatus commonReflectValues(
+		MFnDependencyNode& node, 
+		MaterialData& matStrct,
+		vector<const char*> &node_name,
+		vector<const char*> &diffuse_map,
+		vector<const char*> &normal_map,
+		vector<const char*> &specular_map);
+	MStatus findTextures(
+		MFnDependencyNode& node, 
+		MaterialData& matStrct,
+		vector<const char*> &node_name,
+		vector<const char*> &diffuse_map,
+		vector<const char*> &normal_map,
+		vector<const char*> &specular_map);
 
 	MPlug plug;
 	std::string outputDir;

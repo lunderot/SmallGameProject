@@ -142,10 +142,10 @@ struct MaterialData
 		mtrl_type = eLambert;
 		normal_depth = specular_factor = shininess = reflection_factor = diffuse_factor = 0;
 		specular[3] = reflection[3] = ambient[3] = diffuse[3] = transparency_color[3] = incandescence[3] = { 0.0f };
-		node_name = nullptr;
-		diffuse_map = nullptr;
-		normal_map = nullptr;
-		specular_map = nullptr;
+		//node_name = nullptr;
+		//diffuse_map = nullptr;
+		//normal_map = nullptr;
+		//specular_map = nullptr;
 	}
 
 	unsigned int name_length;
@@ -164,10 +164,10 @@ struct MaterialData
 	double diffuse_factor;
 	double transparency_color[3];
 	double incandescence[3];
-	const char* node_name;
-	char* diffuse_map;
-	char* normal_map;
-	char* specular_map;
+	//const char* node_name;
+	//char* diffuse_map;
+	//char* normal_map;
+	//char* specular_map;
 
 	friend std::ostream& operator<<(std::ostream& out, const MaterialData& obj);
 };
@@ -242,14 +242,6 @@ struct KeyframePoint
 
 struct Keyframes
 {
-#ifndef MAYA_EXPORT
-	~Keyframes()
-	{
-		delete[] points;
-		delete[] curveName;
-		delete[] attachToName;
-	};
-#endif
 	unsigned int curveNameLength;
 	// Whether the animation should loop indefinitely.
 	bool loopAnimation;
@@ -259,12 +251,12 @@ struct Keyframes
 	unsigned int affectedObjectIndex;
 	unsigned int numberOfKeyframes;
 	unsigned int attachToNameLength;
-	KeyframePoint* points;
-	const char* curveName;
+	//KeyframePoint* points;
+	//const char* curveName;
 	// Which attribute to attach to. Needs to be non-const because *Maya*.
-	char* attachToName;
+	//char* attachToName;
 
-	void WriteBinary(ofstream& outputfile);
+	//void WriteBinary(ofstream& outputfile);
 	friend std::ostream& operator<<(std::ostream& out, const Keyframes& obj);
 };
 
@@ -291,13 +283,6 @@ struct VertexInfluence
 
 struct SkinAnimation
 {
-#ifndef MAYA_EXPORT
-	~SkinAnimation()
-	{
-		delete[] influenceWeights;
-		delete[] influenceIndices;
-	};
-#endif
 	// The number of influence objects (e.g. the number of joints).
 	unsigned int numberOfInfluences;
 	// The index of the mesh to influence.
@@ -306,12 +291,10 @@ struct SkinAnimation
 	unsigned int skinVertexCount;
 
 	// The indices for the influence objects (e.g. the indices for the joints).
-	int* influenceIndices;
+	//int* influenceIndices;
 	// The data of weights for every vertex. Are as many as there are verts on the mesh.
-	VertexInfluence* influenceWeights;
+	//VertexInfluence* influenceWeights;
 
-
-	void WriteBinary(ofstream& outputfile);
 	friend std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj);
 };
 

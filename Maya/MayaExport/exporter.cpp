@@ -78,9 +78,16 @@ MStatus Exporter::doIt(const MArgList& argList)
 	map<const char*, int> jointHeiraki;
 	map<const char*, unsigned int> meshMap;
 	Header header;
+
 	vector<MaterialData> mat;
 	Materials  matExporter;
-	matExporter.exportMaterial(mat, materials, outputDir);
+
+	vector<const char*> node_name;
+	vector<const char*> diffuse_map;
+	vector<const char*> normal_map;
+	vector<const char*> specular_map;
+
+	matExporter.exportMaterial(mat, materials, outputDir, node_name, diffuse_map, normal_map, specular_map);
 	header.material_count = mat.size();
 
 	vector<const char*> transformNames;
@@ -101,9 +108,15 @@ MStatus Exporter::doIt(const MArgList& argList)
 	vector <MorphAnimation> morphs;
 
 	Keyframe keyFrame;
-	SkeletonAnimation skelAnim;
 	vector<Keyframes> keysStorage;
+	vector<vector<KeyframePoint>> points;
+	vector<const char*> curveName;
+	vector<const char*> attachToName;
+
+	SkeletonAnimation skelAnim;
 	vector<SkinAnimation> skinStorage;
+	vector<vector<int>> influenceIndices;
+	vector<vector<VertexInfluence>> influenceWeights;
 
 	MDagPath testdag;
 
@@ -247,7 +260,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 		MObject animSkin = skinLoop.item();
 
-		skelAnim.exportSkin(animSkin, skin, jointHeiraki, meshMap);
+		skelAnim.exportSkin(animSkin, skin, jointHeiraki, meshMap, influenceIndices, influenceWeights);
 
 		skinStorage.push_back(skin);
 
@@ -266,7 +279,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 		MObject animCurve = curveLoop.item();
 
-		status = keyFrame.exportKeyframes(animCurve, key, transformHeiraki, jointHeiraki);
+		status = keyFrame.exportKeyframes(animCurve, key, transformHeiraki, jointHeiraki, points, curveName, attachToName);
 
 		if (status == MS::kSuccess)
 		{
@@ -287,7 +300,24 @@ MStatus Exporter::doIt(const MArgList& argList)
 	output.writeToFiles(&header);
 
 	//Data
-	/*output.writeToFiles(&mat[0], mat.size());*/
+	for (unsigned int i = 0; i < mat.size(); i++)
+	{
+		output.writeToFiles(&mat[i]);
+		output.writeToFiles(&node_name[i]);
+
+		if (diffuse_map[i] != nullptr)
+		{
+			output.writeToFiles(&diffuse_map[i]);
+		}
+		if (normal_map[i] != nullptr)
+		{
+			output.writeToFiles(&normal_map[i]);
+		}
+		if (specular_map[i] != nullptr)
+		{
+ 			output.writeToFiles(&specular_map[i]);
+		}
+	}
 
 	for (unsigned int i = 0; i < transformData.size(); i++)
 	{
@@ -295,15 +325,11 @@ MStatus Exporter::doIt(const MArgList& argList)
 		output.writeToFiles(&transformNames[i]);
 	}
 
-	/*output.writeToFiles(&joints[0], joints.size());*/
-
 	for (unsigned int i = 0; i < cameraVec.size(); i++)
 	{
-	output.writeToFiles(&cameraVec[i]);
-	output.writeToFiles(&camreNames[i]);
+		output.writeToFiles(&cameraVec[i]);
+		output.writeToFiles(&camreNames[i]);
 	}
-
-	/*output.writeToFiles(&meshes[0], meshes.size());*/
 
 	for (unsigned int i = 0; i < lightbody.size(); i++)
 	{
@@ -315,13 +341,23 @@ MStatus Exporter::doIt(const MArgList& argList)
 	{
 		output.writeToFiles(&expNurbName[i]);
 		output.writeToFiles(&nurbBody[i]);
-		//for (unsigned int j = 0; j < expParentID[i].size(); j++)
-			output.writeToFiles(expParentID[i].data(), expParentID[i].size());
+		output.writeToFiles(expParentID[i].data(), expParentID[i].size());
 	}
 
-	//output.writeToFiles(&morphs[0], morphs.size());
-	//output.writeToFiles(&skinStorage[0], skinStorage.size());
-	//output.writeToFiles(&keysStorage[0], keysStorage.size());
+	for (unsigned int i = 0; i < skinStorage.size(); i++)
+	{
+		output.writeToFiles(&skinStorage[i]);
+		output.writeToFiles(influenceIndices[i].data(), influenceIndices[i].size());
+		output.writeToFiles(influenceWeights[i].data(), influenceWeights[i].size());
+	}
+
+	for (unsigned int i = 0; i < keysStorage.size(); i++)
+	{
+		output.writeToFiles(&keysStorage[i]);
+		output.writeToFiles(points[i].data(), points[i].size());
+		output.writeToFiles(&curveName[i]);
+		output.writeToFiles(&attachToName[i]);
+	}
 
 	output.CloseFiles();
 	return MStatus::kSuccess;

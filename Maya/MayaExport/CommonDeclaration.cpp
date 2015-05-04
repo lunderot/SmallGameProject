@@ -59,19 +59,20 @@ std::ostream& operator<<(std::ostream& out, const MaterialData& obj)
 		<< "Diffuse factor: " << obj.diffuse_factor << endl
 		<< "Transparency color: " << obj.transparency_color[0] << " " << obj.transparency_color[1] << " " << obj.transparency_color[2] << endl
 		<< "Incandescence: " << obj.incandescence[0] << " " << obj.incandescence[1] << " " << obj.incandescence[2] << endl
-		<< "Name: " << obj.node_name << endl
-		<< "Diffuse map: ";
-	if (obj.diffuse_map != nullptr)
-		out << obj.diffuse_map;
-	out << endl
-		<< "Normal map: ";
-	if (obj.normal_map != nullptr)
-		out << obj.normal_map;
-	out << endl
-		<< "Specular map: ";
-	if (obj.specular_map != nullptr)
-		out << obj.specular_map;
-	out << endl;
+		;
+	//	<< "Name: " << obj.node_name << endl
+	//	<< "Diffuse map: ";
+	//if (obj.diffuse_map != nullptr)
+	//	out << obj.diffuse_map;
+	//out << endl
+	//	<< "Normal map: ";
+	//if (obj.normal_map != nullptr)
+	//	out << obj.normal_map;
+	//out << endl
+	//	<< "Specular map: ";
+	//if (obj.specular_map != nullptr)
+	//	out << obj.specular_map;
+	//out << endl;
 	return out;
 }
 
@@ -193,24 +194,24 @@ std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj)
 		<< "Skin mesh index: " << obj.skinMeshIndex << endl
 		<< "Skin vertex count: " << obj.skinVertexCount << endl;
 
-	for (unsigned int i = 0; i < obj.numberOfInfluences; i++)
-	{
-		out << "Influence object " << i + 1 << " index: " << obj.influenceIndices[i] << endl;
-	}
+	//for (unsigned int i = 0; i < obj.numberOfInfluences; i++)
+	//{
+	//	out << "Influence object " << i + 1 << " index: " << obj.influenceIndices[i] << endl;
+	//}
 
-	for (unsigned int i = 0; i < obj.skinVertexCount; i++)
-	{
-		out << "Vertex " << i + 1 << ": " << endl
-			<< obj.influenceWeights[i];
-	}
+	//for (unsigned int i = 0; i < obj.skinVertexCount; i++)
+	//{
+	//	out << "Vertex " << i + 1 << ": " << endl
+	//		<< obj.influenceWeights[i];
+	//}
 
 	return out;
 }
 
 std::ostream& operator<<(std::ostream& out, const Keyframes& obj)
 {
-	out << "Curve name:" << obj.curveName << endl
-		<< "Attribute name: " << obj.attachToName << endl
+	out /*<< "Curve name:" << obj.curveName << endl
+		<< "Attribute name: " << obj.attachToName << endl*/
 		<< "Curve name length: " << obj.curveNameLength << endl
 		<< "Attribute name length: " << obj.attachToNameLength << endl
 		<< "Loop the animation: " << obj.loopAnimation << endl
@@ -218,11 +219,11 @@ std::ostream& operator<<(std::ostream& out, const Keyframes& obj)
 		<< "Affected object index: " << obj.affectedObjectIndex << endl
 		<< "Number of keyframes: " << obj.numberOfKeyframes << endl;
 
-	for (unsigned int i = 0; i < obj.numberOfKeyframes; i++)
-	{
-		out << "Keyframe " << i + 1 << ": " << endl
-			<< obj.points[i];
-	}
+	//for (unsigned int i = 0; i < obj.numberOfKeyframes; i++)
+	//{
+	//	out << "Keyframe " << i + 1 << ": " << endl
+	//		<< obj.points[i];
+	//}
 
 	return out;
 }

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-MStatus SkeletonAnimation::exportSkin(MObject& mayaObject, SkinAnimation& skin, map<const char*, int>& jointMap, map<const char*, unsigned int>& meshMap)
+MStatus SkeletonAnimation::exportSkin(MObject& mayaObject, SkinAnimation& skin, map<const char*, int>& jointMap, map<const char*, unsigned int>& meshMap, vector<vector<int>> &influenceIndices, vector<vector<VertexInfluence>> &influenceWeights)
 {
 	MFnSkinCluster skinCluster(mayaObject);
 	MDagPathArray influences;
@@ -10,8 +10,8 @@ MStatus SkeletonAnimation::exportSkin(MObject& mayaObject, SkinAnimation& skin, 
 	unsigned int numberOfInfluences = skinCluster.influenceObjects(influences);
 	skin.numberOfInfluences = numberOfInfluences;
 
-	skin.influenceIndices = new int[skin.numberOfInfluences];
-
+	//skin.influenceIndices = new int[skin.numberOfInfluences];
+	
 	unsigned int index;
 
 	// It should only be possible to have one geometry per skin cluster, hence the 0
@@ -24,18 +24,24 @@ MStatus SkeletonAnimation::exportSkin(MObject& mayaObject, SkinAnimation& skin, 
 
 	skin.skinMeshIndex = meshMap[skinNode.name().asChar()];
 
+	vector<int> temp_ind;
+
 	for (unsigned int j = 0; j < numberOfInfluences; j++)
 	{
 		MFnDependencyNode influenceNode = influences[j].node();
 
-		skin.influenceIndices[j] = jointMap[influenceNode.name().asChar()];
+		//skin.influenceIndices[j] = jointMap[influenceNode.name().asChar()];
+		temp_ind.push_back(jointMap[influenceNode.name().asChar()]);
 	}
+	influenceIndices.push_back(temp_ind);
 
 	MItGeometry geomIter(skinPath);
 
 	skin.skinVertexCount = geomIter.count();
 
-	skin.influenceWeights = new VertexInfluence[skin.skinVertexCount];
+	//skin.influenceWeights = new VertexInfluence[skin.skinVertexCount];
+
+	vector<VertexInfluence> temp_geom;
 
 	while (!geomIter.isDone())
 	{
@@ -53,7 +59,8 @@ MStatus SkeletonAnimation::exportSkin(MObject& mayaObject, SkinAnimation& skin, 
 		{
 			for (unsigned int x = 0; x < weights.length(); x++)
 			{
-				tempWeights.push_back(make_pair(weights[x], skin.influenceIndices[x]));
+				//tempWeights.push_back(make_pair(weights[x], skin.influenceIndices[x]));
+				tempWeights.push_back(make_pair(weights[x], temp_ind[x]));
 			}
 
 			while (tempWeights.size() < 4)
@@ -63,21 +70,22 @@ MStatus SkeletonAnimation::exportSkin(MObject& mayaObject, SkinAnimation& skin, 
 		}
 		else
 		{
-			vector<pair<double, int>> temp;
+			vector<pair<double, int>> temp_pair;
 			double totalWeight = 0.0f;
 
 			for (unsigned int x = 0; x < weights.length(); x++)
 			{
-				temp.push_back(make_pair(weights[x], skin.influenceIndices[x]));
+				//temp.push_back(make_pair(weights[x], skin.influenceIndices[x]));
+				temp_pair.push_back(make_pair(weights[x], temp_ind[x]));
 			}
 
-			sort(temp.begin(), temp.end());
-			reverse(temp.begin(), temp.end());
+			sort(temp_pair.begin(), temp_pair.end());
+			reverse(temp_pair.begin(), temp_pair.end());
 
 			for (unsigned int x = 0; x < 4; x++)
 			{
-				tempWeights.push_back(temp[x]);
-				totalWeight += temp[x].first;
+				tempWeights.push_back(temp_pair[x]);
+				totalWeight += temp_pair[x].first;
 			}
 
 			double normalizer = 1.0f / totalWeight;
@@ -94,10 +102,14 @@ MStatus SkeletonAnimation::exportSkin(MObject& mayaObject, SkinAnimation& skin, 
 			tempVert.weight[x] = tempWeights[x].first;
 		}
 
-		skin.influenceWeights[geomIter.index()] = tempVert;
+		//skin.influenceWeights[geomIter.index()] = tempVert;
+
+		temp_geom.push_back(tempVert);
 
 		geomIter.next();
 	}
+
+	influenceWeights.push_back(temp_geom);
 
 	return MS::kSuccess;
 }

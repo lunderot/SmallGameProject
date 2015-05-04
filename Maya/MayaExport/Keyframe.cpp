@@ -2,7 +2,7 @@
 
 using namespace std;
 
-MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve, map<const char*, int>& transMap, map<const char*, int>& jointMap)
+MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve, map<const char*, int>& transMap, map<const char*, int>& jointMap, vector<vector<KeyframePoint>> &points, vector<const char*> &curveName, vector<const char*> &attachToName)
 {
 	MS status;
 
@@ -21,9 +21,10 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve,
 
 		KeyframePoint point;
 
-		keyframeCurve.points = new KeyframePoint[keyframeCurve.numberOfKeyframes];
+		//keyframeCurve.points = new KeyframePoint[keyframeCurve.numberOfKeyframes];
 
-		keyframeCurve.curveName = curveObject.name().asChar();
+		//keyframeCurve.curveName = curveObject.name().asChar();
+		curveName.push_back(curveObject.name().asChar());
 		keyframeCurve.curveNameLength = curveObject.name().length();
 
 		if (curveObject.postInfinityType() == MFnAnimCurve::InfinityType::kCycle)
@@ -34,6 +35,8 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve,
 		{
 			keyframeCurve.loopAnimation = false;
 		}
+
+		vector<KeyframePoint> temp_point;
 
 		for (unsigned int i = 0; i < keyCount; i++)
 		{
@@ -46,8 +49,11 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve,
 			point.time = curveObject.time(i).as(MTime::kSeconds);
 			point.value = curveObject.value(i);
 
-			keyframeCurve.points[i] = point;
+			//keyframeCurve.points[i] = point;
+			temp_point.push_back(point);
 		}
+
+		points.push_back(temp_point);
 
 		MPlug outputPlug = curveObject.findPlug("output", true, &status);
 
@@ -58,12 +64,18 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve,
 		MObject controlledObject = allConnections[0].node();
 		keyframeCurve.attachToNameLength = allConnections[0].partialName().length();
 
-		keyframeCurve.attachToName = new char[keyframeCurve.attachToNameLength + 1];
+		//keyframeCurve.attachToName = new char[keyframeCurve.attachToNameLength + 1];
+		char* attachToName_temp = new char[keyframeCurve.attachToNameLength + 1];
+
 		for (unsigned int i = 0; i < keyframeCurve.attachToNameLength; i++)
 		{ 
-			keyframeCurve.attachToName[i] = allConnections[0].partialName().asChar()[i];
+			//keyframeCurve.attachToName[i] = allConnections[0].partialName().asChar()[i];
+			attachToName_temp[i] = allConnections[0].partialName().asChar()[i];
 		}
-		keyframeCurve.attachToName[keyframeCurve.attachToNameLength] = '\0';
+		//keyframeCurve.attachToName[keyframeCurve.attachToNameLength] = '\0';
+		attachToName_temp[keyframeCurve.attachToNameLength] = '\0';
+
+		attachToName.push_back((const char*)attachToName_temp);
 
 		MFnDependencyNode controlledNode(controlledObject);
 

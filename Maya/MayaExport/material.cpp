@@ -3,7 +3,7 @@
 
 using namespace std;
 
-MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const char*, int>& mat_map, std::string output_dir)
+MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const char*, int>& mat_map, std::string output_dir, vector<const char*> &node_name, vector<const char*> &diffuse_map, vector<const char*> &normal_map, vector<const char*> &specular_map)
 {
 	MStatus status = MStatus::kSuccess;
 
@@ -23,16 +23,27 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 
 			mat_struct.mtrl_type = mat_struct.ePhong;
 
-			this->commonDiffuseValues(materialFn, mat_struct);
-			this->commonReflectValues(materialFn, mat_struct);
+			this->commonDiffuseValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
+			this->commonReflectValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 
 			plug = materialFn.findPlug("cosinePower");
 			plug.getValue(mat_struct.specular_factor);
 
 			mat_struct.shininess = 0.0f;
 
-			this->findTextures(materialFn, mat_struct);
-
+			this->findTextures(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
+			if (mat_struct.duffuse_map_length == 0)
+			{
+				diffuse_map.push_back(nullptr);
+			}
+			if (mat_struct.normal_map_length == 0)
+			{
+				normal_map.push_back(nullptr);
+			}
+			if (mat_struct.specular_map_length == 0)
+			{
+				specular_map.push_back(nullptr);
+			}
 		}
 		else if (matIt.thisNode().hasFn(MFn::kBlinn))
 		{
@@ -42,8 +53,8 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 
 			mat_struct.mtrl_type = mat_struct.eBlinn;
 
-			this->commonDiffuseValues(materialFn, mat_struct);
-			this->commonReflectValues(materialFn, mat_struct);
+			this->commonDiffuseValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
+			this->commonReflectValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 
 			plug = materialFn.findPlug("eccentricity");
 			plug.getValue(mat_struct.specular_factor);
@@ -51,7 +62,19 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 			plug = materialFn.findPlug("specularRollOff");
 			plug.getValue(mat_struct.shininess);
 
-			this->findTextures(materialFn, mat_struct);
+			this->findTextures(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
+			if (mat_struct.duffuse_map_length == 0)
+			{
+				diffuse_map.push_back(nullptr);
+			}
+			if (mat_struct.normal_map_length == 0)
+			{
+				normal_map.push_back(nullptr);
+			}
+			if (mat_struct.specular_map_length == 0)
+			{
+				specular_map.push_back(nullptr);
+			}
 
 		}
 		else if (matIt.thisNode().hasFn(MFn::kLambert))
@@ -62,7 +85,7 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 
 			mat_struct.mtrl_type = mat_struct.eLambert;
 
-			this->commonDiffuseValues(materialFn, mat_struct);
+			this->commonDiffuseValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 
 			mat_struct.shininess = 0.0f;
 			mat_struct.specular[0] = 0.0f;
@@ -74,8 +97,19 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 			mat_struct.reflection[2] = 0.0f;
 			mat_struct.reflection_factor = 0.0f;
 
-			this->findTextures(materialFn, mat_struct);
-
+			this->findTextures(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
+			if (mat_struct.duffuse_map_length == 0)
+			{
+				diffuse_map.push_back(nullptr);
+			}
+			if (mat_struct.normal_map_length == 0)
+			{
+				normal_map.push_back(nullptr);
+			}
+			if (mat_struct.specular_map_length == 0)
+			{
+				specular_map.push_back(nullptr);
+			}
 		}
 
 		// Write to file or push_back the data here
@@ -87,9 +121,10 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 	return status;
 }
 
-MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, MaterialData& matStrct)
+MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, MaterialData& matStrct, vector<const char*> &node_name, vector<const char*> &diffuse_map, vector<const char*> &normal_map, vector<const char*> &specular_map)
 {
-	matStrct.node_name = node.name().asChar();
+	//matStrct.node_name = node.name().asChar();
+	node_name.push_back(node.name().asChar());
 	matStrct.name_length = node.name().length();
 
 	plug = node.findPlug("colorR");
@@ -125,7 +160,7 @@ MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, MaterialData& ma
 	return MStatus::kSuccess;
 }
 
-MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct MaterialData& matStrct)
+MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct MaterialData& matStrct, vector<const char*> &node_name, vector<const char*> &diffuse_map, vector<const char*> &normal_map, vector<const char*> &specular_map)
 {
 	plug = node.findPlug("specularColorR");
 	plug.getValue(matStrct.specular[0]);
@@ -146,7 +181,7 @@ MStatus Materials::commonReflectValues(MFnDependencyNode& node, struct MaterialD
 	return MStatus::kSuccess;
 }
 
-MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct)
+MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct, vector<const char*> &node_name, vector<const char*> &diffuse_map, vector<const char*> &normal_map, vector<const char*> &specular_map)
 {
 	bool asDst = true, asSrc = false;
 	MPlugArray allConnections;
@@ -173,13 +208,22 @@ MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct)
 			tempOut.append("/");
 			tempOut.append(fileName);
 
-			matStrct.diffuse_map = new char[fileName.size() + 1];
+			//matStrct.diffuse_map = new char[fileName.size() + 1];
+			//for (unsigned int x = 0; x < matStrct.duffuse_map_length; x++)
+			//{
+			//	matStrct.diffuse_map[x] = fileName[x];
+			//}
+			//matStrct.diffuse_map[matStrct.duffuse_map_length] = '\0';
+
+			char* diffuse_map_temp = new char[fileName.size() + 1];
 			for (unsigned int x = 0; x < matStrct.duffuse_map_length; x++)
 			{
-				matStrct.diffuse_map[x] = fileName[x];
+				diffuse_map_temp[x] = fileName[x];
 			}
-			matStrct.diffuse_map[matStrct.duffuse_map_length] = '\0';
+			diffuse_map_temp[matStrct.duffuse_map_length] = '\0';
 
+			diffuse_map.push_back((const char*)diffuse_map_temp);
+			
 			CopyFile(temp.c_str(), tempOut.c_str(), TRUE);
 
 			break;
@@ -209,12 +253,21 @@ MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct)
 				tempOut.append("/");
 				tempOut.append(fileName);
 
-				matStrct.specular_map = new char[fileName.size() + 1];
+				//matStrct.specular_map = new char[fileName.size() + 1];
+				//for (unsigned int x = 0; x < matStrct.specular_map_length; x++)
+				//{
+				//	matStrct.specular_map[x] = fileName[x];
+				//}
+				//matStrct.specular_map[matStrct.specular_map_length] = '\0';
+
+				char* specular_map_temp = new char[fileName.size() + 1];
 				for (unsigned int x = 0; x < matStrct.specular_map_length; x++)
 				{
-					matStrct.specular_map[x] = fileName[x];
+					specular_map_temp[x] = fileName[x];
 				}
-				matStrct.specular_map[matStrct.specular_map_length] = '\0';
+				specular_map_temp[matStrct.specular_map_length] = '\0';
+
+				specular_map.push_back((const char*)specular_map_temp);
 
 				CopyFile(temp.c_str(), tempOut.c_str(), TRUE);
 
@@ -258,12 +311,21 @@ MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct)
 					tempOut.append("/");
 					tempOut.append(fileName);
 
-					matStrct.normal_map = new char[fileName.size() + 1];
+					//matStrct.normal_map = new char[fileName.size() + 1];
+					//for (unsigned int x = 0; x < matStrct.normal_map_length; x++)
+					//{
+					//	matStrct.normal_map[x] = fileName[x];
+					//}
+					//matStrct.normal_map[matStrct.normal_map_length] = '\0';
+
+					char* normal_map_temp = new char[fileName.size() + 1];
 					for (unsigned int x = 0; x < matStrct.normal_map_length; x++)
 					{
-						matStrct.normal_map[x] = fileName[x];
+						normal_map_temp[x] = fileName[x];
 					}
-					matStrct.normal_map[matStrct.normal_map_length] = '\0';
+					normal_map_temp[matStrct.normal_map_length] = '\0';
+
+					normal_map.push_back((const char*)normal_map_temp);
 
 					CopyFile(temp.c_str(), tempOut.c_str(), TRUE);
 

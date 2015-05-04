@@ -14,7 +14,7 @@
 class SkeletonAnimation
 {
 public:
-	MStatus exportSkin(MObject& mayaObject, SkinAnimation& skin, map<const char*, int>& jointMap, map<const char*, unsigned int>& meshMap);
+	MStatus exportSkin(MObject& mayaObject, SkinAnimation& skin, map<const char*, int>& jointMap, map<const char*, unsigned int>& meshMap, vector<vector<int>> &influenceIndices, vector<vector<VertexInfluence>> &influenceWeights);
 protected:
 private:
 	bool asDst = false, asSrc = true;
