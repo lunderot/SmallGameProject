@@ -8,6 +8,6 @@
 class MorphAnimations
 {
 public:
-	MStatus exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, map<const char*, unsigned int> meshMap);
+	MStatus exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, vector<vector<double>>& positions, vector <const char*>& blendShapeName, map<const char*, unsigned int> meshMap);
 };
 #endif

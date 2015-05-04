@@ -102,10 +102,24 @@ MStatus Exporter::doIt(const MArgList& argList)
 	vector<const char*> camreNames;
 	vector<vector<unsigned int>> cameraParentIDs;
 
+	// mesh
 	vector <meshStruct> meshes;
+	vector<vector<double>> position;
+	vector<vector<float>> uv;
+	vector<vector<double>> normal;
+	vector<vector<double>> tangent;
+	vector<vector<double>> bi_tangent;
+
+	vector<vector<int>> transform_Id;
+	vector<vector<int>> material_Id;
+	vector<vector<Vertex>> vertices;
+	vector<const char*> name;
+
 
 	MorphAnimations morphAnims;
 	vector <MorphAnimation> morphs;
+	vector<vector<double>> morphsPositions;
+	vector <const char*> moprhsNames;
 
 	Keyframe keyFrame;
 	vector<Keyframes> keysStorage;
@@ -130,7 +144,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				meshStruct newMesh;
 				MFnMesh mayaMesh(path);
 
-				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, meshMap);
+				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, meshMap, position, uv, normal, tangent, bi_tangent, transform_Id, material_Id, vertices, name);
 				if (status != MS::kSuccess)
 				{
 					MGlobal::displayInfo("Failure at newMesh::exportMesh()");
@@ -243,7 +257,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 		MFnDependencyNode wuut(testing);
 		MFnAnimCurve anim(testing, &status);
 
-		morphAnims.exportMorphAnimation(it, morphAnim, meshMap);
+		morphAnims.exportMorphAnimation(it, morphAnim, morphsPositions, moprhsNames, meshMap);
 		morphs.push_back(morphAnim);
 		header.morph_count++;
 
@@ -315,14 +329,33 @@ MStatus Exporter::doIt(const MArgList& argList)
 		}
 		if (specular_map[i] != nullptr)
 		{
- 			output.writeToFiles(&specular_map[i]);
+			output.writeToFiles(&specular_map[i]);
 		}
+	}
+
+	for (unsigned int i = 0; i < meshes.size(); i++)
+	{
+		output.writeToFiles(position[i].data(), position[i].size());
+		output.writeToFiles(uv[i].data(), uv[i].size());
+		output.writeToFiles(normal[i].data(), normal[i].size());
+		output.writeToFiles(tangent[i].data(), tangent[i].size());
+		output.writeToFiles(bi_tangent[i].data(), bi_tangent[i].size());
+		output.writeToFiles(transform_Id[i].data(), transform_Id[i].size());
+		output.writeToFiles(material_Id[i].data(), material_Id[i].size());
+		output.writeToFiles(vertices[i].data(), vertices[i].size());
+		output.writeToFiles(&name[i]);
 	}
 
 	for (unsigned int i = 0; i < transformData.size(); i++)
 	{
 		output.writeToFiles(&transformData[i]);
 		output.writeToFiles(&transformNames[i]);
+	}
+
+	for (unsigned int i = 0; i < joints.size(); i++)
+	{
+		output.writeToFiles(&joints[i]);
+		output.writeToFiles(&jointNames[i]);
 	}
 
 	for (unsigned int i = 0; i < cameraVec.size(); i++)
@@ -357,6 +390,13 @@ MStatus Exporter::doIt(const MArgList& argList)
 		output.writeToFiles(points[i].data(), points[i].size());
 		output.writeToFiles(&curveName[i]);
 		output.writeToFiles(&attachToName[i]);
+	}
+
+	for (unsigned int i = 0; i < morphs.size(); i++)
+	{
+		output.writeToFiles(&morphs[i]);
+		output.writeToFiles(morphsPositions[i].data(), morphsPositions[i].size());
+		output.writeToFiles(&moprhsNames[i]);
 	}
 
 	output.CloseFiles();
