@@ -21,7 +21,7 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
-			mat_struct.mtrl_type = mat_struct.ePhong;
+			mat_struct.mtrl_type = material_type::ePhong;
 
 			this->commonDiffuseValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 			this->commonReflectValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
@@ -51,7 +51,7 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
-			mat_struct.mtrl_type = mat_struct.eBlinn;
+			mat_struct.mtrl_type = material_type::eBlinn;
 
 			this->commonDiffuseValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 			this->commonReflectValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
@@ -83,7 +83,7 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 
 			mat_map[materialFn.name().asChar()] = mat_vector.size();
 
-			mat_struct.mtrl_type = mat_struct.eLambert;
+			mat_struct.mtrl_type = material_type::eLambert;
 
 			this->commonDiffuseValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 
@@ -230,7 +230,7 @@ MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct,
 		}
 	}
 
-	if (matStrct.mtrl_type != matStrct.eLambert)
+	if (matStrct.mtrl_type != material_type::eLambert)
 	{
 		plug = node.findPlug("specularColor", true);
 		plug.connectedTo(allConnections, asDst, asSrc);

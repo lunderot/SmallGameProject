@@ -5,7 +5,7 @@
 #include <maya/MAnimControl.h>
 #include <maya/MItKeyframe.h>
 
-MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnimation &morphAnim, vector<vector<double>>& positions, vector <const char*>& blendShapeName, map<const char*, unsigned int> meshMap)
+MStatus MorphAnimations::exportMorphAnimation(MItDependencyNodes &it, MorphAnimationData& morphAnim, vector<vector<double>>& positions, vector <const char*>& blendShapeName, map<const char*, unsigned int> meshMap)
 {
 	MStatus status;
 	unsigned int counter = 0;

@@ -13,7 +13,7 @@ class exportLight
 {
 public:
 
-	MStatus exportLightType(MObject& mayaLight, Light& oneLight, vector<const char*>& name);
+	MStatus exportLightType(MObject& mayaLight, LightData& oneLight, vector<const char*>& name);
 
 };
 

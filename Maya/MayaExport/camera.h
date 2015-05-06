@@ -11,7 +11,7 @@ using namespace std;
 class Camera
 {
 public:
-	MStatus exportCamera(MFnCamera& mayaCamera, camera& camera, map<const char*, int>& transformHeiraki, vector<const char*>& names, vector<vector<unsigned int>>& parentIDs);
+	MStatus exportCamera(MFnCamera& mayaCamera, cameraData& camera, map<const char*, int>& transformHeiraki, vector<const char*>& names, vector<vector<unsigned int>>& parentIDs);
 
 };
 #endif

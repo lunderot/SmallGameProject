@@ -26,7 +26,7 @@ struct Header
 	friend std::ostream& operator<<(std::ostream& out, const Header& obj);
 };
 
-struct Transform
+struct TransformData
 {
 	unsigned int name_Length;
 	int parentID;
@@ -34,15 +34,15 @@ struct Transform
 	double rotation[4];
 	double scale[3];
 
-	friend std::ostream& operator<<(std::ostream& out, const Transform& obj);
+	friend std::ostream& operator<<(std::ostream& out, const TransformData& obj);
 };
 
-struct Joint
+struct JointData
 {
 	double jointOrientation[4];
-	Transform transform;
+	TransformData transform;
 
-	friend std::ostream& operator<<(std::ostream& out, const Joint& obj)
+	friend std::ostream& operator<<(std::ostream& out, const JointData& obj)
 	{
 		out << "ParentID: " << obj.transform.parentID << endl
 			<< "Position: " << obj.transform.position[0] << ' ' << obj.transform.position[1] << ' ' << obj.transform.position[3] << endl
@@ -69,7 +69,7 @@ struct Vertex
 	}
 };
 
-struct meshStruct
+struct meshStructData
 {
 	unsigned int name_length;
 	unsigned int vertex_count;
@@ -95,10 +95,11 @@ struct meshStruct
 	//Vertex* vertices;
 	//const char* name;
 
-	friend std::ostream& operator<<(std::ostream& out, const meshStruct& obj);
+	friend std::ostream& operator<<(std::ostream& out, const meshStructData& obj);
 };
 
-struct camera
+enum projection_type{ ePerspective, eOrthogonal };
+struct cameraData
 {
 	unsigned int name_length;
 	unsigned int nrOfParents;
@@ -109,12 +110,12 @@ struct camera
 	double field_of_view_y;
 	double near_plane;
 	double far_plane;
-	enum projection_type{ ePerspective, eOrthogonal } projection;
+	projection_type projection;
 
-	friend std::ostream& operator<<(std::ostream& out, const camera& obj);
+	friend std::ostream& operator<<(std::ostream& out, const cameraData& obj);
 };
 
-struct MorphAnimation
+struct MorphAnimationData
 {
 	unsigned int blendShape_name_length;
 
@@ -126,11 +127,12 @@ struct MorphAnimation
 
 	unsigned int nrOfPositions;
 
-	friend std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj);
+	friend std::ostream& operator<<(std::ostream& out, const MorphAnimationData& obj);
 	// vertex
 	// color
 };
 
+enum material_type { eLambert, eBlinn, ePhong };
 struct MaterialData
 {
 	MaterialData()
@@ -149,7 +151,7 @@ struct MaterialData
 	unsigned int duffuse_map_length;
 	unsigned int normal_map_length;
 	unsigned int specular_map_length;
-	enum material_type { eLambert, eBlinn, ePhong } mtrl_type;
+	material_type mtrl_type;
 	double normal_depth;
 	double specular[3];
 	double specular_factor;
@@ -169,23 +171,25 @@ struct MaterialData
 	friend std::ostream& operator<<(std::ostream& out, const MaterialData& obj);
 };
 
-struct Light
+enum light_type{ ePoint, eDirectional, eSpot, eArea, eVolume };
+enum decay_type{ eNone, eLinear, eQuadric, eCubic };
+struct LightData
 {
 	unsigned int name_Length;
-	enum light_type{ ePoint, eDirectional, eSpot, eArea, eVolume }type;
+	light_type type;
 	double color[3];
 	float intensity;
-	enum decay_type{ eNone, eLinear, eQuadric, eCubic }dType;
+	decay_type dType;
 	//short decay_type;
 	bool cast_shadows;
 	double shadow_color[3];
 	//const char* name;
 
-	friend std::ostream& operator<<(std::ostream& out, const Light& obj);
+	friend std::ostream& operator<<(std::ostream& out, const LightData& obj);
 
 };
 
-struct Nurb
+struct NurbData
 {
 	unsigned int name_Length;
 	unsigned int numberOfParent;
@@ -193,9 +197,22 @@ struct Nurb
 	//int* parentID;
 	//const char* name;
 
-	friend std::ostream& operator<<(std::ostream& out, const Nurb& obj);
+	friend std::ostream& operator<<(std::ostream& out, const NurbData& obj);
 };
 
+enum TangentType {
+	kTangentGlobal,
+	kTangentFixed,
+	kTangentLinear,
+	kTangentFlat,
+	kTangentSmooth,
+	kTangentStep,
+	kTangentSlow,
+	kTangentFast,
+	kTangentClamped,
+	kTangentPlateau,
+	kTangentStepNext
+};
 // Handles a single point on the Graph Editor's curve. This represents a single keyframe.
 struct KeyframePoint
 {
@@ -209,20 +226,8 @@ struct KeyframePoint
 	float tangentOutX;
 	float tangentOutY;
 	// Which type of input and output curve the point has.
-	enum type { 
-		kTangentGlobal,
-		kTangentFixed,
-		kTangentLinear,
-		kTangentFlat,
-		kTangentSmooth,
-		kTangentStep,
-		kTangentSlow,
-		kTangentFast,
-		kTangentClamped,
-		kTangentPlateau,
-		kTangentStepNext
-	} inputTangentType;
-	enum type outputTangentType;
+	TangentType inputTangentType;
+	TangentType outputTangentType;
 
 	friend std::ostream& operator<<(std::ostream& out, const KeyframePoint& obj)
 	{
@@ -237,13 +242,14 @@ struct KeyframePoint
 	}
 };
 
-struct Keyframes
+enum AffectedType { kJoint, kTransform, kBlendShape, kOther };
+struct KeyframesData
 {
 	unsigned int curveNameLength;
 	// Whether the animation should loop indefinitely.
 	bool loopAnimation;
 	// What type of object the keyframes are linked to.
-	enum type { kJoint, kTransform, kBlendShape, kOther } affectedObjectType;
+	AffectedType affectedObjectType;
 	// Which index the linked object has.
 	unsigned int affectedObjectIndex;
 	unsigned int numberOfKeyframes;
@@ -254,7 +260,7 @@ struct Keyframes
 	//char* attachToName;
 
 	//void WriteBinary(ofstream& outputfile);
-	friend std::ostream& operator<<(std::ostream& out, const Keyframes& obj);
+	friend std::ostream& operator<<(std::ostream& out, const KeyframesData& obj);
 };
 
 // Holds the four influence objects' indices and their weights for a single vertex.

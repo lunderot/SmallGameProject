@@ -12,7 +12,7 @@ using namespace std;
 class Mesh
 {
 public:
-	MStatus exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int>& transformHeiraki, meshStruct& meshes, map<const char*, unsigned int>& meshMap,
+	MStatus exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int>& transformHeiraki, meshStructData& meshes, map<const char*, unsigned int>& meshMap,
 		vector<vector<double>>& position,
 		vector<vector<float>>& uv,
 		vector<vector<double>>& normal,
@@ -24,10 +24,10 @@ public:
 		vector<const char*>& name);
 
 private:
-	MStatus exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, meshStruct& meshes, 
+	MStatus exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, meshStructData& meshes, 
 		vector<vector<int>>& material_Id);
 
-	MStatus exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeiraki, map<const char*, int>& materials, meshStruct& meshes,
+	MStatus exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeiraki, map<const char*, int>& materials, meshStructData& meshes,
 		vector<vector<double>>& position,
 		vector<vector<float>>& uv,
 		vector<vector<double>>& normal,

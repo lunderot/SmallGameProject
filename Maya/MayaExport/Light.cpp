@@ -2,7 +2,7 @@
 #include "maya/mPlug.h"
 
 //MStatus exportLight::exportLightType(MFnLight& mayaLight, LightHeader& Lheader, Light& oneLight)
-MStatus exportLight::exportLightType(MObject& inputLight, Light& oneLight, vector<const char*>& name)
+MStatus exportLight::exportLightType(MObject& inputLight, LightData& oneLight, vector<const char*>& name)
 {
 
 
@@ -19,36 +19,36 @@ MStatus exportLight::exportLightType(MObject& inputLight, Light& oneLight, vecto
 
 	if (inputLight.hasFn(MFn::Type::kPointLight))
 	{	
-		oneLight.type = Light::light_type::ePoint;
-		oneLight.dType = (Light::decay_type)mayaLight.decayRate(&status);
+		oneLight.type = light_type::ePoint;
+		oneLight.dType = (decay_type)mayaLight.decayRate(&status);
 	}
 
 	
 	else if (inputLight.hasFn(MFn::Type::kDirectionalLight))
 	{
-		oneLight.type = Light::light_type::eDirectional;
-		oneLight.dType = Light::eNone;
+		oneLight.type = light_type::eDirectional;
+		oneLight.dType = decay_type::eNone;
 	}
 
 
 	else if (inputLight.hasFn(MFn::Type::kSpotLight))
 	{
-		oneLight.type = Light::light_type::eSpot;
-		oneLight.dType = (Light::decay_type)mayaLight.decayRate(&status);
+		oneLight.type = light_type::eSpot;
+		oneLight.dType = (decay_type)mayaLight.decayRate(&status);
 	}
 
 
 	else if (inputLight.hasFn(MFn::Type::kAreaLight))
 	{
-		oneLight.type = Light::light_type::eArea;
-		oneLight.dType = (Light::decay_type)mayaLight.decayRate(&status);
+		oneLight.type = light_type::eArea;
+		oneLight.dType = (decay_type)mayaLight.decayRate(&status);
 	}
 
 
 	else if (inputLight.hasFn(MFn::Type::kVolumeLight))
 	{
-		oneLight.type = Light::light_type::eVolume;
-		oneLight.dType = Light::eNone;
+		oneLight.type = light_type::eVolume;
+		oneLight.dType = decay_type::eNone;
 	}
 	else
 		return MS::kFailure;
@@ -58,7 +58,7 @@ MStatus exportLight::exportLightType(MObject& inputLight, Light& oneLight, vecto
 	oneLight.name_Length = mayaLight.name().length();
 
 	MGlobal::displayInfo("Maya Light Type: " + MString() + mayaLight.typeName());
-	MGlobal::displayInfo("Maya Decay Type: " + MString() + (Light::decay_type)mayaLight.decayRate(&status));
+	MGlobal::displayInfo("Maya Decay Type: " + MString() + (decay_type)mayaLight.decayRate(&status));
 	MGlobal::displayInfo("Light Type: " + MString() + oneLight.type);
 	MGlobal::displayInfo("Decay Type: " + MString() + oneLight.dType);
 

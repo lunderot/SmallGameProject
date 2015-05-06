@@ -2,15 +2,15 @@
 #define MAYA_EXPORT
 #include "CommonDeclaration.h"
 
-MStatus Camera::exportCamera(MFnCamera& mayaCamera, camera& camera, map<const char*, int>& transformHeiraki, vector<const char*>& names, vector<vector<unsigned int>>& parentIDs)
+MStatus Camera::exportCamera(MFnCamera& mayaCamera, cameraData& camera, map<const char*, int>& transformHeiraki, vector<const char*>& names, vector<vector<unsigned int>>& parentIDs)
 {
 	MStatus status;
 
 	// Check if the camera is orthogonal or not
 	if (mayaCamera.isOrtho())
-		camera.projection = camera.eOrthogonal;
+		camera.projection = projection_type::eOrthogonal;
 	else
-		camera.projection = camera.ePerspective;
+		camera.projection = projection_type::ePerspective;
 
 	// Get the data we need from the camera
 	camera.name_length = mayaCamera.name().length();

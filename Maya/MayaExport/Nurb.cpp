@@ -1,7 +1,7 @@
 #include "Nurb.h"
 #include "maya/mPlug.h"
 
-MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, Nurb& nurbSphere, map<const char*, int> transformHierarchy, vector<const char*>& name, vector<vector <int> >& parentID)
+MStatus exportNurb::exportNurbSphere(MFnNurbsSurface& mayaNurbSphere, NurbData& nurbSphere, map<const char*, int> transformHierarchy, vector<const char*>& name, vector<vector <int> >& parentID)
 {
 	MS status;
 

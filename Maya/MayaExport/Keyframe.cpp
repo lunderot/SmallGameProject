@@ -2,7 +2,7 @@
 
 using namespace std;
 
-MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve, map<const char*, int>& transMap, map<const char*, int>& jointMap, vector<vector<KeyframePoint>> &points, vector<const char*> &curveName, vector<const char*> &attachToName)
+MStatus Keyframe::exportKeyframes(MObject& mayaObject, KeyframesData& keyframeCurve, map<const char*, int>& transMap, map<const char*, int>& jointMap, vector<vector<KeyframePoint>> &points, vector<const char*> &curveName, vector<const char*> &attachToName)
 {
 	MS status;
 
@@ -43,8 +43,8 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve,
 			curveObject.getTangent(i, point.tangentInX, point.tangentInY, true);
 			curveObject.getTangent(i, point.tangentOutX, point.tangentOutY, false);
 
-			point.inputTangentType = static_cast<KeyframePoint::type>(curveObject.inTangentType(i));
-			point.outputTangentType = static_cast<KeyframePoint::type>(curveObject.outTangentType(i));
+			point.inputTangentType = static_cast<TangentType>(curveObject.inTangentType(i));
+			point.outputTangentType = static_cast<TangentType>(curveObject.outTangentType(i));
 
 			point.time = curveObject.time(i).as(MTime::kSeconds);
 			point.value = curveObject.value(i);
@@ -81,21 +81,21 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, Keyframes& keyframeCurve,
 
 		if (controlledObject.apiType() == MFn::Type::kJoint)
 		{
-			keyframeCurve.affectedObjectType = Keyframes::kJoint;
+			keyframeCurve.affectedObjectType = AffectedType::kJoint;
 			keyframeCurve.affectedObjectIndex = jointMap[controlledNode.name().asChar()];
 		}
 		else if (controlledObject.apiType() == MFn::Type::kTransform)
 		{
-			keyframeCurve.affectedObjectType = Keyframes::kTransform;
+			keyframeCurve.affectedObjectType = AffectedType::kTransform;
 			keyframeCurve.affectedObjectIndex = transMap[controlledNode.name().asChar()];
 		}
 		else if (controlledObject.apiType() == MFn::Type::kBlendShape)
 		{
-			keyframeCurve.affectedObjectType = Keyframes::kBlendShape;
+			keyframeCurve.affectedObjectType = AffectedType::kBlendShape;
 		}
 		else
 		{
-			keyframeCurve.affectedObjectType = Keyframes::kOther;
+			keyframeCurve.affectedObjectType = AffectedType::kOther;
 		}
 	}
 	else

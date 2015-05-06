@@ -1,7 +1,7 @@
 #include "mesh.h"
 #include < maya/MPlug.h >
 
-MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int>& transformHeiraki, meshStruct& meshes, map<const char*, unsigned int>& meshMap,
+MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<const char*, int>& transformHeiraki, meshStructData& meshes, map<const char*, unsigned int>& meshMap,
 	vector<vector<double>>& position,
 	vector<vector<float>>& uv,
 	vector<vector<double>>& normal,
@@ -39,7 +39,7 @@ MStatus Mesh::exportMesh(MFnMesh& mesh, map<const char*, int>& materials, map<co
 	return status;
 }
 
-MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, meshStruct& meshes,
+MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, meshStructData& meshes,
 	vector<vector<int>>& material_Id)
 {
 	MItDependencyNodes it(MFn::kLambert);
@@ -88,7 +88,7 @@ MStatus Mesh::exportMaterial(MFnMesh& mesh, map<const char*, int>& materials, me
 	return MStatus::kSuccess;
 }
 
-MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeiraki, map<const char*, int>& materials, meshStruct& meshes,
+MStatus Mesh::exportVertices(MFnMesh& mesh, map<const char*, int>& transformHeiraki, map<const char*, int>& materials, meshStructData& meshes,
 	vector<vector<double>>& position,
 	vector<vector<float>>& uv,
 	vector<vector<double>>& normal,

@@ -64,12 +64,12 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	//--Light
 	exportLight aLight;
-	vector<Light> lightbody;
+	vector<LightData> lightbody;
 	vector<const char*> expLightName;
 
 	//--Nurb
 	exportNurb aNurb;
-	vector<Nurb> nurbBody;
+	vector<NurbData> nurbBody;
 	vector<const char*> expNurbName;
 	vector<vector <int>> expParentID;
 
@@ -91,19 +91,19 @@ MStatus Exporter::doIt(const MArgList& argList)
 	header.material_count = mat.size();
 
 	vector<const char*> transformNames;
-	vector<Transform> transformData;
+	vector<TransformData> transformData;
 
 	vector<const char*> jointNames;
-	vector<Joint> joints;
+	vector<JointData> joints;
 
 	// camera
 	Camera cam;
-	vector<camera> cameraVec;
+	vector<cameraData> cameraVec;
 	vector<const char*> camreNames;
 	vector<vector<unsigned int>> cameraParentIDs;
 
 	// mesh
-	vector <meshStruct> meshes;
+	vector <meshStructData> meshes;
 	vector<vector<double>> position;
 	vector<vector<float>> uv;
 	vector<vector<double>> normal;
@@ -117,12 +117,12 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 
 	MorphAnimations morphAnims;
-	vector <MorphAnimation> morphs;
+	vector <MorphAnimationData> morphs;
 	vector<vector<double>> morphsPositions;
 	vector <const char*> moprhsNames;
 
 	Keyframe keyFrame;
-	vector<Keyframes> keysStorage;
+	vector<KeyframesData> keysStorage;
 	vector<vector<KeyframePoint>> points;
 	vector<const char*> curveName;
 	vector<const char*> attachToName;
@@ -141,7 +141,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.apiType() == MFn::kMesh)
 			{
 				MStatus status;
-				meshStruct newMesh;
+				meshStructData newMesh;
 				MFnMesh mayaMesh(path);
 
 				status = mesh.exportMesh(mayaMesh, materials, transformHeiraki, newMesh, meshMap, position, uv, normal, tangent, bi_tangent, transform_Id, material_Id, vertices, name);
@@ -157,7 +157,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.apiType() == MFn::kTransform)
 			{
 				//MStatus status;
-				Transform transform;
+				TransformData transform;
 
 				TransformClass transformClass;
 
@@ -174,7 +174,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.apiType() == MFn::kCamera)
 			{
 				MFnCamera mayaCamera(path);
-				camera camera;
+				cameraData camera;
 				status = cam.exportCamera(mayaCamera, camera, transformHeiraki, camreNames, cameraParentIDs);
 
 				if (status != MS::kSuccess)
@@ -189,7 +189,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			{
 				MFnIkJoint mayaJoint(path);
 
-				Joint joint;
+				JointData joint;
 
 				JointExporter jointExporter;
 				status = jointExporter.exportJoint(mayaJoint, jointHeiraki, transformHeiraki, joints.size(), joint, jointNames);
@@ -207,7 +207,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.hasFn(MFn::kNonAmbientLight))
 			{
 				MS status;
-				Light eOLight;
+				LightData eOLight;
 
 				//MFnLight eMayaLight(path);
 				//MFnNonAmbientLight eMayaLight(path);
@@ -225,7 +225,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 			if (path.hasFn(MFn::kNurbsSurface))
 			{
 				MS status;
-				Nurb structNurb;
+				NurbData structNurb;
 
 				//MFnNurbsSurface eNurb(path);
 				//aNurb.exportNurbSphere(eNurb, nurbHeader, structNurb, transformHeiraki);
@@ -251,7 +251,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 
 	while (!it.isDone())
 	{
-		MorphAnimation morphAnim;
+		MorphAnimationData morphAnim;
 		MObject testing = it.item();
 		MFnDagNode storetest(testing);
 		MFnDependencyNode wuut(testing);
@@ -289,7 +289,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	while (!curveLoop.isDone())
 	{
 		MS status = MS::kSuccess;
-		Keyframes key;
+		KeyframesData key;
 
 		MObject animCurve = curveLoop.item();
 
@@ -333,19 +333,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 		}
 	}
 
-	for (unsigned int i = 0; i < meshes.size(); i++)
-	{
-		output.writeToFiles(position[i].data(), position[i].size());
-		output.writeToFiles(uv[i].data(), uv[i].size());
-		output.writeToFiles(normal[i].data(), normal[i].size());
-		output.writeToFiles(tangent[i].data(), tangent[i].size());
-		output.writeToFiles(bi_tangent[i].data(), bi_tangent[i].size());
-		output.writeToFiles(transform_Id[i].data(), transform_Id[i].size());
-		output.writeToFiles(material_Id[i].data(), material_Id[i].size());
-		output.writeToFiles(vertices[i].data(), vertices[i].size());
-		output.writeToFiles(&name[i]);
-	}
-
 	for (unsigned int i = 0; i < transformData.size(); i++)
 	{
 		output.writeToFiles(&transformData[i]);
@@ -361,20 +348,42 @@ MStatus Exporter::doIt(const MArgList& argList)
 	for (unsigned int i = 0; i < cameraVec.size(); i++)
 	{
 		output.writeToFiles(&cameraVec[i]);
+		output.writeToFiles(cameraParentIDs[i].data(), cameraParentIDs[i].size());
 		output.writeToFiles(&camreNames[i]);
 	}
 
 	for (unsigned int i = 0; i < lightbody.size(); i++)
-	{
-		output.writeToFiles(&expLightName[i]);
+	{	
 		output.writeToFiles(&lightbody[i]);
+		output.writeToFiles(&expLightName[i]);
 	}
 
 	for (unsigned int i = 0; i < nurbBody.size(); i++)
 	{
-		output.writeToFiles(&expNurbName[i]);
 		output.writeToFiles(&nurbBody[i]);
 		output.writeToFiles(expParentID[i].data(), expParentID[i].size());
+		output.writeToFiles(&expNurbName[i]);
+	}
+
+	for (unsigned int i = 0; i < meshes.size(); i++)
+	{
+		output.writeToFiles(&meshes[i]);
+		output.writeToFiles(position[i].data(), position[i].size());
+		output.writeToFiles(uv[i].data(), uv[i].size());
+		output.writeToFiles(normal[i].data(), normal[i].size());
+		output.writeToFiles(tangent[i].data(), tangent[i].size());
+		output.writeToFiles(bi_tangent[i].data(), bi_tangent[i].size());
+		output.writeToFiles(transform_Id[i].data(), transform_Id[i].size());
+		output.writeToFiles(material_Id[i].data(), material_Id[i].size());
+		output.writeToFiles(vertices[i].data(), vertices[i].size());
+		output.writeToFiles(&name[i]);
+	}
+
+	for (unsigned int i = 0; i < morphs.size(); i++)
+	{
+		output.writeToFiles(&morphs[i]);
+		output.writeToFiles(morphsPositions[i].data(), morphsPositions[i].size());
+		output.writeToFiles(&moprhsNames[i]);
 	}
 
 	for (unsigned int i = 0; i < skinStorage.size(); i++)
@@ -392,12 +401,6 @@ MStatus Exporter::doIt(const MArgList& argList)
 		output.writeToFiles(&attachToName[i]);
 	}
 
-	for (unsigned int i = 0; i < morphs.size(); i++)
-	{
-		output.writeToFiles(&morphs[i]);
-		output.writeToFiles(morphsPositions[i].data(), morphsPositions[i].size());
-		output.writeToFiles(&moprhsNames[i]);
-	}
 
 	output.CloseFiles();
 	return MStatus::kSuccess;

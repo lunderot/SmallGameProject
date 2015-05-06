@@ -9,12 +9,12 @@
 class TransformClass
 {
 public:
-	MStatus exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, Transform& transform, vector<const char*>& names);
+	MStatus exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, TransformData& transform, vector<const char*>& names);
 private:
 	MStatus exportName(MFnTransform& mayaTransform, vector<const char*>& names);
-	MStatus exportTranslation(MFnTransform& mayaTransform, Transform& transform);
-	MStatus exportRotation(MFnTransform& mayaTransform, Transform& transform);
-	MStatus exportScale(MFnTransform& mayaTransform, Transform& transform);
+	MStatus exportTranslation(MFnTransform& mayaTransform, TransformData& transform);
+	MStatus exportRotation(MFnTransform& mayaTransform, TransformData& transform);
+	MStatus exportScale(MFnTransform& mayaTransform, TransformData& transform);
 };
 
 #endif

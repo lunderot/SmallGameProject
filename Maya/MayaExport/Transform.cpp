@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, Transform& transform, vector<const char*>& names)
+MStatus TransformClass::exportTransform(MFnTransform& mayaTransform, std::map<const char*, int>& heiraki, unsigned int transformCount, TransformData& transform, vector<const char*>& names)
 {	
 	MStatus status = MS::kSuccess;
 
@@ -64,7 +64,7 @@ MStatus TransformClass::exportName(MFnTransform& mayaTransform, vector<const cha
 	return status;
 }
 
-MStatus TransformClass::exportTranslation(MFnTransform& mayaTransform, Transform& transform)
+MStatus TransformClass::exportTranslation(MFnTransform& mayaTransform, TransformData& transform)
 {
 	MS status;
 	MSpace space;
@@ -73,12 +73,12 @@ MStatus TransformClass::exportTranslation(MFnTransform& mayaTransform, Transform
 	return status;
 }
 
-MStatus TransformClass::exportRotation(MFnTransform& mayaTransform, Transform& transform)
+MStatus TransformClass::exportRotation(MFnTransform& mayaTransform, TransformData& transform)
 {
 	return mayaTransform.getRotationQuaternion(transform.rotation[0], transform.rotation[1], transform.rotation[2], transform.rotation[3]);
 }
 
-MStatus TransformClass::exportScale(MFnTransform& mayaTransform, Transform& transform)
+MStatus TransformClass::exportScale(MFnTransform& mayaTransform, TransformData& transform)
 {
 
 	return mayaTransform.getScale(transform.scale);

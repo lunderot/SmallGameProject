@@ -17,7 +17,7 @@ std::ostream& operator<<(std::ostream& out, const Header& obj)
 }
 
 //Transform
-std::ostream& operator<<(std::ostream& out, const Transform& obj)
+std::ostream& operator<<(std::ostream& out, const TransformData& obj)
 {
 	out << "Transform name length: " << obj.name_Length << endl
 		<< "ParentID: " << obj.parentID << endl
@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& out, const Transform& obj)
 }
 
 //Camera
-std::ostream& operator<<(std::ostream& out, const camera& obj)
+std::ostream& operator<<(std::ostream& out, const cameraData& obj)
 {
 	out << "Camera name length: " << obj.name_length << endl
 		<< "Number of parents: " << obj.nrOfParents << endl;
@@ -77,7 +77,7 @@ std::ostream& operator<<(std::ostream& out, const MaterialData& obj)
 }
 
 // Light 
-std::ostream& operator<<(std::ostream& out, const Light& obj)
+std::ostream& operator<<(std::ostream& out, const LightData& obj)
 {
 	out << "LIGHT" << endl
 		<< "Light name length: " << obj.name_Length << endl
@@ -91,7 +91,7 @@ std::ostream& operator<<(std::ostream& out, const Light& obj)
 }
 
 // Nurb
-std::ostream& operator << (std::ostream& out, const Nurb& obj)
+std::ostream& operator << (std::ostream& out, const NurbData& obj)
 {
 	out << "NURB" << endl
 		<< " Nurb name lengtht: " << obj.name_Length << endl
@@ -103,7 +103,7 @@ std::ostream& operator << (std::ostream& out, const Nurb& obj)
 }
 
 //struct MorphAnimation
-std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
+std::ostream& operator<<(std::ostream& out, const MorphAnimationData& obj)
 {
 	out << "Blend Shape name length: " << obj.blendShape_name_length << endl;
 
@@ -117,7 +117,7 @@ std::ostream& operator<<(std::ostream& out, const MorphAnimation& obj)
 }
 
 //meshStruct
-std::ostream& operator<<(std::ostream& out, const meshStruct& obj)
+std::ostream& operator<<(std::ostream& out, const meshStructData& obj)
 {
 	out //<< "Mesh Name: " << obj.name << endl
 		<< "Name Length: " << obj.name_length << endl
@@ -202,7 +202,7 @@ std::ostream& operator<<(std::ostream& out, const SkinAnimation& obj)
 	return out;
 }
 
-std::ostream& operator<<(std::ostream& out, const Keyframes& obj)
+std::ostream& operator<<(std::ostream& out, const KeyframesData& obj)
 {
 	out /*<< "Curve name:" << obj.curveName << endl
 		<< "Attribute name: " << obj.attachToName << endl*/
