@@ -9,7 +9,7 @@ Mesh::~Mesh()
 
 }
 
-void Mesh::GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo)
+bool Mesh::GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo)
 {
 	FbxMesh* lMesh = pNode->GetMesh();
 	
@@ -18,7 +18,10 @@ void Mesh::GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo)
 		FBXSDK_printf("current mesh node: %s\n", pNode->GetName());
 
 		this->GetNormals(lMesh, pMeshInfo);
+
+		return true;
 	}
+	return false;
 }
 
 void Mesh::GetNormals(FbxMesh* pMesh, MeshInfo& pMeshInfo)
@@ -27,26 +30,23 @@ void Mesh::GetNormals(FbxMesh* pMesh, MeshInfo& pMeshInfo)
 
 	if (lNormalElement)
 	{
-		if (lNormalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+		for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
 		{
-			for (unsigned int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
+			int lNormalIndex = 0;
+
+			if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
 			{
-				int lNormalIndex = 0;
-
-				if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
-				{
-					lNormalIndex = lVertexIndex;
-				}
-
-				if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
-				{
-					lNormalIndex = lNormalElement->GetIndexArray().GetAt(lVertexIndex);
-				}
-
-				pMeshInfo.normals.push_back(lNormalElement->GetDirectArray().GetAt(lNormalIndex));
-
-				//FBXSDK_printf("normals for vertex[%d]: %f %f %f %f \n", lVertexIndex, pMeshInfo.normals[lVertexIndex][0], pMeshInfo.normals[lVertexIndex][1], pMeshInfo.normals[lVertexIndex][2], pMeshInfo.normals[lVertexIndex][3]);
+				lNormalIndex = lVertexIndex;
 			}
+
+			if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+			{
+				lNormalIndex = lNormalElement->GetIndexArray().GetAt(lVertexIndex);
+			}
+
+			pMeshInfo.normals.push_back(lNormalElement->GetDirectArray().GetAt(lNormalIndex));
+
+			FBXSDK_printf("normals for vertex[%d]: %f %f %f %f \n", lVertexIndex, pMeshInfo.normals[lVertexIndex][0], pMeshInfo.normals[lVertexIndex][1], pMeshInfo.normals[lVertexIndex][2], pMeshInfo.normals[lVertexIndex][3]);
 		}
 	}
 }

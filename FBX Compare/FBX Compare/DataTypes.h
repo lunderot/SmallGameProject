@@ -2,6 +2,7 @@
 #define DATATYPES_H
 
 #include <vector>
+#include <iostream>
 #include <fbxsdk.h>
 
 struct MeshInfo

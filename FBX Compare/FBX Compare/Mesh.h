@@ -12,7 +12,7 @@ public:
 	Mesh();
 	~Mesh();
 
-	void GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo);
+	bool GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo);
 };
 
 #endif /* MESH_H */

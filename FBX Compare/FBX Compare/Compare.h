@@ -11,7 +11,10 @@ class Compare
 private:
 	Scenes* lScenes;
 
-	Mesh meshHandler;
+	bool lStatus = false;
+	bool isGolden = true, isTest = false;
+
+	Mesh lMeshHandler;
 
 	std::vector<MeshInfo> lGoldMeshInfo;
 	std::vector<MeshInfo> lTestMeshInfo;
@@ -21,6 +24,9 @@ public:
 	~Compare();
 
 	void DoComparison(std::string pOutputFile);
+
+	void GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode);
+	void TraverseScene(FbxNode* pNode, bool pType);
 };
 
 #endif /* COMPARE_H */
