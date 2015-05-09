@@ -49,6 +49,24 @@ void Compare::MeshCompare()
 					}
 				}
 			}
+			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].position.size(); j++)
+			{
+				if (this->lGoldMeshInfo[i].position.size() != this->lTestMeshInfo[i].position.size())
+				{
+					FBXSDK_printf("\nThe number of vertex positions differ in mesh number %d\n", i);
+					FBXSDK_printf("Early error out!\n");
+				}
+				else
+				{
+					for (unsigned int k = 0; k < 4; k++)
+					{
+						if ((abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) < -EPSILON)
+						{
+							FBXSDK_printf("Mesh [%d], vert pos [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), (abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])));
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -66,6 +84,7 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 		{
 			this->lGoldMeshInfo.push_back(tempMeshInfo);
 			tempMeshInfo.normals.clear();
+			tempMeshInfo.position.clear();
 		}
 		
 		TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
@@ -79,6 +98,7 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 		{
 			this->lTestMeshInfo.push_back(tempMeshInfo);
 			tempMeshInfo.normals.clear();
+			tempMeshInfo.position.clear();
 		}
 
 		TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
@@ -101,11 +121,13 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 				{
 					this->lGoldMeshInfo.push_back(tempMeshInfo);
 					tempMeshInfo.normals.clear();
+					tempMeshInfo.position.clear();
 				}
 				else
 				{
 					this->lTestMeshInfo.push_back(tempMeshInfo);
 					tempMeshInfo.normals.clear();
+					tempMeshInfo.position.clear();
 				}
 			}
 
