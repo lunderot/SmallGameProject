@@ -15,7 +15,7 @@ bool Mesh::GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo)
 	
 	if (lMesh)
 	{
-		FBXSDK_printf("current mesh node: %s\n", pNode->GetName());
+		//FBXSDK_printf("current mesh node: %s\n", pNode->GetName());
 
 		this->GetNormals(lMesh, pMeshInfo);
 
@@ -46,7 +46,7 @@ void Mesh::GetNormals(FbxMesh* pMesh, MeshInfo& pMeshInfo)
 
 			pMeshInfo.normals.push_back(lNormalElement->GetDirectArray().GetAt(lNormalIndex));
 
-			FBXSDK_printf("normals for vertex[%d]: %f %f %f %f \n", lVertexIndex, pMeshInfo.normals[lVertexIndex][0], pMeshInfo.normals[lVertexIndex][1], pMeshInfo.normals[lVertexIndex][2], pMeshInfo.normals[lVertexIndex][3]);
+			//FBXSDK_printf("normals for vertex[%d]: %f %f %f %f \n", lVertexIndex, pMeshInfo.normals[lVertexIndex][0], pMeshInfo.normals[lVertexIndex][1], pMeshInfo.normals[lVertexIndex][2], pMeshInfo.normals[lVertexIndex][3]);
 		}
 	}
 }

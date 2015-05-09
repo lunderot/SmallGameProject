@@ -17,8 +17,40 @@ void Compare::DoComparison(std::string pOutputFile)
 
 	this->GatherInfo(lGoldenRootNode, lTestRootNode);
 
-	FBXSDK_printf("Number of Gold meshes %d \n", this->lGoldMeshInfo.size());
-	FBXSDK_printf("Number of Test meshes %d \n", this->lTestMeshInfo.size());
+	this->MeshCompare();
+}
+
+void Compare::MeshCompare()
+{
+	if (this->lGoldMeshInfo.size() != this->lTestMeshInfo.size())
+	{
+		FBXSDK_printf("\nThe number of meshes differ between files\n");
+		FBXSDK_printf("Early error out!\n");
+	}
+	else
+	{
+		for (unsigned int i = 0; i < this->lGoldMeshInfo.size(); i++)
+		{
+			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].normals.size(); j++)
+			{
+				if (this->lGoldMeshInfo[i].normals.size() != this->lTestMeshInfo[i].normals.size())
+				{
+					FBXSDK_printf("\nThe number of normals differ in mesh number %d\n", i);
+					FBXSDK_printf("Early error out!\n");
+				}
+				else
+				{
+					for (unsigned int k = 0; k < 4; k++)
+					{
+						if ((abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])) < -EPSILON)
+						{
+							FBXSDK_printf("Mesh [%d], normal [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), (abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])));
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
@@ -80,4 +112,13 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 			TraverseScene(pNode->GetChild(counter), pType);
 		}
 	}
+}
+
+std::string Compare::ReturnXYZW(int value)
+{
+	if (value == 0){ return "x"; }
+	else if(value == 1){ return "y"; }
+	else if(value == 2){ return "z"; }
+	else if(value == 3){ return "w"; }
+	else { return "unk"; }
 }

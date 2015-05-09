@@ -5,6 +5,7 @@
 #include "DataTypes.h"
 #include "Scenes.h"
 #include "Mesh.h"
+#include <map>
 
 class Compare
 {
@@ -27,6 +28,10 @@ public:
 
 	void GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode);
 	void TraverseScene(FbxNode* pNode, bool pType);
+
+	void MeshCompare();
+
+	std::string ReturnXYZW(int value);
 };
 
 #endif /* COMPARE_H */
