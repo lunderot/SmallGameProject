@@ -18,14 +18,14 @@ bool Camera::GetInfo(FbxNode* pNode, CamInfo& pCamInfo)
 	{
 		FBXSDK_printf("current camera node: %s\n", pNode->GetName());
 
-		this->GetPosition(lCamera, pCamInfo);
+		this->GetStats(lCamera, pCamInfo);
 
 		return true;
 	}
 	return false;
 }
 
-void Camera::GetPosition(FbxCamera* pCamera, CamInfo& pCamInfo)
+void Camera::GetStats(FbxCamera* pCamera, CamInfo& pCamInfo)
 {
 	pCamInfo.position = pCamera->Position;
 }

@@ -6,7 +6,7 @@
 class Camera
 {
 private:
-	void GetPosition(FbxCamera* pCamera, CamInfo& pCamInfo);
+	void GetStats(FbxCamera* pCamera, CamInfo& pCamInfo);
 protected:
 public:
 	Camera();
