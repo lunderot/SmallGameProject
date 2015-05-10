@@ -18,6 +18,7 @@ void Compare::DoComparison(std::string pOutputFile)
 	this->GatherInfo(lGoldenRootNode, lTestRootNode);
 
 	this->MeshCompare();
+	this->CameraCompare();
 }
 
 void Compare::MeshCompare()
@@ -91,14 +92,39 @@ void Compare::MeshCompare()
 	}
 }
 
+void Compare::CameraCompare()
+{
+	if (this->lGoldCamInfo.size() != this->lTestCamInfo.size())
+	{
+		FBXSDK_printf("\nThe number of cameras differ between files\n");
+		FBXSDK_printf("Early error out!\n");
+	}
+	else
+	{
+		for (unsigned int i = 0; i < this->lGoldCamInfo.size(); i++)
+		{
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])) > EPSILON || (abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Camera [%d], %s-position differ by more than an epsilon: % f\n", i, this->ReturnXYZW(j), (abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])));
+				}
+			}
+		}
+	}
+}
+
 void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 {
 	MeshInfo tempMeshInfo;
+	CamInfo tempCamInfo;
 
 	int counter;
 
+	// GOLD
 	for (counter = 0; counter <= pGoldenRootNode->GetChildCount(); counter++)
 	{
+		// MESH
 		this->lStatus = this->lMeshHandler.GetInfo(pGoldenRootNode, tempMeshInfo);
 		if (lStatus)
 		{
@@ -107,13 +133,21 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 			tempMeshInfo.position.clear();
 			tempMeshInfo.uv.clear();
 		}
+		// CAMERA
+		this->lStatus = this->lCamHandler.GetInfo(pGoldenRootNode, tempCamInfo);
+		if (lStatus)
+		{
+			this->lGoldCamInfo.push_back(tempCamInfo);
+		}
 		
 		TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
 	}
 
+
+	// TEST
 	for (counter = 0; counter <= pTestRootNode->GetChildCount(); counter++)
 	{
-
+		// MESH
 		this->lStatus = this->lMeshHandler.GetInfo(pTestRootNode, tempMeshInfo);
 		if (lStatus)
 		{
@@ -121,6 +155,12 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 			tempMeshInfo.normals.clear();
 			tempMeshInfo.position.clear();
 			tempMeshInfo.uv.clear();
+		}
+		// CAMERA
+		this->lStatus = this->lCamHandler.GetInfo(pTestRootNode, tempCamInfo);
+		if (lStatus)
+		{
+			this->lGoldCamInfo.push_back(tempCamInfo);
 		}
 
 		TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
@@ -131,11 +171,13 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 {
 	int counter;
 	MeshInfo tempMeshInfo;
+	CamInfo tempCamInfo;
 
 	if (pNode)
 	{	
 		for (counter = 0; counter <= pNode->GetChildCount(); counter++)
 		{	
+			// MESH
 			this->lStatus = this->lMeshHandler.GetInfo(pNode, tempMeshInfo);
 			if (lStatus)
 			{
@@ -152,6 +194,19 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 					tempMeshInfo.normals.clear();
 					tempMeshInfo.position.clear();
 					tempMeshInfo.uv.clear();
+				}
+			}
+			// CAMERA
+			this->lStatus = this->lCamHandler.GetInfo(pNode, tempCamInfo);
+			if (lStatus)
+			{
+				if (pType == this->isGolden)
+				{
+					this->lGoldCamInfo.push_back(tempCamInfo);
+				}
+				else
+				{
+					this->lTestCamInfo.push_back(tempCamInfo);
 				}
 			}
 

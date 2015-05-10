@@ -12,4 +12,9 @@ struct MeshInfo
 	std::vector<FbxVector2> uv;
 };
 
+struct CamInfo
+{
+	FbxDouble3 position;
+};
+
 #endif /* DATATYPES_H */

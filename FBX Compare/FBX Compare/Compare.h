@@ -5,6 +5,7 @@
 #include "DataTypes.h"
 #include "Scenes.h"
 #include "Mesh.h"
+#include "Camera.h"
 #include <map>
 
 class Compare
@@ -16,9 +17,12 @@ private:
 	bool isGolden = true, isTest = false;
 
 	Mesh lMeshHandler;
+	Camera lCamHandler;
 
 	std::vector<MeshInfo> lGoldMeshInfo;
 	std::vector<MeshInfo> lTestMeshInfo;
+	std::vector<CamInfo> lGoldCamInfo;
+	std::vector<CamInfo> lTestCamInfo;
 protected:
 public:
 	Compare(Scenes* pScenes);
@@ -30,6 +34,7 @@ public:
 	void TraverseScene(FbxNode* pNode, bool pType);
 
 	void MeshCompare();
+	void CameraCompare();
 
 	std::string ReturnXYZW(int value);
 };
