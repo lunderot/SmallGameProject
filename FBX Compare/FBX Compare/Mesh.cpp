@@ -19,6 +19,7 @@ bool Mesh::GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo)
 
 		this->GetNormals(lMesh, pMeshInfo);
 		this->GetPosition(lMesh, pMeshInfo);
+		this->GetUV(lMesh, pMeshInfo);
 
 		return true;
 	}
@@ -59,5 +60,29 @@ void Mesh::GetPosition(FbxMesh* pMesh, MeshInfo& pMeshInfo)
 		pMeshInfo.position.push_back(pMesh->GetControlPointAt(lVertexIndex));
 
 		//FBXSDK_printf("position for vertex[%d]: %f %f %f %f \n", lVertexIndex, pMeshInfo.position[lVertexIndex][0], pMeshInfo.position[lVertexIndex][1], pMeshInfo.position[lVertexIndex][2], pMeshInfo.position[lVertexIndex][3]);
+	}
+}
+
+void Mesh::GetUV(FbxMesh* pMesh, MeshInfo& pMeshInfo)
+{
+	FbxGeometryElementUV* lUvElement = pMesh->GetElementUV();
+
+	if (lUvElement)
+	{
+		for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
+		{
+			int lUvIndex = 0;
+
+			if (lUvElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+			{
+				lUvIndex = lVertexIndex;
+			}
+			if (lUvElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+			{
+				lUvIndex = lUvElement->GetIndexArray().GetAt(lVertexIndex);
+			}
+
+			pMeshInfo.uv.push_back(lUvElement->GetDirectArray().GetAt(lUvIndex));
+		}
 	}
 }

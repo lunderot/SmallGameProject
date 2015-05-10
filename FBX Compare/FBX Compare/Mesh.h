@@ -8,6 +8,7 @@ class Mesh
 private:
 	void GetNormals(FbxMesh* pMesh, MeshInfo& pMeshInfo);
 	void GetPosition(FbxMesh* pMesh, MeshInfo& pMeshInfo);
+	void GetUV(FbxMesh* pMesh, MeshInfo& pMeshInfo);
 protected:
 public:
 	Mesh();

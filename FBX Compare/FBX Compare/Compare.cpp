@@ -49,6 +49,7 @@ void Compare::MeshCompare()
 					}
 				}
 			}
+
 			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].position.size(); j++)
 			{
 				if (this->lGoldMeshInfo[i].position.size() != this->lTestMeshInfo[i].position.size())
@@ -63,6 +64,25 @@ void Compare::MeshCompare()
 						if ((abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) < -EPSILON)
 						{
 							FBXSDK_printf("Mesh [%d], vert pos [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), (abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])));
+						}
+					}
+				}
+			}
+
+			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].uv.size(); j++)
+			{
+				if (this->lGoldMeshInfo[i].uv.size() != this->lTestMeshInfo[i].uv.size())
+				{
+					FBXSDK_printf("\nThe number of UV coordinates differ in mesh number %d\n", i);
+					FBXSDK_printf("Early error out!\n");
+				}
+				else
+				{
+					for (unsigned int k = 0; k < 2; k++)
+					{
+						if ((abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])) < -EPSILON)
+						{
+							FBXSDK_printf("Mesh [%d], UV [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), (abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])));
 						}
 					}
 				}
@@ -85,6 +105,7 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 			this->lGoldMeshInfo.push_back(tempMeshInfo);
 			tempMeshInfo.normals.clear();
 			tempMeshInfo.position.clear();
+			tempMeshInfo.uv.clear();
 		}
 		
 		TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
@@ -99,6 +120,7 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 			this->lTestMeshInfo.push_back(tempMeshInfo);
 			tempMeshInfo.normals.clear();
 			tempMeshInfo.position.clear();
+			tempMeshInfo.uv.clear();
 		}
 
 		TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
@@ -122,12 +144,14 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 					this->lGoldMeshInfo.push_back(tempMeshInfo);
 					tempMeshInfo.normals.clear();
 					tempMeshInfo.position.clear();
+					tempMeshInfo.uv.clear();
 				}
 				else
 				{
 					this->lTestMeshInfo.push_back(tempMeshInfo);
 					tempMeshInfo.normals.clear();
 					tempMeshInfo.position.clear();
+					tempMeshInfo.uv.clear();
 				}
 			}
 

@@ -9,6 +9,7 @@ struct MeshInfo
 {
 	std::vector<FbxVector4> normals;
 	std::vector<FbxVector4> position;
+	std::vector<FbxVector2> uv;
 };
 
 #endif /* DATATYPES_H */
