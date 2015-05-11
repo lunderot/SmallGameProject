@@ -106,6 +106,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Compare.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Scenes.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="Compare.h" />
     <ClInclude Include="DataTypes.h" />
     <ClInclude Include="Defines.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Scenes.h" />
   </ItemGroup>
