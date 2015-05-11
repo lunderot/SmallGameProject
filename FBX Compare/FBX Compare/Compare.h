@@ -6,6 +6,7 @@
 #include "Scenes.h"
 #include "Mesh.h"
 #include "Camera.h"
+#include "Light.h"
 #include <map>
 
 class Compare
@@ -18,11 +19,14 @@ private:
 
 	Mesh lMeshHandler;
 	Camera lCamHandler;
+	Light lLightHandler;
 
 	std::vector<MeshInfo> lGoldMeshInfo;
 	std::vector<MeshInfo> lTestMeshInfo;
 	std::vector<CamInfo> lGoldCamInfo;
 	std::vector<CamInfo> lTestCamInfo;
+	std::vector<LightInfo> lGoldLightInfo;
+	std::vector<LightInfo> lTestLightInfo;
 protected:
 public:
 	Compare(Scenes* pScenes);
@@ -35,8 +39,10 @@ public:
 
 	void MeshCompare();
 	void CameraCompare();
+	void LightCompare();
 
 	std::string ReturnXYZW(int value);
+	std::string ReturnRGBA(int value);
 };
 
 #endif /* COMPARE_H */

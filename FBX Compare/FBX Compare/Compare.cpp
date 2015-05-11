@@ -19,6 +19,7 @@ void Compare::DoComparison(std::string pOutputFile)
 
 	this->MeshCompare();
 	this->CameraCompare();
+	this->LightCompare();
 }
 
 void Compare::MeshCompare()
@@ -88,6 +89,7 @@ void Compare::MeshCompare()
 					}
 				}
 			}
+			//FBXSDK_printf("\n");
 		}
 	}
 }
@@ -142,8 +144,55 @@ void Compare::CameraCompare()
 			}
 			if (this->lGoldCamInfo[i].projection != this->lTestCamInfo[i].projection)
 			{
-				FBXSDK_printf("Camera [%d], projection type differ", i);
+				FBXSDK_printf("Camera [%d], projection type differ\n", i);
 			}
+			//FBXSDK_printf("\n");
+		}
+	}
+}
+
+void Compare::LightCompare()
+{
+	if (this->lGoldLightInfo.size() != this->lTestLightInfo.size())
+	{
+		FBXSDK_printf("\nThe number of lights differ between files\n");
+		FBXSDK_printf("Early error out!\n");
+	}
+	else
+	{
+		for (unsigned int i = 0; i < this->lGoldLightInfo.size(); i++)
+		{
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldLightInfo[i].color[j]) - abs(this->lTestLightInfo[i].color[j])) > EPSILON || (abs(this->lGoldLightInfo[i].color[j]) - abs(this->lTestLightInfo[i].color[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Light [%d], color %s differ by more than an epsilon: % f\n", i, this->ReturnRGBA(j), abs(abs(this->lGoldLightInfo[i].color[j]) - abs(this->lTestLightInfo[i].color[j])));
+				}
+			}
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldLightInfo[i].shadow_color[j]) - abs(this->lTestLightInfo[i].shadow_color[j])) > EPSILON || (abs(this->lGoldLightInfo[i].shadow_color[j]) - abs(this->lTestLightInfo[i].shadow_color[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Light [%d], shadow color %s differ by more than an epsilon: % f\n", i, this->ReturnRGBA(j), abs(abs(this->lGoldLightInfo[i].shadow_color[j]) - abs(this->lTestLightInfo[i].shadow_color[j])));
+				}
+			}
+			if ((abs(this->lGoldLightInfo[i].intensity) - abs(this->lTestLightInfo[i].intensity)) > EPSILON || (abs(this->lGoldLightInfo[i].intensity) - abs(this->lTestLightInfo[i].intensity)) < -EPSILON)
+			{
+				FBXSDK_printf("Light [%d], intensity differ by more than an epsilon: % f\n", i, abs(abs(this->lGoldLightInfo[i].intensity) - abs(this->lTestLightInfo[i].intensity)));
+			}
+			if (this->lGoldLightInfo[i].decay_type != this->lTestLightInfo[i].decay_type)
+			{
+				FBXSDK_printf("Light [%d], decay type differ\n", i);
+			}
+			if (this->lGoldLightInfo[i].light_type != this->lTestLightInfo[i].light_type)
+			{
+				FBXSDK_printf("Light [%d], light type differ\n", i);
+			}
+			if (this->lGoldLightInfo[i].cast_shadows != this->lTestLightInfo[i].cast_shadows)
+			{
+				FBXSDK_printf("Light [%d], only one light casts shadows\n", i);
+			}
+			//FBXSDK_printf("\n");
 		}
 	}
 }
@@ -152,6 +201,7 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 {
 	MeshInfo tempMeshInfo;
 	CamInfo tempCamInfo;
+	LightInfo tempLightInfo;
 
 	int counter;
 
@@ -172,6 +222,12 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 		if (lStatus)
 		{
 			this->lGoldCamInfo.push_back(tempCamInfo);
+		}
+		// LIGHT
+		this->lStatus = this->lLightHandler.GetInfo(pGoldenRootNode, tempLightInfo);
+		if (lStatus)
+		{
+			this->lGoldLightInfo.push_back(tempLightInfo);
 		}
 		
 		TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
@@ -194,7 +250,13 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 		this->lStatus = this->lCamHandler.GetInfo(pTestRootNode, tempCamInfo);
 		if (lStatus)
 		{
-			this->lGoldCamInfo.push_back(tempCamInfo);
+			this->lTestCamInfo.push_back(tempCamInfo);
+		}
+		// LIGHT
+		this->lStatus = this->lLightHandler.GetInfo(pTestRootNode, tempLightInfo);
+		if (lStatus)
+		{
+			this->lTestLightInfo.push_back(tempLightInfo);
 		}
 
 		TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
@@ -206,6 +268,7 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 	int counter;
 	MeshInfo tempMeshInfo;
 	CamInfo tempCamInfo;
+	LightInfo tempLightInfo;
 
 	if (pNode)
 	{	
@@ -243,6 +306,19 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 					this->lTestCamInfo.push_back(tempCamInfo);
 				}
 			}
+			// LIGHT
+			this->lStatus = this->lLightHandler.GetInfo(pNode, tempLightInfo);
+			if (lStatus)
+			{
+				if (pType == this->isGolden)
+				{
+					this->lGoldLightInfo.push_back(tempLightInfo);
+				}
+				else
+				{
+					this->lTestLightInfo.push_back(tempLightInfo);
+				}
+			}
 
 			TraverseScene(pNode->GetChild(counter), pType);
 		}
@@ -255,5 +331,14 @@ std::string Compare::ReturnXYZW(int value)
 	else if(value == 1){ return "y"; }
 	else if(value == 2){ return "z"; }
 	else if(value == 3){ return "w"; }
+	else { return "unk"; }
+}
+
+std::string Compare::ReturnRGBA(int value)
+{
+	if (value == 0){ return "r"; }
+	else if (value == 1){ return "g"; }
+	else if (value == 2){ return "b"; }
+	else if (value == 3){ return "a"; }
 	else { return "unk"; }
 }

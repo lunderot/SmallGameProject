@@ -26,12 +26,13 @@ struct CamInfo
 
 struct LightInfo
 {
-	unsigned int light_type;
 	FbxDouble3 color;
+	FbxDouble3 shadow_color;
 	double intensity;
+	unsigned int light_type;
 	unsigned int decay_type;
 	bool cast_shadows;
-	FbxDouble3 shadow_color;
+
 };
 
 #endif /* DATATYPES_H */

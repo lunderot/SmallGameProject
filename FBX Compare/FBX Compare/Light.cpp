@@ -27,5 +27,10 @@ bool Light::GetInfo(FbxNode* pNode, LightInfo& pLightInfo)
 
 void Light::GetStats(FbxLight* pLight, LightInfo& pLightInfo)
 {
-
+	pLightInfo.cast_shadows = pLight->CastShadows.Get();
+	pLightInfo.color = pLight->Color.Get();
+	pLightInfo.decay_type = pLight->DecayType.Get();
+	pLightInfo.intensity = pLight->Intensity.Get();
+	pLightInfo.light_type = pLight->LightType.Get();
+	pLightInfo.shadow_color = pLight->ShadowColor.Get();
 }
