@@ -20,6 +20,7 @@ void Compare::DoComparison(std::string pOutputFile)
 	this->MeshCompare();
 	this->CameraCompare();
 	this->LightCompare();
+	this->MaterialCompare();
 }
 
 void Compare::MeshCompare()
@@ -197,6 +198,84 @@ void Compare::LightCompare()
 	}
 }
 
+void Compare::MaterialCompare()
+{
+	if (this->lGoldMaterialInfo.size() != this->lTestMaterialInfo.size())
+	{
+		FBXSDK_printf("\nThe number of materials differ between files\n");
+		FBXSDK_printf("Early error out!\n");
+	}
+	else
+	{
+		for (unsigned int i = 0; i < this->lGoldMaterialInfo.size(); i++)
+		{
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldMaterialInfo[i].second.specular[j]) - abs(this->lTestMaterialInfo[i].second.specular[j])) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.specular[j]) - abs(this->lTestMaterialInfo[i].second.specular[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Material %s, specular color %s differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, this->ReturnRGBA(j), abs(abs(this->lGoldMaterialInfo[i].second.specular[j]) - abs(this->lTestMaterialInfo[i].second.specular[j])));
+				}
+			}
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldMaterialInfo[i].second.reflection[j]) - abs(this->lTestMaterialInfo[i].second.reflection[j])) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.reflection[j]) - abs(this->lTestMaterialInfo[i].second.reflection[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Material %s, reflection color %s differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, this->ReturnRGBA(j), abs(abs(this->lGoldMaterialInfo[i].second.reflection[j]) - abs(this->lTestMaterialInfo[i].second.reflection[j])));
+				}
+			}
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldMaterialInfo[i].second.ambient[j]) - abs(this->lTestMaterialInfo[i].second.ambient[j])) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.ambient[j]) - abs(this->lTestMaterialInfo[i].second.ambient[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Material %s, ambient color %s differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, this->ReturnRGBA(j), abs(abs(this->lGoldMaterialInfo[i].second.ambient[j]) - abs(this->lTestMaterialInfo[i].second.ambient[j])));
+				}
+			}
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldMaterialInfo[i].second.diffuse[j]) - abs(this->lTestMaterialInfo[i].second.diffuse[j])) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.diffuse[j]) - abs(this->lTestMaterialInfo[i].second.diffuse[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Material %s, diffuse color %s differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, this->ReturnRGBA(j), abs(abs(this->lGoldMaterialInfo[i].second.diffuse[j]) - abs(this->lTestMaterialInfo[i].second.diffuse[j])));
+				}
+			}
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldMaterialInfo[i].second.transparency_color[j]) - abs(this->lTestMaterialInfo[i].second.transparency_color[j])) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.transparency_color[j]) - abs(this->lTestMaterialInfo[i].second.transparency_color[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Material %s, transparency color %s differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, this->ReturnRGBA(j), abs(abs(this->lGoldMaterialInfo[i].second.transparency_color[j]) - abs(this->lTestMaterialInfo[i].second.transparency_color[j])));
+				}
+			}
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				if ((abs(this->lGoldMaterialInfo[i].second.incandescence[j]) - abs(this->lTestMaterialInfo[i].second.incandescence[j])) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.incandescence[j]) - abs(this->lTestMaterialInfo[i].second.incandescence[j])) < -EPSILON)
+				{
+					FBXSDK_printf("Material %s, incandescence color %s differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, this->ReturnRGBA(j), abs(abs(this->lGoldMaterialInfo[i].second.incandescence[j]) - abs(this->lTestMaterialInfo[i].second.incandescence[j])));
+				}
+			}
+			if ((abs(this->lGoldMaterialInfo[i].second.specular_factor) - abs(this->lTestMaterialInfo[i].second.specular_factor)) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.specular_factor) - abs(this->lTestMaterialInfo[i].second.specular_factor)) < -EPSILON)
+			{
+				FBXSDK_printf("Material %s, specular factor differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, abs(abs(this->lGoldMaterialInfo[i].second.specular_factor) - abs(this->lTestMaterialInfo[i].second.specular_factor)));
+			}
+			if ((abs(this->lGoldMaterialInfo[i].second.shininess) - abs(this->lTestMaterialInfo[i].second.shininess)) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.shininess) - abs(this->lTestMaterialInfo[i].second.shininess)) < -EPSILON)
+			{
+				FBXSDK_printf("Material %s, shininess differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, abs(abs(this->lGoldMaterialInfo[i].second.shininess) - abs(this->lTestMaterialInfo[i].second.shininess)));
+			}
+			if ((abs(this->lGoldMaterialInfo[i].second.reflection_factor) - abs(this->lTestMaterialInfo[i].second.reflection_factor)) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.reflection_factor) - abs(this->lTestMaterialInfo[i].second.reflection_factor)) < -EPSILON)
+			{
+				FBXSDK_printf("Material %s, reflection factor differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, abs(abs(this->lGoldMaterialInfo[i].second.reflection_factor) - abs(this->lTestMaterialInfo[i].second.reflection_factor)));
+			}
+			if ((abs(this->lGoldMaterialInfo[i].second.diffuse_factor) - abs(this->lTestMaterialInfo[i].second.diffuse_factor)) > EPSILON || (abs(this->lGoldMaterialInfo[i].second.diffuse_factor) - abs(this->lTestMaterialInfo[i].second.diffuse_factor)) < -EPSILON)
+			{
+				FBXSDK_printf("Material %s, diffuse factor differ by more than an epsilon: % f\n", lGoldMaterialInfo[i].first, abs(abs(this->lGoldMaterialInfo[i].second.diffuse_factor) - abs(this->lTestMaterialInfo[i].second.diffuse_factor)));
+			}
+			if (this->lGoldMaterialInfo[i].second.material_type != this->lTestMaterialInfo[i].second.material_type)
+			{
+				FBXSDK_printf("Material %s, material type differ\n", lGoldMaterialInfo[i].first);
+			}
+			//FBXSDK_printf("\n");
+		}
+	}
+}
+
 void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 {
 	MeshInfo tempMeshInfo;
@@ -229,6 +308,8 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 		{
 			this->lGoldLightInfo.push_back(tempLightInfo);
 		}
+		// MATERIAL
+		this->lStatus = this->lMaterialHandler.GetInfo(pGoldenRootNode, this->lGoldMaterialNames, this->lGoldMaterialInfo);
 		
 		TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
 	}
@@ -258,6 +339,8 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 		{
 			this->lTestLightInfo.push_back(tempLightInfo);
 		}
+		// MATERIAL
+		this->lStatus = this->lMaterialHandler.GetInfo(pTestRootNode, this->lTestMaterialNames, this->lTestMaterialInfo);
 
 		TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
 	}
@@ -318,6 +401,15 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 				{
 					this->lTestLightInfo.push_back(tempLightInfo);
 				}
+			}
+			// MATERIAL
+			if (pType == this->isGolden)
+			{
+				this->lStatus = this->lMaterialHandler.GetInfo(pNode, lGoldMaterialNames, lGoldMaterialInfo);
+			}
+			else
+			{
+				this->lStatus = this->lMaterialHandler.GetInfo(pNode, lTestMaterialNames, lTestMaterialInfo);
 			}
 
 			TraverseScene(pNode->GetChild(counter), pType);

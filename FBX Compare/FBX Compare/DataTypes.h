@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <set>
 #include <fbxsdk.h>
 
 struct MeshInfo
@@ -32,7 +33,21 @@ struct LightInfo
 	unsigned int light_type;
 	unsigned int decay_type;
 	bool cast_shadows;
+};
 
+struct MaterialInfo
+{
+	FbxDouble3 specular;
+	FbxDouble3 reflection;
+	FbxDouble3 ambient;
+	FbxDouble3 diffuse;
+	FbxDouble3 transparency_color;
+	FbxDouble3 incandescence;
+	double specular_factor;
+	double shininess;
+	double reflection_factor;
+	double diffuse_factor;
+	unsigned int material_type;
 };
 
 #endif /* DATATYPES_H */
