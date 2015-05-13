@@ -16,7 +16,7 @@ bool Light::GetInfo(FbxNode* pNode, LightInfo& pLightInfo)
 
 	if (lLight)
 	{
-		FBXSDK_printf("current light node: %s\n", pNode->GetName());
+		//FBXSDK_printf("current light node: %s\n", pNode->GetName());
 
 		this->GetStats(lLight, pLightInfo);
 

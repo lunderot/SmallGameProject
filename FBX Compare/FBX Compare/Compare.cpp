@@ -21,6 +21,7 @@ void Compare::DoComparison(std::string pOutputFile)
 	this->CameraCompare();
 	this->LightCompare();
 	this->MaterialCompare();
+	this->HierarchyCompare();
 }
 
 void Compare::MeshCompare()
@@ -91,7 +92,6 @@ void Compare::MeshCompare()
 					}
 				}
 			}
-			//FBXSDK_printf("\n");
 		}
 	}
 }
@@ -149,7 +149,6 @@ void Compare::CameraCompare()
 			{
 				FBXSDK_printf("Camera [%d], projection type differ\n", i);
 			}
-			//FBXSDK_printf("\n");
 		}
 	}
 }
@@ -196,7 +195,6 @@ void Compare::LightCompare()
 			{
 				FBXSDK_printf("Light [%d], only one light casts shadows\n", i);
 			}
-			//FBXSDK_printf("\n");
 		}
 	}
 }
@@ -275,7 +273,79 @@ void Compare::MaterialCompare()
 			{
 				FBXSDK_printf("Material %s, material type differ\n", lGoldMaterialInfo[i].first);
 			}
-			//FBXSDK_printf("\n");
+		}
+	}
+}
+
+void Compare::HierarchyCompare()
+{
+	if (this->lGoldHierarchyNodes.size() != this->lTestHierarchyNodes.size())
+	{
+		FBXSDK_printf("\nThe number of hierarchial nodes differ between files\n");
+		FBXSDK_printf("Early error out!\n");
+		return;
+	}
+	else
+	{
+		bool nameDiffer = false;
+		bool childDiffer = false;
+		std::vector<std::pair<unsigned int, unsigned int>> indexStore;
+
+		for (unsigned int i = 0; i < this->lGoldHierarchyNodes.size(); i++)
+		{
+			std::string temp_name = this->lGoldHierarchyNodes[i].node_name;
+
+			std::vector<TransformNodeInfo>::iterator it = std::find_if(this->lTestHierarchyNodes.begin(), this->lTestHierarchyNodes.end(), [&, temp_name](const TransformNodeInfo& element){ return element.node_name == temp_name; });
+
+			indexStore.push_back(std::make_pair(i, it - this->lTestHierarchyNodes.begin()));
+
+			if (it - this->lTestHierarchyNodes.begin() + 1 > this->lGoldHierarchyNodes.size())
+			{
+				nameDiffer = true;
+				FBXSDK_printf("The node %s was not found in the test file\n", temp_name);
+			}
+		}
+		if (nameDiffer == false)
+		{
+			for (unsigned int i = 0; i < indexStore.size(); i++)
+			{
+				if (this->lGoldHierarchyNodes[indexStore[i].first].child_names.size() != this->lTestHierarchyNodes[indexStore[i].second].child_names.size())
+				{
+					FBXSDK_printf("The nodes %s does not have the same amount of children: %d vs %d\n", 
+						this->lGoldHierarchyNodes[indexStore[i].first].node_name, 
+						this->lGoldHierarchyNodes[indexStore[i].first].child_names.size(), 
+						this->lTestHierarchyNodes[indexStore[i].second].child_names.size());
+					
+					childDiffer = true;
+				}
+			}
+			if (childDiffer == false)
+			{
+				for (unsigned int i = 0; i < this->lGoldHierarchyNodes.size(); i++)
+				{
+					for (unsigned int j = 0; j < 3; j++)
+					{
+						if ((abs(this->lGoldHierarchyNodes[i].rotation[j]) - abs(this->lTestHierarchyNodes[i].rotation[j])) > EPSILON || (abs(this->lGoldHierarchyNodes[i].rotation[j]) - abs(this->lTestHierarchyNodes[i].rotation[j])) < -EPSILON)
+						{
+							FBXSDK_printf("Node %s, rotation %s differ by more than an epsilon: % f\n", this->lGoldHierarchyNodes[i].node_name, this->ReturnXYZW(j), abs(abs(this->lGoldHierarchyNodes[i].rotation[j]) - abs(this->lTestHierarchyNodes[i].rotation[j])));
+						}
+					}
+					for (unsigned int j = 0; j < 3; j++)
+					{
+						if ((abs(this->lGoldHierarchyNodes[i].scale[j]) - abs(this->lTestHierarchyNodes[i].scale[j])) > EPSILON || (abs(this->lGoldHierarchyNodes[i].scale[j]) - abs(this->lTestHierarchyNodes[i].scale[j])) < -EPSILON)
+						{
+							FBXSDK_printf("Node %s, scale %s differ by more than an epsilon: % f\n", this->lGoldHierarchyNodes[i].node_name, this->ReturnXYZW(j), abs(abs(this->lGoldHierarchyNodes[i].scale[j]) - abs(this->lTestHierarchyNodes[i].scale[j])));
+						}
+					}
+					for (unsigned int j = 0; j < 3; j++)
+					{
+						if ((abs(this->lGoldHierarchyNodes[i].translation[j]) - abs(this->lTestHierarchyNodes[i].translation[j])) > EPSILON || (abs(this->lGoldHierarchyNodes[i].translation[j]) - abs(this->lTestHierarchyNodes[i].translation[j])) < -EPSILON)
+						{
+							FBXSDK_printf("Node %s, translation %s differ by more than an epsilon: % f\n", this->lGoldHierarchyNodes[i].node_name, this->ReturnXYZW(j), abs(abs(this->lGoldHierarchyNodes[i].translation[j]) - abs(this->lTestHierarchyNodes[i].translation[j])));
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -292,76 +362,13 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 	// GOLD
 	for (counter = 0; counter <= pGoldenRootNode->GetChildCount(); counter++)
 	{
-		//// MESH
-		//this->lStatus = this->lMeshHandler.GetInfo(pGoldenRootNode, tempMeshInfo);
-		//if (lStatus)
-		//{
-		//	this->lGoldMeshInfo.push_back(tempMeshInfo);
-		//	tempMeshInfo.normals.clear();
-		//	tempMeshInfo.position.clear();
-		//	tempMeshInfo.uv.clear();
-		//}
-		//// CAMERA
-		//this->lStatus = this->lCamHandler.GetInfo(pGoldenRootNode, tempCamInfo);
-		//if (lStatus)
-		//{
-		//	this->lGoldCamInfo.push_back(tempCamInfo);
-		//}
-		//// LIGHT
-		//this->lStatus = this->lLightHandler.GetInfo(pGoldenRootNode, tempLightInfo);
-		//if (lStatus)
-		//{
-		//	this->lGoldLightInfo.push_back(tempLightInfo);
-		//}
-		//// MATERIAL
-		//this->lStatus = this->lMaterialHandler.GetInfo(pGoldenRootNode, this->lGoldMaterialNames, this->lGoldMaterialInfo);
-		//// HIERARCHY
-		//this->lStatus = this->lHierarchyHandler.GetInfo(pGoldenRootNode, tempTransformNodeInfo);
-		//if (lStatus)
-		//{
-		//	this->lGoldHierarchyNodes.push_back(tempTransformNodeInfo);
-		//	tempTransformNodeInfo.child_names.clear();
-		//}
-		
-		TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
+		this->TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
 	}
-
 
 	// TEST
 	for (counter = 0; counter <= pTestRootNode->GetChildCount(); counter++)
 	{
-		//// MESH
-		//this->lStatus = this->lMeshHandler.GetInfo(pTestRootNode, tempMeshInfo);
-		//if (lStatus)
-		//{
-		//	this->lTestMeshInfo.push_back(tempMeshInfo);
-		//	tempMeshInfo.normals.clear();
-		//	tempMeshInfo.position.clear();
-		//	tempMeshInfo.uv.clear();
-		//}
-		//// CAMERA
-		//this->lStatus = this->lCamHandler.GetInfo(pTestRootNode, tempCamInfo);
-		//if (lStatus)
-		//{
-		//	this->lTestCamInfo.push_back(tempCamInfo);
-		//}
-		//// LIGHT
-		//this->lStatus = this->lLightHandler.GetInfo(pTestRootNode, tempLightInfo);
-		//if (lStatus)
-		//{
-		//	this->lTestLightInfo.push_back(tempLightInfo);
-		//}
-		//// MATERIAL
-		//this->lStatus = this->lMaterialHandler.GetInfo(pTestRootNode, this->lTestMaterialNames, this->lTestMaterialInfo);
-		//// HIERARCHY
-		//this->lStatus = this->lHierarchyHandler.GetInfo(pTestRootNode, tempTransformNodeInfo);
-		//if (lStatus)
-		//{
-		//	this->lTestHierarchyNodes.push_back(tempTransformNodeInfo);
-		//	tempTransformNodeInfo.child_names.clear();
-		//}
-
-		TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
+		this->TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
 	}
 }
 
@@ -374,79 +381,79 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 	TransformNodeInfo tempTransformNodeInfo;
 
 	if (pNode)
-	{	
-		for (counter = 0; counter <= pNode->GetChildCount(); counter++)
-		{	
-			// MESH
-			this->lStatus = this->lMeshHandler.GetInfo(pNode, tempMeshInfo);
-			if (lStatus)
-			{
-				if (pType == this->isGolden)
-				{
-					this->lGoldMeshInfo.push_back(tempMeshInfo);
-					tempMeshInfo.normals.clear();
-					tempMeshInfo.position.clear();
-					tempMeshInfo.uv.clear();
-				}
-				else
-				{
-					this->lTestMeshInfo.push_back(tempMeshInfo);
-					tempMeshInfo.normals.clear();
-					tempMeshInfo.position.clear();
-					tempMeshInfo.uv.clear();
-				}
-			}
-			// CAMERA
-			this->lStatus = this->lCamHandler.GetInfo(pNode, tempCamInfo);
-			if (lStatus)
-			{
-				if (pType == this->isGolden)
-				{
-					this->lGoldCamInfo.push_back(tempCamInfo);
-				}
-				else
-				{
-					this->lTestCamInfo.push_back(tempCamInfo);
-				}
-			}
-			// LIGHT
-			this->lStatus = this->lLightHandler.GetInfo(pNode, tempLightInfo);
-			if (lStatus)
-			{
-				if (pType == this->isGolden)
-				{
-					this->lGoldLightInfo.push_back(tempLightInfo);
-				}
-				else
-				{
-					this->lTestLightInfo.push_back(tempLightInfo);
-				}
-			}
-			// MATERIAL
+	{		
+		// MESH
+		this->lStatus = this->lMeshHandler.GetInfo(pNode, tempMeshInfo);
+		if (lStatus)
+		{
 			if (pType == this->isGolden)
 			{
-				this->lStatus = this->lMaterialHandler.GetInfo(pNode, lGoldMaterialNames, lGoldMaterialInfo);
+				this->lGoldMeshInfo.push_back(tempMeshInfo);
+				tempMeshInfo.normals.clear();
+				tempMeshInfo.position.clear();
+				tempMeshInfo.uv.clear();
 			}
 			else
 			{
-				this->lStatus = this->lMaterialHandler.GetInfo(pNode, lTestMaterialNames, lTestMaterialInfo);
+				this->lTestMeshInfo.push_back(tempMeshInfo);
+				tempMeshInfo.normals.clear();
+				tempMeshInfo.position.clear();
+				tempMeshInfo.uv.clear();
 			}
-			// HIERARCHY
-			this->lStatus = this->lHierarchyHandler.GetInfo(pNode, tempTransformNodeInfo);
-			if (lStatus)
+		}
+		// CAMERA
+		this->lStatus = this->lCamHandler.GetInfo(pNode, tempCamInfo);
+		if (lStatus)
+		{
+			if (pType == this->isGolden)
 			{
-				if (pType == this->isGolden)
-				{
-					this->lGoldHierarchyNodes.push_back(tempTransformNodeInfo);
-					tempTransformNodeInfo.child_names.clear();
-				}
-				else
-				{
-					this->lTestHierarchyNodes.push_back(tempTransformNodeInfo);
-					tempTransformNodeInfo.child_names.clear();
-				}
+				this->lGoldCamInfo.push_back(tempCamInfo);
 			}
+			else
+			{
+				this->lTestCamInfo.push_back(tempCamInfo);
+			}
+		}
+		// LIGHT
+		this->lStatus = this->lLightHandler.GetInfo(pNode, tempLightInfo);
+		if (lStatus)
+		{
+			if (pType == this->isGolden)
+			{
+				this->lGoldLightInfo.push_back(tempLightInfo);
+			}
+			else
+			{
+				this->lTestLightInfo.push_back(tempLightInfo);
+			}
+		}
+		// MATERIAL
+		if (pType == this->isGolden)
+		{
+			this->lStatus = this->lMaterialHandler.GetInfo(pNode, lGoldMaterialNames, lGoldMaterialInfo);
+		}
+		else
+		{
+			this->lStatus = this->lMaterialHandler.GetInfo(pNode, lTestMaterialNames, lTestMaterialInfo);
+		}
+		// HIERARCHY
+		this->lStatus = this->lHierarchyHandler.GetInfo(pNode, tempTransformNodeInfo);
+		if (lStatus)
+		{
+			if (pType == this->isGolden)
+			{
+				this->lGoldHierarchyNodes.push_back(tempTransformNodeInfo);
+				tempTransformNodeInfo.child_names.clear();
+			}
+			else
+			{
+				this->lTestHierarchyNodes.push_back(tempTransformNodeInfo);
+				tempTransformNodeInfo.child_names.clear();
+			}
+		}
 
+		for (counter = 0; counter < pNode->GetChildCount(); counter++)
+		{
 			TraverseScene(pNode->GetChild(counter), pType);
 		}
 	}

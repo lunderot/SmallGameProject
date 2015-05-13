@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 	Scenes scenes(lSdkManager, "file1.fbx", "file2.fbx");
 
 	FBXSDK_printf("FBX Compare\n\n");
+	FBXSDK_printf("Differences between files:\n\n");
 
 	Compare comparitor = Compare(&scenes);
 	comparitor.DoComparison("out.txt");

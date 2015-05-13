@@ -24,7 +24,7 @@ bool Material::GetInfo(FbxNode* pNode, std::set<std::string>& pMaterialNames, st
 
 			if (pMaterialNames.find(temp_name) == pMaterialNames.end())
 			{
-				FBXSDK_printf("current material node: %s\n", lSurfaceMaterial->GetName());
+				//FBXSDK_printf("current material node: %s\n", lSurfaceMaterial->GetName());
 
 				pMaterialNames.insert(temp_name);
 

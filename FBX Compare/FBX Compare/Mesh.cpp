@@ -15,7 +15,7 @@ bool Mesh::GetInfo(FbxNode* pNode, MeshInfo& pMeshInfo)
 	
 	if (lMesh)
 	{
-		FBXSDK_printf("current mesh node: %s\n", pNode->GetName());
+		//FBXSDK_printf("current mesh node: %s\n", pNode->GetName());
 
 		this->GetNormals(lMesh, pMeshInfo);
 		this->GetPosition(lMesh, pMeshInfo);

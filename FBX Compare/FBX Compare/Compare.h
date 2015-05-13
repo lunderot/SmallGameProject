@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "Hierarchy.h"
 #include <map>
+#include <algorithm>
 
 
 class Compare
