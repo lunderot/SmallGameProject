@@ -50,4 +50,13 @@ struct MaterialInfo
 	unsigned int material_type;
 };
 
+struct TransformNodeInfo
+{
+	std::string node_name;
+	FbxDouble3 translation;
+	FbxDouble3 scale;
+	FbxDouble3 rotation;
+	std::vector<std::string> child_names;
+};
+
 #endif /* DATATYPES_H */

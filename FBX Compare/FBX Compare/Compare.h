@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Material.h"
+#include "Hierarchy.h"
 #include <map>
 
 
@@ -23,6 +24,7 @@ private:
 	Camera lCamHandler;
 	Light lLightHandler;
 	Material lMaterialHandler;
+	Hierarchy lHierarchyHandler;
 
 	std::vector<MeshInfo> lGoldMeshInfo;
 	std::vector<MeshInfo> lTestMeshInfo;
@@ -32,6 +34,8 @@ private:
 	std::vector<LightInfo> lTestLightInfo;
 	std::vector<std::pair<std::string, MaterialInfo>> lGoldMaterialInfo;
 	std::vector<std::pair<std::string, MaterialInfo>> lTestMaterialInfo;
+	std::vector<TransformNodeInfo> lGoldHierarchyNodes;
+	std::vector<TransformNodeInfo> lTestHierarchyNodes;
 
 	std::set<std::string> lGoldMaterialNames;
 	std::set<std::string> lTestMaterialNames;
@@ -49,6 +53,7 @@ public:
 	void CameraCompare();
 	void LightCompare();
 	void MaterialCompare();
+	void HierarchyCompare();
 
 	std::string ReturnXYZW(int value);
 	std::string ReturnRGBA(int value);

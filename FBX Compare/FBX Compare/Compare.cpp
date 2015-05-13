@@ -29,6 +29,7 @@ void Compare::MeshCompare()
 	{
 		FBXSDK_printf("\nThe number of meshes differ between files\n");
 		FBXSDK_printf("Early error out!\n");
+		return;
 	}
 	else
 	{
@@ -101,6 +102,7 @@ void Compare::CameraCompare()
 	{
 		FBXSDK_printf("\nThe number of cameras differ between files\n");
 		FBXSDK_printf("Early error out!\n");
+		return;
 	}
 	else
 	{
@@ -158,6 +160,7 @@ void Compare::LightCompare()
 	{
 		FBXSDK_printf("\nThe number of lights differ between files\n");
 		FBXSDK_printf("Early error out!\n");
+		return;
 	}
 	else
 	{
@@ -204,6 +207,7 @@ void Compare::MaterialCompare()
 	{
 		FBXSDK_printf("\nThe number of materials differ between files\n");
 		FBXSDK_printf("Early error out!\n");
+		return;
 	}
 	else
 	{
@@ -281,35 +285,43 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 	MeshInfo tempMeshInfo;
 	CamInfo tempCamInfo;
 	LightInfo tempLightInfo;
+	TransformNodeInfo tempTransformNodeInfo;
 
 	int counter;
 
 	// GOLD
 	for (counter = 0; counter <= pGoldenRootNode->GetChildCount(); counter++)
 	{
-		// MESH
-		this->lStatus = this->lMeshHandler.GetInfo(pGoldenRootNode, tempMeshInfo);
-		if (lStatus)
-		{
-			this->lGoldMeshInfo.push_back(tempMeshInfo);
-			tempMeshInfo.normals.clear();
-			tempMeshInfo.position.clear();
-			tempMeshInfo.uv.clear();
-		}
-		// CAMERA
-		this->lStatus = this->lCamHandler.GetInfo(pGoldenRootNode, tempCamInfo);
-		if (lStatus)
-		{
-			this->lGoldCamInfo.push_back(tempCamInfo);
-		}
-		// LIGHT
-		this->lStatus = this->lLightHandler.GetInfo(pGoldenRootNode, tempLightInfo);
-		if (lStatus)
-		{
-			this->lGoldLightInfo.push_back(tempLightInfo);
-		}
-		// MATERIAL
-		this->lStatus = this->lMaterialHandler.GetInfo(pGoldenRootNode, this->lGoldMaterialNames, this->lGoldMaterialInfo);
+		//// MESH
+		//this->lStatus = this->lMeshHandler.GetInfo(pGoldenRootNode, tempMeshInfo);
+		//if (lStatus)
+		//{
+		//	this->lGoldMeshInfo.push_back(tempMeshInfo);
+		//	tempMeshInfo.normals.clear();
+		//	tempMeshInfo.position.clear();
+		//	tempMeshInfo.uv.clear();
+		//}
+		//// CAMERA
+		//this->lStatus = this->lCamHandler.GetInfo(pGoldenRootNode, tempCamInfo);
+		//if (lStatus)
+		//{
+		//	this->lGoldCamInfo.push_back(tempCamInfo);
+		//}
+		//// LIGHT
+		//this->lStatus = this->lLightHandler.GetInfo(pGoldenRootNode, tempLightInfo);
+		//if (lStatus)
+		//{
+		//	this->lGoldLightInfo.push_back(tempLightInfo);
+		//}
+		//// MATERIAL
+		//this->lStatus = this->lMaterialHandler.GetInfo(pGoldenRootNode, this->lGoldMaterialNames, this->lGoldMaterialInfo);
+		//// HIERARCHY
+		//this->lStatus = this->lHierarchyHandler.GetInfo(pGoldenRootNode, tempTransformNodeInfo);
+		//if (lStatus)
+		//{
+		//	this->lGoldHierarchyNodes.push_back(tempTransformNodeInfo);
+		//	tempTransformNodeInfo.child_names.clear();
+		//}
 		
 		TraverseScene(pGoldenRootNode->GetChild(counter), this->isGolden);
 	}
@@ -318,29 +330,36 @@ void Compare::GatherInfo(FbxNode* pGoldenRootNode, FbxNode* pTestRootNode)
 	// TEST
 	for (counter = 0; counter <= pTestRootNode->GetChildCount(); counter++)
 	{
-		// MESH
-		this->lStatus = this->lMeshHandler.GetInfo(pTestRootNode, tempMeshInfo);
-		if (lStatus)
-		{
-			this->lTestMeshInfo.push_back(tempMeshInfo);
-			tempMeshInfo.normals.clear();
-			tempMeshInfo.position.clear();
-			tempMeshInfo.uv.clear();
-		}
-		// CAMERA
-		this->lStatus = this->lCamHandler.GetInfo(pTestRootNode, tempCamInfo);
-		if (lStatus)
-		{
-			this->lTestCamInfo.push_back(tempCamInfo);
-		}
-		// LIGHT
-		this->lStatus = this->lLightHandler.GetInfo(pTestRootNode, tempLightInfo);
-		if (lStatus)
-		{
-			this->lTestLightInfo.push_back(tempLightInfo);
-		}
-		// MATERIAL
-		this->lStatus = this->lMaterialHandler.GetInfo(pTestRootNode, this->lTestMaterialNames, this->lTestMaterialInfo);
+		//// MESH
+		//this->lStatus = this->lMeshHandler.GetInfo(pTestRootNode, tempMeshInfo);
+		//if (lStatus)
+		//{
+		//	this->lTestMeshInfo.push_back(tempMeshInfo);
+		//	tempMeshInfo.normals.clear();
+		//	tempMeshInfo.position.clear();
+		//	tempMeshInfo.uv.clear();
+		//}
+		//// CAMERA
+		//this->lStatus = this->lCamHandler.GetInfo(pTestRootNode, tempCamInfo);
+		//if (lStatus)
+		//{
+		//	this->lTestCamInfo.push_back(tempCamInfo);
+		//}
+		//// LIGHT
+		//this->lStatus = this->lLightHandler.GetInfo(pTestRootNode, tempLightInfo);
+		//if (lStatus)
+		//{
+		//	this->lTestLightInfo.push_back(tempLightInfo);
+		//}
+		//// MATERIAL
+		//this->lStatus = this->lMaterialHandler.GetInfo(pTestRootNode, this->lTestMaterialNames, this->lTestMaterialInfo);
+		//// HIERARCHY
+		//this->lStatus = this->lHierarchyHandler.GetInfo(pTestRootNode, tempTransformNodeInfo);
+		//if (lStatus)
+		//{
+		//	this->lTestHierarchyNodes.push_back(tempTransformNodeInfo);
+		//	tempTransformNodeInfo.child_names.clear();
+		//}
 
 		TraverseScene(pTestRootNode->GetChild(counter), this->isTest);
 	}
@@ -352,6 +371,7 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 	MeshInfo tempMeshInfo;
 	CamInfo tempCamInfo;
 	LightInfo tempLightInfo;
+	TransformNodeInfo tempTransformNodeInfo;
 
 	if (pNode)
 	{	
@@ -410,6 +430,21 @@ void Compare::TraverseScene(FbxNode* pNode, bool pType)
 			else
 			{
 				this->lStatus = this->lMaterialHandler.GetInfo(pNode, lTestMaterialNames, lTestMaterialInfo);
+			}
+			// HIERARCHY
+			this->lStatus = this->lHierarchyHandler.GetInfo(pNode, tempTransformNodeInfo);
+			if (lStatus)
+			{
+				if (pType == this->isGolden)
+				{
+					this->lGoldHierarchyNodes.push_back(tempTransformNodeInfo);
+					tempTransformNodeInfo.child_names.clear();
+				}
+				else
+				{
+					this->lTestHierarchyNodes.push_back(tempTransformNodeInfo);
+					tempTransformNodeInfo.child_names.clear();
+				}
 			}
 
 			TraverseScene(pNode->GetChild(counter), pType);
