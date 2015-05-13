@@ -1,3 +1,4 @@
+#pragma once
 #include <fbxsdk.h>
 #include <iostream>
 #include <vector>

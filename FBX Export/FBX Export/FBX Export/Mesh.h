@@ -7,6 +7,6 @@
 class Mesh
 {
 public:
-	FbxMesh* GetMesh(FbxScene* scene, std::string fileName);
+	void GetMesh(FbxScene* scene, std::string fileName);
 	~Mesh();
 };

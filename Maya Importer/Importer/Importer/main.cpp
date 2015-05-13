@@ -3,10 +3,25 @@
 int main()
 {
 	Importer importer;
-	importer.importFile("C://TESTTEST.bin");
+	importer.importFile("C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/Portal_test_FBX.bin");
 
-	ofstream out("C://ImporterTest.txt");
+	ofstream out("C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/Portal_test_FBX_ImporterTest.txt");
 	out << importer.headers << endl;
+
+	for (unsigned int i = 0; i < importer.headers.group_count; i++)
+	{
+		out << importer.transforms[i].name << endl;
+		out << importer.transforms[i].rotation[0] << " " << importer.transforms[i].rotation[1] << " " << importer.transforms[i].rotation[2] << " " << importer.transforms[i].rotation[3] << " " << endl;
+	}
+
+	out << "-------------------------------------------------------------------------";
+	importer.getTransform();
+
+	for (unsigned int i = 0; i < importer.headers.group_count; i++)
+	{
+		out << importer.getTransform()[i].name << endl;
+		out << importer.getTransform()[i].rotation[0] << " " << importer.getTransform()[i].rotation[1] << " " << importer.getTransform()[i].rotation[2] << " " << importer.getTransform()[i].rotation[3] << " " << endl;
+	}
 
 	//for (unsigned int i = 0; i < importer.headers.joint_count; i++)
 	//	out << importer.joints[i] << endl;
@@ -32,59 +47,59 @@ int main()
 	//for (unsigned int i = 0; i < importer.headers.anim_curve_count; i++)
 	//	out << importer.getCurves()[i] << endl;
 
-	for (unsigned int i = 0; i < importer.headers.material_count; i++)
-	{
-		out << importer.materials[i].name_length;
-		out << importer.materials[i].duffuse_map_length;
-		out << importer.materials[i].normal_map_length;
-		out << importer.materials[i].specular_map_length;
-		out << importer.materials[i].mtrl_type;
-		out << importer.materials[i].normal_depth;
-		out << importer.materials[i].specular[0];
-		out << importer.materials[i].specular[1];
-		out << importer.materials[i].specular[2];
-		out << importer.materials[i].specular_factor;
-		out << importer.materials[i].shininess;
-		out << importer.materials[i].reflection[0];
-		out << importer.materials[i].reflection[1];
-		out << importer.materials[i].reflection[2];
-		out << importer.materials[i].reflection_factor;
-		out << importer.materials[i].ambient[0];
-		out << importer.materials[i].ambient[1];
-		out << importer.materials[i].ambient[2];
-		out << importer.materials[i].diffuse[0];
-		out << importer.materials[i].diffuse[1];
-		out << importer.materials[i].diffuse[2];
-		out << importer.materials[i].diffuse_factor;
-		out << importer.materials[i].transparency_color[0];
-		out << importer.materials[i].transparency_color[1];
-		out << importer.materials[i].transparency_color[2];
-		out << importer.materials[i].incandescence[0];
-		out << importer.materials[i].incandescence[1];
-		out << importer.materials[i].incandescence[2];
-		out << importer.materials[i].name;
-		//out << importer.materials[i].diffuse_map;
-		//out << importer.materials[i].normal_map;
-		//out << importer.materials[i].specular_map;
-	};
+	//for (unsigned int i = 0; i < importer.headers.material_count; i++)
+	//{
+	//	out << importer.materials[i].name_length;
+	//	out << importer.materials[i].duffuse_map_length;
+	//	out << importer.materials[i].normal_map_length;
+	//	out << importer.materials[i].specular_map_length;
+	//	out << importer.materials[i].mtrl_type;
+	//	out << importer.materials[i].normal_depth;
+	//	out << importer.materials[i].specular[0];
+	//	out << importer.materials[i].specular[1];
+	//	out << importer.materials[i].specular[2];
+	//	out << importer.materials[i].specular_factor;
+	//	out << importer.materials[i].shininess;
+	//	out << importer.materials[i].reflection[0];
+	//	out << importer.materials[i].reflection[1];
+	//	out << importer.materials[i].reflection[2];
+	//	out << importer.materials[i].reflection_factor;
+	//	out << importer.materials[i].ambient[0];
+	//	out << importer.materials[i].ambient[1];
+	//	out << importer.materials[i].ambient[2];
+	//	out << importer.materials[i].diffuse[0];
+	//	out << importer.materials[i].diffuse[1];
+	//	out << importer.materials[i].diffuse[2];
+	//	out << importer.materials[i].diffuse_factor;
+	//	out << importer.materials[i].transparency_color[0];
+	//	out << importer.materials[i].transparency_color[1];
+	//	out << importer.materials[i].transparency_color[2];
+	//	out << importer.materials[i].incandescence[0];
+	//	out << importer.materials[i].incandescence[1];
+	//	out << importer.materials[i].incandescence[2];
+	//	out << importer.materials[i].name;
+	//	//out << importer.materials[i].diffuse_map;
+	//	//out << importer.materials[i].normal_map;
+	//	//out << importer.materials[i].specular_map;
+	//};
 
 
-	for (unsigned int i = 0; i < importer.headers.group_count; i++)
-	{
-		out << importer.transforms[i].name_Length;
-		out << importer.transforms[i].parentID;
-		out << importer.transforms[i].position[0];
-		out << importer.transforms[i].position[1];
-		out << importer.transforms[i].position[2];
-		out << importer.transforms[i].rotation[0];
-		out << importer.transforms[i].rotation[1];
-		out << importer.transforms[i].rotation[2];
-		out << importer.transforms[i].rotation[3];
-		out << importer.transforms[i].scale[0];
-		out << importer.transforms[i].scale[1];
-		out << importer.transforms[i].scale[2];
-		out << importer.transforms[i].name;
-	};
+	//for (unsigned int i = 0; i < importer.headers.group_count; i++)
+	//{
+	//	out << importer.transforms[i].name_Length;
+	//	out << importer.transforms[i].parentID;
+	//	out << importer.transforms[i].position[0];
+	//	out << importer.transforms[i].position[1];
+	//	out << importer.transforms[i].position[2];
+	//	out << importer.transforms[i].rotation[0];
+	//	out << importer.transforms[i].rotation[1];
+	//	out << importer.transforms[i].rotation[2];
+	//	out << importer.transforms[i].rotation[3];
+	//	out << importer.transforms[i].scale[0];
+	//	out << importer.transforms[i].scale[1];
+	//	out << importer.transforms[i].scale[2];
+	//	out << importer.transforms[i].name;
+	//};
 
 	//struct ImporterJoint
 	//{

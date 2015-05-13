@@ -3,7 +3,6 @@
 
 int main()
 {
-
 	FbxManager* sdkManager = FbxManager::Create();
 	FbxIOSettings* ios = FbxIOSettings::Create(sdkManager, IOSROOT);
 	ios->SetBoolProp(EXP_FBX_MATERIAL,				true);
@@ -19,23 +18,25 @@ int main()
 	FbxExporter* exporter = FbxExporter::Create(sdkManager, "");
 	const char* fileName = "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/testFile.fbx";
 
-	bool exportStatus = exporter->Initialize(fileName, 0, sdkManager->GetIOSettings());
+	bool exportStatus(exporter->Initialize(fileName, 1, sdkManager->GetIOSettings()));
 	if (!exportStatus)
 	{
 		FBXSDK_printf("Failed to initialize the exporter!");
 	}
 	//Scene
 	FbxScene* scene = FbxScene::Create(sdkManager, "aScene");
-
-	// Mesh
+	
+	//Mesh
 	Mesh mesh;
 
-	// Fill the FBX scene with data
-	mesh.GetMesh(scene, "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/BackgroundPlane.bin");
+	// Fill the FBX with data
+	mesh.GetMesh(scene, "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
 
+	// Export the scene
 	exporter->Export(scene);
 	exporter->Destroy();
 	sdkManager->Destroy();
+	std::cout << "DONE!" << std::endl;
 	std::getchar();
 	return 0;
 }

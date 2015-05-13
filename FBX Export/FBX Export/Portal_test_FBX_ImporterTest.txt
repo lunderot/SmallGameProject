@@ -1,0 +1,271 @@
+Number of groups: 65
+Number of meshes: 19
+Number of materials: 2
+Number of cameras: 4
+Number of lights: 0
+Number of joints: 0
+Number of nurbSurfices: 0
+Number of animation curves: 0
+Number of skins: 0
+Number of morph animations: 0
+
+groundPlane_transform
+0.707107 0 0 0.707107 
+persp
+0.171083 -0.243118 -0.043615 -0.953793 
+top
+-0.707107 0 0 0.707107 
+front
+0 0 0 1 
+side
+0 0.707107 0 0.707107 
+Portal_body_01
+0 0 0 1 
+portal_stuff_holder_01
+0 0 0 1 
+portal_stuff_holder_02
+0 0 0.382683 0.92388 
+portal_stuff_holder_03
+0 0 0.707107 0.707107 
+portal_stuff_holder_04
+0 0 0.92388 0.382683 
+portal_stuff_holder_05
+0 0 -1 5.05322e-016 
+portal_stuff_holder_06
+0 0 -0.92388 0.382683 
+portal_stuff_holder_07
+0 0 -0.707107 0.707107 
+portal_stuff_holder_08
+0 0 -0.382683 0.92388 
+Portal_body_02
+0 0 1 6.12323e-017 
+back_armor_motor_bottom_02
+-0.153046 -0.153046 -0.690346 0.690346 
+back_armor_motor_top_02
+0.153046 -0.153046 0.690346 0.690346 
+ORIGINAL_back_armor_side_long1
+0.185332 -0.112313 0.0780222 0.973114 
+back_armor_motor_right_01
+0 0.21644 0 0.976296 
+back_armor_motor_left_01
+0 -0.21644 0 0.976296 
+back_armor_right_side_short_01
+0.0102845 0.105444 -0.2556 0.96096 
+back_armor_right_side_long_01
+0.185332 0.112313 -0.0780222 0.973114 
+back_armor_right_bottom_01
+-0.385118 -0.32102 -0.630037 0.59303 
+back_armor_left_side_short_01
+0.0102845 -0.105444 0.2556 0.96096 
+back_armor_left_bottom_01
+-0.32102 -0.385118 -0.59303 0.630037 
+back_armor_middle_02
+0.309017 0 0 0.951057 
+back_armor_middle_01
+0.307693 0 0 0.951486 
+mech_armor_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+back_armor_motor_bottom_02
+-0.153046 -0.153046 -0.690346 0.690346 
+back_armor_motor_top_02
+0.153046 -0.153046 0.690346 0.690346 
+ORIGINAL_back_armor_side_long1
+0.185332 -0.112313 0.0780222 0.973114 
+back_armor_motor_right_01
+0 0.21644 0 0.976296 
+back_armor_motor_left_01
+0 -0.21644 0 0.976296 
+back_armor_right_side_short_01
+0.0102845 0.105444 -0.2556 0.96096 
+back_armor_right_side_long_01
+0.185332 0.112313 -0.0780222 0.973114 
+back_armor_right_bottom_01
+-0.385118 -0.32102 -0.630037 0.59303 
+back_armor_left_side_short_01
+0.0102845 -0.105444 0.2556 0.96096 
+back_armor_left_bottom_01
+-0.32102 -0.385118 -0.59303 0.630037 
+back_armor_middle_02
+0.309017 0 0 0.951057 
+back_armor_middle_01
+0.307693 0 0 0.951486 
+mech_armor_01
+0 0 0 1 
+-------------------------------------------------------------------------groundPlane_transform
+0.707107 0 0 0.707107 
+persp
+0.171083 -0.243118 -0.043615 -0.953793 
+top
+-0.707107 0 0 0.707107 
+front
+0 0 0 1 
+side
+0 0.707107 0 0.707107 
+Portal_body_01
+0 0 0 1 
+portal_stuff_holder_01
+0 0 0 1 
+portal_stuff_holder_02
+0 0 0.382683 0.92388 
+portal_stuff_holder_03
+0 0 0.707107 0.707107 
+portal_stuff_holder_04
+0 0 0.92388 0.382683 
+portal_stuff_holder_05
+0 0 -1 5.05322e-016 
+portal_stuff_holder_06
+0 0 -0.92388 0.382683 
+portal_stuff_holder_07
+0 0 -0.707107 0.707107 
+portal_stuff_holder_08
+0 0 -0.382683 0.92388 
+Portal_body_02
+0 0 1 6.12323e-017 
+back_armor_motor_bottom_02
+-0.153046 -0.153046 -0.690346 0.690346 
+back_armor_motor_top_02
+0.153046 -0.153046 0.690346 0.690346 
+ORIGINAL_back_armor_side_long1
+0.185332 -0.112313 0.0780222 0.973114 
+back_armor_motor_right_01
+0 0.21644 0 0.976296 
+back_armor_motor_left_01
+0 -0.21644 0 0.976296 
+back_armor_right_side_short_01
+0.0102845 0.105444 -0.2556 0.96096 
+back_armor_right_side_long_01
+0.185332 0.112313 -0.0780222 0.973114 
+back_armor_right_bottom_01
+-0.385118 -0.32102 -0.630037 0.59303 
+back_armor_left_side_short_01
+0.0102845 -0.105444 0.2556 0.96096 
+back_armor_left_bottom_01
+-0.32102 -0.385118 -0.59303 0.630037 
+back_armor_middle_02
+0.309017 0 0 0.951057 
+back_armor_middle_01
+0.307693 0 0 0.951486 
+mech_armor_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+portal_stuff_03
+0 0 0 1 
+portal_stuff_02
+0 0 0 1 
+portal_stuff_01
+0 0 0 1 
+back_armor_motor_bottom_02
+-0.153046 -0.153046 -0.690346 0.690346 
+back_armor_motor_top_02
+0.153046 -0.153046 0.690346 0.690346 
+ORIGINAL_back_armor_side_long1
+0.185332 -0.112313 0.0780222 0.973114 
+back_armor_motor_right_01
+0 0.21644 0 0.976296 
+back_armor_motor_left_01
+0 -0.21644 0 0.976296 
+back_armor_right_side_short_01
+0.0102845 0.105444 -0.2556 0.96096 
+back_armor_right_side_long_01
+0.185332 0.112313 -0.0780222 0.973114 
+back_armor_right_bottom_01
+-0.385118 -0.32102 -0.630037 0.59303 
+back_armor_left_side_short_01
+0.0102845 -0.105444 0.2556 0.96096 
+back_armor_left_bottom_01
+-0.32102 -0.385118 -0.59303 0.630037 
+back_armor_middle_02
+0.309017 0 0 0.951057 
+back_armor_middle_01
+0.307693 0 0 0.951486 
+mech_armor_01
+0 0 0 1 
