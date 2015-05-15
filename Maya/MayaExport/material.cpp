@@ -57,10 +57,10 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 			this->commonReflectValues(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 
 			plug = materialFn.findPlug("eccentricity");
-			plug.getValue(mat_struct.specular_factor);
+			plug.getValue(mat_struct.shininess);
 
 			plug = materialFn.findPlug("specularRollOff");
-			plug.getValue(mat_struct.shininess);
+			plug.getValue(mat_struct.specular_factor);
 
 			this->findTextures(materialFn, mat_struct, node_name, diffuse_map, normal_map, specular_map);
 			if (mat_struct.duffuse_map_length == 0)
