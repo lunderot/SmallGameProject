@@ -4,6 +4,7 @@
 #include "maya_includes.h"
 #define MAYA_EXPORT
 #include "CommonDeclaration.h"
+#include <map>
 //#include <fstream>
 //
 //using namespace std;
@@ -13,7 +14,7 @@ class exportLight
 {
 public:
 
-	MStatus exportLightType(MObject& mayaLight, LightData& oneLight, vector<const char*>& name);
+	MStatus exportLightType(MObject& mayaLight, LightData& oneLight, vector<const char*>& name, map<const char*, int> transformHierarchy, vector<vector <int> >& parentID);
 
 };
 

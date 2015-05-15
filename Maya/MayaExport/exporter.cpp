@@ -66,6 +66,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	exportLight aLight;
 	vector<LightData> lightbody;
 	vector<const char*> expLightName;
+	vector<vector<int>> expParentLightID;
 
 	//--Nurb
 	exportNurb aNurb;
@@ -212,7 +213,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 				//MFnLight eMayaLight(path);
 				//MFnNonAmbientLight eMayaLight(path);
 				MObject eMayaLight = path.node();
-				status = aLight.exportLightType(eMayaLight, eOLight, expLightName);
+				status = aLight.exportLightType(eMayaLight, eOLight, expLightName, transformHeiraki, expParentLightID);
 				if (status == MS::kSuccess)
 				{
 					lightbody.push_back(eOLight);
@@ -355,6 +356,7 @@ MStatus Exporter::doIt(const MArgList& argList)
 	for (unsigned int i = 0; i < lightbody.size(); i++)
 	{	
 		output.writeToFiles(&lightbody[i]);
+		output.writeToFiles(expParentLightID[i].data(), expParentLightID[i].size());
 		output.writeToFiles(&expLightName[i]);
 	}
 

@@ -2,7 +2,7 @@
 #include "maya/mPlug.h"
 
 //MStatus exportLight::exportLightType(MFnLight& mayaLight, LightHeader& Lheader, Light& oneLight)
-MStatus exportLight::exportLightType(MObject& inputLight, LightData& oneLight, vector<const char*>& name)
+MStatus exportLight::exportLightType(MObject& inputLight, LightData& oneLight, vector<const char*>& name, map<const char*, int> transformHierarchy, vector<vector <int> >& parentID)
 {
 
 
@@ -115,6 +115,25 @@ MStatus exportLight::exportLightType(MObject& inputLight, LightData& oneLight, v
 	MGlobal::displayInfo("OneLight Shadow Color: " + MString() + oneLight.shadow_color[0] + " " + MString() + oneLight.shadow_color[1] + " " + MString() + oneLight.shadow_color[2]);
 	MGlobal::displayInfo("Maya Shadow Color: " + MString() + colorOfShadow.r + " " + MString() + colorOfShadow.g + " " + MString() + colorOfShadow.b);
 
+
+	// ---------------------------------------------------//
+	//					PARENT ID                         //
+	// ---------------------------------------------------//
+
+	MFnLight mayaLIGHTO(inputLight);
+
+
+	vector<int> parentIndex(mayaLight.parentCount());
+
+	for (unsigned int i = 0; i < mayaLight.parentCount(); i++)
+	{
+		MObject parent = mayaLight.parent(i);
+		MFnDagNode storeParent(parent);
+		parentIndex[i] = transformHierarchy[storeParent.name().asChar()];
+	}
+
+	oneLight.numberOfParent = mayaLight.parentCount();
+	parentID.push_back(parentIndex);
 
 
 	return MS::kSuccess;
