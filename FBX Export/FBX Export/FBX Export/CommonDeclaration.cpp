@@ -134,49 +134,49 @@ std::ostream& operator<<(std::ostream& out, const meshStructData& obj)
 
 	/*for (unsigned int i = 0; i < obj.transform_count; i++)
 	{
-	out << obj.transform_Id[i] << endl;
+		out << obj.transform_Id[i] << endl;
 	}
 
 	out << "Material id: " << endl;
 
 	for (unsigned int i = 0; i < obj.material_count; i++)
 	{
-	out << obj.material_Id[i] << endl;
+		out << obj.material_Id[i] << endl;
 	}
 
 	for (unsigned int i = 0; i < obj.position_count; i++)
 	{
-	out << "Position " << i << ": " << obj.position[i][0] << " " << obj.position[i][1] << " " << obj.position[i][2] << endl;
+		out << "Position " << i << ": " << obj.position[i][0] << " " << obj.position[i][1] << " " << obj.position[i][2] << endl;
 	}
 	for (unsigned int i = 0; i < obj.uv_count; i++)
 	{
-	out << "UV " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << endl;
+		out << "UV " << i << ": " << obj.uv[i][0] << " " << obj.uv[i][1] << endl;
 	}
 	for (unsigned int i = 0; i < obj.normal_count; i++)
 	{
-	out << "Normal " << i << ": " << obj.normal[i][0] << " " << obj.normal[i][1] << " " << obj.normal[i][2] << endl;
+		out << "Normal " << i << ": " << obj.normal[i][0] << " " << obj.normal[i][1] << " " << obj.normal[i][2] << endl;
 	}
 	for (unsigned int i = 0; i < obj.tangent_count; i++)
 	{
-	out << "Tangent " << i << ": " << obj.tangent[i][0] << " " << obj.tangent[i][1] << " " << obj.tangent[i][2] << endl;
+		out << "Tangent " << i << ": " << obj.tangent[i][0] << " " << obj.tangent[i][1] << " " << obj.tangent[i][2] << endl;
 	}
 	for (unsigned int i = 0; i < obj.biTangent_count; i++)
 	{
-	out << "Bi-Tangent " << i << ": " << obj.bi_tangent[i][0] << " " << obj.bi_tangent[i][1] << " " << obj.bi_tangent[i][2] << endl;
+		out << "Bi-Tangent " << i << ": " << obj.bi_tangent[i][0] << " " << obj.bi_tangent[i][1] << " " << obj.bi_tangent[i][2] << endl;
 	}*/
 
 	/*int tmp = 0;
 	int tmp_faceCounter = 0;
 	for (unsigned int i = 0; i < obj.indice_count; i++)
 	{
-	if (tmp == 0 || tmp == 3)
-	{
-	out << "Face " << tmp_faceCounter << ": " << endl;
-	tmp_faceCounter++;
-	tmp = 0;
-	}
-	out << obj.vertices[i] << endl;
-	tmp++;
+		if (tmp == 0 || tmp == 3)
+		{
+			out << "Face " << tmp_faceCounter << ": " << endl;
+			tmp_faceCounter++;
+			tmp = 0;
+		}
+		out << obj.vertices[i] << endl;
+		tmp++;
 	}*/
 
 	return out;

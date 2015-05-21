@@ -36,6 +36,9 @@ void Mesh::GetMesh(FbxScene* scene, std::string fileName)
 	{
 		FBXSDK_printf("Failed to Import the file");
 	}
+
+	//Materials
+	Material material;
 	// Get root node
 	FbxNode* rootNode = scene->GetRootNode();
 
@@ -91,6 +94,7 @@ void Mesh::GetMesh(FbxScene* scene, std::string fileName)
 	std::vector<FbxMesh*> meshes;
 	meshes.resize(importer.getNumMeshes());
 	const ImporterMesh* importedMeshes = importer.getMesh();
+	const ImporterMaterial* importedMaterials = importer.getMaterial();
 
 
 	for (unsigned int i = 0; i < importer.getNumMeshes(); i++)
@@ -163,6 +167,9 @@ void Mesh::GetMesh(FbxScene* scene, std::string fileName)
 			parentNode->GetName();
 			std::cout << "Transform name : " << parentNode->GetName() << std::endl;
 		}
+
+		// Get Materials
+		material.ExportMaterials(scene, mesh, importedMeshes[i], importedMaterials);
 	}
 }
 

@@ -103,12 +103,14 @@
     <ClCompile Include="CommonDeclaration.cpp" />
     <ClCompile Include="Importer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonDeclaration.h" />
     <ClInclude Include="Importer.h" />
     <ClInclude Include="Includes.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,6 @@
 #ifndef IMPORTER_H
 #define IMPORTER_H
-#include "../../../Maya/MayaExport/CommonDeclaration.h"
+#include "CommonDeclaration.h"
 #include <string>
 
 struct ImporterTransform
@@ -45,7 +45,7 @@ struct ImporterMesh
 	char*  name;
 };
 
-struct ImporterCamera
+struct ImporterCamera 
 {
 	unsigned int name_length;
 	unsigned int nrOfParents;
@@ -80,20 +80,22 @@ struct ImporterMaterial
 	double transparency_color[3];
 	double incandescence[3];
 	char* name;
-	char*  diffuse_map;
-	char*  normal_map;
-	char*  specular_map;
+	char* diffuse_map;
+	char* normal_map;
+	char* specular_map;
 };
 
 struct ImporterLight
 {
 	unsigned int name_Length;
+	unsigned int numberOfParents;
 	light_type type;
 	double color[3];
 	float intensity;
 	decay_type dType;
 	bool cast_shadows;
 	double shadow_color[3];
+	int* parentID;
 	char* name;
 };
 
@@ -172,8 +174,8 @@ public:
 	const ImporterWeights* getWeights() const;
 	const ImporterKeyframes* getCurves() const;
 
-	private:
-
+private:
+	//Allt här under lär bli private
 	bool extractMainHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);
 
 	bool extractTransforms(unsigned int& offset, char* fileData, unsigned int& fileSize);

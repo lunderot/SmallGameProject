@@ -30,7 +30,7 @@ int main()
 	Mesh mesh;
 
 	// Fill the FBX with data
-	mesh.GetMesh(scene, "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
+	mesh.GetMesh(scene, "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/New_Portal_NoCylinder_01.bin");
 
 	// Export the scene
 	exporter->Export(scene);
