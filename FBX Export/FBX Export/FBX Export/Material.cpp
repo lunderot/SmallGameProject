@@ -4,6 +4,7 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 {
 	for (int i = 0; i < importedMesh.material_count; i++)
 	{
+		FbxNode* node = mesh->GetNode();
 		FbxString materialName = importedMaterials[importedMesh.material_Id[i]].name;
 		
 		FbxString shadingName;
@@ -14,10 +15,16 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 		FbxDouble3 transparencyColor(importedMaterials[importedMesh.material_Id[i]].transparency_color[0], importedMaterials[importedMesh.material_Id[i]].transparency_color[1], importedMaterials[importedMesh.material_Id[i]].transparency_color[2]);
 		FbxDouble3 specularColor(importedMaterials[importedMesh.material_Id[i]].specular[0], importedMaterials[importedMesh.material_Id[i]].specular[1] , importedMaterials[importedMesh.material_Id[i]].specular[2]);
 
+		const char* pathName = "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/";
+		// Lambert
 		if (importedMaterials[importedMesh.material_Id[i]].mtrl_type == 0)
 		{
 			shadingName = "Lambert";
-			FbxSurfaceLambert* material = FbxSurfaceLambert::Create(scene, materialName.Buffer());
+			FbxSurfaceLambert* material = NULL;
+			material= node->GetSrcObject<FbxSurfaceLambert>(0);
+			material = FbxSurfaceLambert::Create(scene, materialName.Buffer());
+			
+			materialName += i;
 			material->Emissive.Set(emissiveColor);
 
 			material->Ambient.Set(ambientColor);
@@ -29,38 +36,59 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 
 			FbxNode* node = mesh->GetNode();
 			if (node)
+			{
 				node->AddMaterial(material);
-		}
-		else if (importedMaterials[importedMesh.material_Id[i]].mtrl_type == 1)
-		{
-			shadingName = "Blinn";
+			}
 
-			FbxSurfacePhong* material = FbxSurfacePhong::Create(scene, materialName.Buffer());
+			// Diffuse Texture
+			FbxFileTexture* texture = FbxFileTexture::Create(scene, "Diffuse Texture");
+			std::cout << "DAFUSE MAP LENGTH: " << importedMaterials[importedMesh.material_Id[i]].duffuse_map_length << std::endl;
+			if (importedMaterials[importedMesh.material_Id[i]].duffuse_map_length > 0)
+			{
+				std::string tmp(pathName);
+				tmp += importedMaterials[importedMesh.material_Id[i]].diffuse_map;
+				texture->SetFileName(tmp.c_str());
+				texture->SetTextureUse(FbxTexture::eStandard);
+				texture->SetMappingType(FbxTexture::eUV);
+				texture->SetMaterialUse(FbxFileTexture::eModelMaterial);
+				texture->SetSwapUV(false);
+				texture->SetTranslation(0.0, 0.0);
+				texture->SetScale(1.0, 1.0);
+				texture->SetRotation(0.0, 0.0);
+
+				if (material)
+					material->Diffuse.ConnectSrcObject(texture);
+			}
+
+			// Normal Texture
+			texture = FbxFileTexture::Create(scene, "Normal Texture");
+			if (importedMaterials[importedMesh.material_Id[i]].normal_map_length > 0)
+			{
+				texture->SetFileName(importedMaterials[importedMesh.material_Id[i]].normal_map);
+				texture->SetTextureUse(FbxTexture::eStandard);
+				texture->SetMappingType(FbxTexture::eUV);
+				texture->SetMaterialUse(FbxFileTexture::eModelMaterial);
+				texture->SetSwapUV(false);
+				texture->SetTranslation(0.0, 0.0);
+				texture->SetScale(1.0, 1.0);
+				texture->SetRotation(0.0, 0.0);
+
+				if (material)
+					material->NormalMap.ConnectSrcObject(texture);
+			}
+
 			
 
-			material->Emissive.Set(emissiveColor);
-
-			material->Ambient.Set(ambientColor);
-
-			material->Diffuse.Set(diffuseColor);
-			material->DiffuseFactor.Set(importedMaterials[importedMesh.material_Id[i]].diffuse_factor);
-
-			material->TransparentColor.Set(transparencyColor);
-
-			material->Specular.Set(specularColor);
-			material->SpecularFactor.Set(importedMaterials[importedMesh.material_Id[i]].specular_factor);
-			material->Shininess.Set(importedMaterials[importedMesh.material_Id[i]].shininess);
-
-			FbxNode* node = mesh->GetNode();
-			if (node)
-				node->AddMaterial(material);
-
 		}
+
+		// Phong
 		else
 		{
 			shadingName = "Phong";
-			FbxSurfacePhong* material = FbxSurfacePhong::Create(scene, materialName.Buffer());
-
+			FbxSurfacePhong* material = NULL;
+			material = node->GetSrcObject<FbxSurfacePhong>(0);
+			material = FbxSurfacePhong::Create(scene, materialName.Buffer());
+			materialName += i;
 			material->Emissive.Set(emissiveColor);
 
 			material->Ambient.Set(ambientColor);
@@ -74,16 +102,66 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 			material->SpecularFactor.Set(importedMaterials[importedMesh.material_Id[i]].specular_factor);
 
 			material->Shininess.Set(importedMaterials[importedMesh.material_Id[i]].shininess);
-			std::cout << "MATERIAL INC!!!" << std::endl;
 
 			FbxNode* node = mesh->GetNode();
 			if (node)
+			{
 				node->AddMaterial(material);
+			}
+
+			// Diffuse Texture
+			FbxFileTexture* texture = FbxFileTexture::Create(scene, "Diffuse Texture");
+			if (importedMaterials[importedMesh.material_Id[i]].duffuse_map_length > 0)
+			{
+				texture->SetFileName(importedMaterials[importedMesh.material_Id[i]].diffuse_map);
+				texture->SetTextureUse(FbxTexture::eStandard);
+				texture->SetMappingType(FbxTexture::eUV);
+				texture->SetMaterialUse(FbxFileTexture::eModelMaterial);
+				texture->SetSwapUV(false);
+				texture->SetTranslation(0.0, 0.0);
+				texture->SetScale(1.0, 1.0);
+				texture->SetRotation(0.0, 0.0);
+
+				if (material)
+					material->Diffuse.ConnectSrcObject(texture);
+			}
+
+			// Specular Texture
+			texture = FbxFileTexture::Create(scene, "Specular Texture");
+			if (importedMaterials[importedMesh.material_Id[i]].specular_map_length > 0)
+			{
+				texture->SetFileName(importedMaterials[importedMesh.material_Id[i]].specular_map);
+				texture->SetTextureUse(FbxTexture::eStandard);
+				texture->SetMappingType(FbxTexture::eUV);
+				texture->SetMaterialUse(FbxFileTexture::eModelMaterial);
+				texture->SetSwapUV(false);
+				texture->SetTranslation(0.0, 0.0);
+				texture->SetScale(1.0, 1.0);
+				texture->SetRotation(0.0, 0.0);
+
+				if (material)
+					material->Specular.ConnectSrcObject(texture);
+			}
+
+			// Normal Texture
+			texture = FbxFileTexture::Create(scene, "Normal Texture");
+			if (importedMaterials[importedMesh.material_Id[i]].normal_map_length > 0)
+			{
+				texture->SetFileName(importedMaterials[importedMesh.material_Id[i]].normal_map);
+				texture->SetTextureUse(FbxTexture::eStandard);
+				texture->SetMappingType(FbxTexture::eUV);
+				texture->SetMaterialUse(FbxFileTexture::eModelMaterial);
+				texture->SetSwapUV(false);
+				texture->SetTranslation(0.0, 0.0);
+				texture->SetScale(1.0, 1.0);
+				texture->SetRotation(0.0, 0.0);
+
+				if (material)
+					material->NormalMap.ConnectSrcObject(texture);
+			}
+
 
 		}
-
-		materialName += i;
-		std::cout << "MATERIAL INC!!!" << std::endl;
 	}
 
 }

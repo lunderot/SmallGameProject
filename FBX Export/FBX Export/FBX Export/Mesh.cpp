@@ -120,15 +120,33 @@ void Mesh::GetMesh(FbxScene* scene, std::string fileName)
 		{
 			controlPoints[j] = vertices[j];
 		}
+
+		// UV's
+		FbxGeometryElementUV* uvDiffuseElement = mesh->CreateElementUV("DiffuseUV");
+		uvDiffuseElement->SetMappingMode(FbxGeometryElement::eByPolygonVertex);
+		uvDiffuseElement->SetReferenceMode(FbxGeometryElement::eIndexToDirect);
+
+		for (unsigned int j = 0; j < importedMeshes[i].uv_count; j++)
+		{
+			uvDiffuseElement->GetDirectArray().Add(FbxVector2(importedMeshes[i].uv[importedMeshes[i].vertices[j].uv * 2 + 0], importedMeshes[i].uv[importedMeshes[i].vertices[j].uv * 2 + 1]));
+		}
+
+		uvDiffuseElement->GetIndexArray().SetCount(importedMeshes[i].uv_count);
+		std::cout << "UV COUNT!!!!!!!!!!!!!!!!!!!!!!" << importedMeshes[i].uv_count << std::endl;
+
 		// Add Polygons to mesh
 		for (unsigned int offset = 0; offset < importedMeshes[i].indice_count; offset += 3)
 		{
-			mesh->BeginPolygon();
+			mesh->BeginPolygon(-1, -1, 0, true);
 			mesh->AddPolygon(offset + 0);
+			uvDiffuseElement->GetIndexArray().SetAt(offset, offset);
 			mesh->AddPolygon(offset + 1);
+			uvDiffuseElement->GetIndexArray().SetAt(offset + 1, offset + 1);
 			mesh->AddPolygon(offset + 2);
+			uvDiffuseElement->GetIndexArray().SetAt(offset + 2, offset + 2);
 			mesh->EndPolygon();
 		}
+		mesh->BuildMeshEdgeArray();
 
 		FbxLayer* layer = mesh->GetLayer(0);
 		if (layer == NULL)
