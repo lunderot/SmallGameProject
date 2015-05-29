@@ -181,11 +181,11 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 		}
 
 		FbxLayerElementNormal* layerElementNormal = FbxLayerElementNormal::Create(mesh, "");
-		layerElementNormal->SetMappingMode(FbxLayerElement::eByControlPoint);
+		layerElementNormal->SetMappingMode(FbxLayerElement::eByPolygonVertex);
 
 		layerElementNormal->SetReferenceMode(FbxLayerElement::eDirect);
-
-		for (unsigned int j = 0; j < importedMeshes[i].indice_count; j++)
+		std::cout << "NORMAL COUNT" << importedMeshes[i].normal_count << std::endl;
+		for (unsigned int j = 0; j < mesh->mControlPoints.Size(); j++)
 		{
 			layerElementNormal->GetDirectArray().Add(FbxVector4(importedMeshes[i].normal[importedMeshes[i].vertices[j].normal * 3 + 0], importedMeshes[i].normal[importedMeshes[i].vertices[j].normal * 3 + 1], importedMeshes[i].normal[importedMeshes[i].vertices[j].normal * 3 + 2]));
 		}

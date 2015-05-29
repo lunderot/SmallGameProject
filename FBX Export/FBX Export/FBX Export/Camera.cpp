@@ -15,7 +15,7 @@ void Camera::ExportCameras(FbxScene* scene, std::string fileName)
 	{
 		FbxCamera* camera = FbxCamera::Create(scene, importedCameras[i].name);
 		FbxNode* camNode = FbxNode::Create(scene, "");
-		camera->Position.Set(FbxDouble3(importedCameras[i].position[0], importedCameras[i].position[1], importedCameras[i].position[2]));
+		//camera->Position.Set(FbxDouble3(importedCameras[i].position[0], importedCameras[i].position[1], importedCameras[i].position[2]));
 
 		camera->UpVector.Set(FbxDouble3(importedCameras[i].up_vector[0], importedCameras[i].up_vector[1], importedCameras[i].up_vector[2]));
 		camera->InterestPosition.Set(FbxDouble3(importedCameras[i].interest_position[0], importedCameras[i].interest_position[1], importedCameras[i].interest_position[2]));
@@ -31,10 +31,12 @@ void Camera::ExportCameras(FbxScene* scene, std::string fileName)
 		else
 			camera->ProjectionType.Set(FbxCamera::EProjectionType::eOrthogonal);
 
+		for (unsigned int j = 0; j < importedCameras[i].nrOfParents; j++)
+		{
+			int parentID = importedCameras[i].parentID[j] + 1;
 
-		int parentID = importedCameras[i].parentID[0] + 1;
-
-		FbxNode* parentNode = scene->GetNode(parentID);
-		parentNode->SetNodeAttribute(camera);
+			FbxNode* parentNode = scene->GetNode(parentID);
+			parentNode->SetNodeAttribute(camera);
+		}
 	}
 }
