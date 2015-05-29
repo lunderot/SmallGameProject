@@ -142,9 +142,9 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 		// UV's
 		FbxGeometryElementUV* uvDiffuseElement = mesh->CreateElementUV("DiffuseUV");
 		uvDiffuseElement->SetMappingMode(FbxGeometryElement::eByPolygonVertex);
-		uvDiffuseElement->SetReferenceMode(FbxGeometryElement::eIndexToDirect);
+		uvDiffuseElement->SetReferenceMode(FbxGeometryElement::eDirect);
 
-		for (unsigned int j = 0; j < importedMeshes[i].uv_count; j++)
+		for (unsigned int j = 0; j < mesh->mControlPoints.Size(); j++)
 		{
 			uvDiffuseElement->GetDirectArray().Add(FbxVector2(importedMeshes[i].uv[importedMeshes[i].vertices[j].uv * 2 + 0], importedMeshes[i].uv[importedMeshes[i].vertices[j].uv * 2 + 1]));
 		}

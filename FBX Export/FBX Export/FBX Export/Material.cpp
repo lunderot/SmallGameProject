@@ -2,7 +2,7 @@
 
 void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMesh& importedMesh, const ImporterMaterial* importedMaterials)
 {
-	for (int i = 1; i < 0; i++)
+	for (int i = 0; i < importedMesh.material_count; i++)
 	{
 		FbxNode* node = mesh->GetNode();
 		FbxString materialName = importedMaterials[importedMesh.material_Id[i]].name;
