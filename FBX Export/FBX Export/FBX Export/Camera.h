@@ -3,7 +3,10 @@
 #include <iostream>
 #include <vector>
 #pragma comment (lib, "libfbxsdk.lib")
-
 #include "Importer.h"
-#include "Mesh.h"
-#include "Camera.h"
+
+class Camera
+{
+public:
+	void ExportCameras(FbxScene* scene, std::string fileName);
+};

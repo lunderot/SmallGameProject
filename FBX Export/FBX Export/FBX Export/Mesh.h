@@ -8,6 +8,6 @@
 class Mesh
 {
 public:
-	void GetMesh(FbxScene* scene, std::string fileName);
+	void ExportMeshes(FbxScene* scene, std::string fileName);
 	~Mesh();
 };

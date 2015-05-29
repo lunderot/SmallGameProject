@@ -16,8 +16,8 @@ int main()
 
 	//Exporter
 	FbxExporter* exporter = FbxExporter::Create(sdkManager, "");
-	const char* fileName = "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/testFile.fbx";
-
+	//const char* fileName = "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/testFile.fbx";
+	const char* fileName = "D://Github/SmallGameProject/FBX Export/FBX Export/testFile.fbx";
 	bool exportStatus(exporter->Initialize(fileName, 1, sdkManager->GetIOSettings()));
 	if (!exportStatus)
 	{
@@ -26,11 +26,14 @@ int main()
 	//Scene
 	FbxScene* scene = FbxScene::Create(sdkManager, "aScene");
 	
-	//Mesh
+	// Classes
 	Mesh mesh;
+	Camera cam;
 
 	// Fill the FBX with data
-	mesh.GetMesh(scene, "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
+	//mesh.GetMesh(scene, "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
+	mesh.ExportMeshes(scene, "D://GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
+	cam.ExportCameras(scene, "D://GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
 
 	// Export the scene
 	exporter->Export(scene);

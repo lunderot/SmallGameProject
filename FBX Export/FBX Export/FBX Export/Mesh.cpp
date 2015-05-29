@@ -28,7 +28,7 @@ double* QuatToEuler(const double quat[4])
 	return returnValues;
 }
 
-void Mesh::GetMesh(FbxScene* scene, std::string fileName)
+void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 {
 	// From the Importer
 	Importer importer;
