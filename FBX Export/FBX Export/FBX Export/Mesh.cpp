@@ -139,6 +139,19 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 			controlPoints[j] = vertices[j];
 		}
 
+		// UV's
+		FbxGeometryElementUV* uvDiffuseElement = mesh->CreateElementUV("DiffuseUV");
+		uvDiffuseElement->SetMappingMode(FbxGeometryElement::eByPolygonVertex);
+		uvDiffuseElement->SetReferenceMode(FbxGeometryElement::eIndexToDirect);
+
+		for (unsigned int j = 0; j < importedMeshes[i].uv_count; j++)
+		{
+			uvDiffuseElement->GetDirectArray().Add(FbxVector2(importedMeshes[i].uv[importedMeshes[i].vertices[j].uv * 2 + 0], importedMeshes[i].uv[importedMeshes[i].vertices[j].uv * 2 + 1]));
+		}
+
+		uvDiffuseElement->GetIndexArray().SetCount(importedMeshes[i].uv_count);
+		std::cout << "UV COUNT!!!!!!!!!!!!!!!!!!!!!!" << importedMeshes[i].uv_count << std::endl;
+
 		vector<unsigned int> indices;
 		for (unsigned int x = 0; x < importedMeshes[i].indice_count; x++)
 		{
@@ -153,9 +166,12 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 			for (unsigned int j = 0; j < 3; j++)
 			{
 				mesh->AddPolygon(indices[offset * 3 + j]);
+				uvDiffuseElement->GetIndexArray().SetAt(offset + j, offset + j);
 			}
 			mesh->EndPolygon();
 		}
+
+		mesh->BuildMeshEdgeArray();
 
 		FbxLayer* layer = mesh->GetLayer(0);
 		if (layer == NULL)
