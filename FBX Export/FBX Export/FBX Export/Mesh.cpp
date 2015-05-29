@@ -107,7 +107,7 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 
 		for (unsigned int j = 0; j < importedMeshes[i].indice_count; j++)
 		{
-			FbxVector4 vertex(importedMeshes[i].position[importedMeshes[i].vertices[j].position * 3 + 0], importedMeshes[i].position[importedMeshes[i].vertices[j].position * 3 + 1], importedMeshes[i].position[importedMeshes[i].vertices[j].position * 3 + 2]);
+			FbxVector4 vertex(importedMeshes[i].position[j * 3 + 0], importedMeshes[i].position[j * 3 + 1], importedMeshes[i].position[j * 3 + 2]);
 			vertices.push_back(vertex);
 		}
 		//meshes.push_back(mesh);
@@ -116,7 +116,7 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 		FbxVector4* controlPoints = mesh->GetControlPoints();
 
 		// Define Faces
-		for (unsigned int j = 0; j < importedMeshes[i].indice_count; j++)
+		for (unsigned int j = 0; j < mesh->mControlPoints.Size(); j++)
 		{
 			controlPoints[j] = vertices[j];
 		}
@@ -134,18 +134,26 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 		uvDiffuseElement->GetIndexArray().SetCount(importedMeshes[i].uv_count);
 		std::cout << "UV COUNT!!!!!!!!!!!!!!!!!!!!!!" << importedMeshes[i].uv_count << std::endl;
 
-		// Add Polygons to mesh
-		for (unsigned int offset = 0; offset < importedMeshes[i].indice_count; offset += 3)
+		vector<unsigned int> indices;
+		for (unsigned int x = 0; x < importedMeshes[i].indice_count; x++)
 		{
-			mesh->BeginPolygon(-1, -1, 0, true);
-			mesh->AddPolygon(offset + 0);
-			uvDiffuseElement->GetIndexArray().SetAt(offset, offset);
-			mesh->AddPolygon(offset + 1);
-			uvDiffuseElement->GetIndexArray().SetAt(offset + 1, offset + 1);
-			mesh->AddPolygon(offset + 2);
-			uvDiffuseElement->GetIndexArray().SetAt(offset + 2, offset + 2);
+			indices.push_back(importedMeshes[i].vertices[x].position);
+		}
+
+		// Add Polygons to mesh
+		for (unsigned int offset = 0; offset < mesh->mControlPoints.Size() / 3; offset++)
+		{
+			mesh->BeginPolygon(-1, -1, false);
+
+			for (unsigned int j = 0; j < 3; j++)
+			{
+				mesh->AddPolygon(indices[offset * 3 + j]);
+				//mesh->AddPolygon(offset * 3 + j);
+				uvDiffuseElement->GetIndexArray().SetAt(offset + j, offset + j);
+			}
 			mesh->EndPolygon();
 		}
+
 		mesh->BuildMeshEdgeArray();
 
 		FbxLayer* layer = mesh->GetLayer(0);
