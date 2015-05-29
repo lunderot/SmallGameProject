@@ -11,10 +11,10 @@ FBXHeaderExtension:  {
 		Year: 2015
 		Month: 5
 		Day: 29
-		Hour: 15
-		Minute: 1
-		Second: 58
-		Millisecond: 66
+		Hour: 19
+		Minute: 18
+		Second: 43
+		Millisecond: 351
 	}
 	Creator: "FBX SDK/FBX Plugins version 2016.0"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -30,8 +30,8 @@ FBXHeaderExtension:  {
 			Comment: ""
 		}
 		Properties70:  {
-			P: "DocumentUrl", "KString", "Url", "", "D:\Github\SmallGameProject\FBX Export\FBX Export\testFile.fbx"
-			P: "SrcDocumentUrl", "KString", "Url", "", "D:\Github\SmallGameProject\FBX Export\FBX Export\testFile.fbx"
+			P: "DocumentUrl", "KString", "Url", "", "C:\Users\Litet\Documents\GitHub\SmallGameProject\FBX Export\FBX Export\testFile.fbx"
+			P: "SrcDocumentUrl", "KString", "Url", "", "C:\Users\Litet\Documents\GitHub\SmallGameProject\FBX Export\FBX Export\testFile.fbx"
 			P: "Original", "Compound", "", ""
 			P: "Original|ApplicationVendor", "KString", "", "", ""
 			P: "Original|ApplicationName", "KString", "", "", ""
@@ -77,7 +77,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 4651696, "aScene", "Scene" {
+	Document: 94944024224, "aScene", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", ""
@@ -298,7 +298,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	NodeAttribute: 5041760, "NodeAttribute::perspShape", "Camera" {
+	NodeAttribute: 94944415120, "NodeAttribute::perspShape", "Camera" {
 		Properties70:  {
 			P: "InterestPosition", "Vector", "", "A",0,0,-1
 			P: "FieldOfViewX", "FieldOfViewX", "", "A",0.950021512530194
@@ -316,26 +316,7 @@ Objects:  {
 		AudioColor: 0,1,0
 		CameraOrthoZoom: 1
 	}
-	NodeAttribute: 5055600, "NodeAttribute::topShape", "Camera" {
-		Properties70:  {
-			P: "InterestPosition", "Vector", "", "A",0,0,-1
-			P: "FieldOfViewX", "FieldOfViewX", "", "A",0.950021512530194
-			P: "FieldOfViewY", "FieldOfViewY", "", "A",0.660594709658507
-			P: "NearPlane", "double", "Number", "",0.1
-			P: "FarPlane", "double", "Number", "",10000
-			P: "CameraProjectionType", "enum", "", "",1
-		}
-		TypeFlags: "Camera"
-		GeometryVersion: 124
-		Position: 0,0,0
-		Up: 0,1,0
-		LookAt: 0,0,-1
-		ShowInfoOnMoving: 1
-		ShowAudio: 0
-		AudioColor: 0,1,0
-		CameraOrthoZoom: 1
-	}
-	NodeAttribute: 5070192, "NodeAttribute::frontShape", "Camera" {
+	NodeAttribute: 94944427232, "NodeAttribute::topShape", "Camera" {
 		Properties70:  {
 			P: "InterestPosition", "Vector", "", "A",0,0,-1
 			P: "FieldOfViewX", "FieldOfViewX", "", "A",0.950021512530194
@@ -354,7 +335,7 @@ Objects:  {
 		AudioColor: 0,1,0
 		CameraOrthoZoom: 1
 	}
-	NodeAttribute: 5084704, "NodeAttribute::sideShape", "Camera" {
+	NodeAttribute: 94944441824, "NodeAttribute::frontShape", "Camera" {
 		Properties70:  {
 			P: "InterestPosition", "Vector", "", "A",0,0,-1
 			P: "FieldOfViewX", "FieldOfViewX", "", "A",0.950021512530194
@@ -373,7 +354,26 @@ Objects:  {
 		AudioColor: 0,1,0
 		CameraOrthoZoom: 1
 	}
-	NodeAttribute: 5099680, "NodeAttribute::", "Light" {
+	NodeAttribute: 94944456384, "NodeAttribute::sideShape", "Camera" {
+		Properties70:  {
+			P: "InterestPosition", "Vector", "", "A",0,0,-1
+			P: "FieldOfViewX", "FieldOfViewX", "", "A",0.950021512530194
+			P: "FieldOfViewY", "FieldOfViewY", "", "A",0.660594709658507
+			P: "NearPlane", "double", "Number", "",0.1
+			P: "FarPlane", "double", "Number", "",10000
+			P: "CameraProjectionType", "enum", "", "",1
+		}
+		TypeFlags: "Camera"
+		GeometryVersion: 124
+		Position: 0,0,0
+		Up: 0,1,0
+		LookAt: 0,0,-1
+		ShowInfoOnMoving: 1
+		ShowAudio: 0
+		AudioColor: 0,1,0
+		CameraOrthoZoom: 1
+	}
+	NodeAttribute: 94944471360, "NodeAttribute::", "Light" {
 		Properties70:  {
 			P: "LightType", "enum", "", "",4
 			P: "Intensity", "Number", "", "A",1
@@ -381,39 +381,39 @@ Objects:  {
 		TypeFlags: "Light"
 		GeometryVersion: 124
 	}
-	Model: 5000032, "Model::groundPlane_transform", "Null" {
+	Model: 94944372016, "Model::groundPlane_transform", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
-			P: "Lcl Rotation", "Lcl Rotation", "", "A",90,-0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",89.9999929422133,-0,0
 			P: "Lcl Scaling", "Lcl Scaling", "", "A",12,12,1
 		}
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5006496, "Model::persp", "Camera" {
+	Model: 94944378000, "Model::persp", "Camera" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
 			P: "Lcl Translation", "Lcl Translation", "", "A",10.1347796201054,7.60108471507904,10.1347796201054
-			P: "Lcl Rotation", "Lcl Rotation", "", "A",-27.9383527296024,45,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-27.9383539202342,45.0000061851535,0
 		}
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5013968, "Model::top", "Camera" {
+	Model: 94944385440, "Model::top", "Camera" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
 			P: "Lcl Translation", "Lcl Translation", "", "A",0,100.1,0
-			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-89.9999929422133,0,0
 		}
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5021216, "Model::front", "Camera" {
+	Model: 94944392560, "Model::front", "Camera" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -423,18 +423,18 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5027984, "Model::side", "Camera" {
+	Model: 94944399344, "Model::side", "Camera" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
 			P: "Lcl Translation", "Lcl Translation", "", "A",100.1,0,0
-			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,90,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,89.9802151428887,0
 		}
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5035472, "Model::volumeLight1", "Light" {
+	Model: 94944406720, "Model::volumeLight1", "Light" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -443,7 +443,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5047296, "Model::", "Null" {
+	Model: 94944418752, "Model::", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -451,7 +451,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5061344, "Model::", "Null" {
+	Model: 94944432976, "Model::", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -459,7 +459,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5075840, "Model::", "Null" {
+	Model: 94944447472, "Model::", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -467,7 +467,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5090352, "Model::", "Null" {
+	Model: 94944462032, "Model::", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -475,7 +475,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 5137776, "Model::", "Null" {
+	Model: 94944509440, "Model::", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -491,37 +491,37 @@ Objects:  {
 Connections:  {
 	
 	;Model::groundPlane_transform, Model::RootNode
-	C: "OO",5000032,0
+	C: "OO",94944372016,0
 	
 	;Model::persp, Model::RootNode
-	C: "OO",5006496,0
+	C: "OO",94944378000,0
 	
 	;Model::top, Model::RootNode
-	C: "OO",5013968,0
+	C: "OO",94944385440,0
 	
 	;Model::front, Model::RootNode
-	C: "OO",5021216,0
+	C: "OO",94944392560,0
 	
 	;Model::side, Model::RootNode
-	C: "OO",5027984,0
+	C: "OO",94944399344,0
 	
 	;Model::volumeLight1, Model::RootNode
-	C: "OO",5035472,0
+	C: "OO",94944406720,0
 	
 	;NodeAttribute::perspShape, Model::persp
-	C: "OO",5041760,5006496
+	C: "OO",94944415120,94944378000
 	
 	;NodeAttribute::topShape, Model::top
-	C: "OO",5055600,5013968
+	C: "OO",94944427232,94944385440
 	
 	;NodeAttribute::frontShape, Model::front
-	C: "OO",5070192,5021216
+	C: "OO",94944441824,94944392560
 	
 	;NodeAttribute::sideShape, Model::side
-	C: "OO",5084704,5027984
+	C: "OO",94944456384,94944399344
 	
 	;NodeAttribute::, Model::volumeLight1
-	C: "OO",5099680,5035472
+	C: "OO",94944471360,94944406720
 }
 ;Takes section
 ;----------------------------------------------------
