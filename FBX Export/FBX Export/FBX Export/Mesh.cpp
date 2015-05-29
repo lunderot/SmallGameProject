@@ -62,7 +62,7 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 
 		TransformNode->LclTranslation.Set(FbxDouble3(importedTransforms[i].position[0], importedTransforms[i].position[1], importedTransforms[i].position[2]));
 
-		int parentID = importedTransforms[i].parentID;
+		int parentID = importedTransforms[i].parentID + 1;
 		//std::cout << parentID << std::endl;
 		std::cout << "Rot we got" << std::endl;
 		//std::cout << euler[0] << std::endl;

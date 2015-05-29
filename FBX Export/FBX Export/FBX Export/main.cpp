@@ -29,11 +29,14 @@ int main()
 	// Classes
 	Mesh mesh;
 	Camera cam;
+	Light light;
 
 	// Fill the FBX with data
 	//mesh.GetMesh(scene, "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
-	mesh.ExportMeshes(scene, "D://GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
-	cam.ExportCameras(scene, "D://GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin");
+	std::string binaryFileName = "D://GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin";
+	mesh.ExportMeshes(scene, binaryFileName);
+	cam.ExportCameras(scene, binaryFileName);
+	light.ExportLights(scene, binaryFileName);
 
 	// Export the scene
 	exporter->Export(scene);
