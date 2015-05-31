@@ -72,15 +72,8 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 		//std::cout << importedTransforms[i].rotation[2] << std::endl;
 		//std::cout << importedTransforms[i].rotation[3] << std::endl;
 		//double* euler = QuatToEuler(importedTransforms[i].rotation);
-		float tmp;
-		cout <<  "cp" << abs(asin(-test._31)) << endl;
-		if (abs(asin(-test._31)) < 0.001f)
-			tmp = asin(-test._31) * 180.0f / FBXSDK_PI;
-		else
-			tmp = asin(-test._31) * 180.0f / FBXSDK_PI - 90.0f;
 
-		cout << tmp << endl;
-		TransformNode->LclRotation.Set(FbxDouble3(atan(test._32 / test._33) * 180.0f / FBXSDK_PI, tmp, atan(test._21 / test._11) * 180.0f / FBXSDK_PI)/*quaternion->DecomposeSphericalXYZ()*/);
+		TransformNode->LclRotation.Set(FbxDouble3(atan(test._32 / test._33) * 180.0f / FBXSDK_PI, asin(-test._31) * 180.0f / FBXSDK_PI, atan(test._21 / test._11) * 180.0f / FBXSDK_PI)/*quaternion->DecomposeSphericalXYZ()*/);
 
 		TransformNode->LclScaling.Set(FbxDouble3(importedTransforms[i].scale[0], importedTransforms[i].scale[1], importedTransforms[i].scale[2]));
 
