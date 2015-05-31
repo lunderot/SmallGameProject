@@ -32,7 +32,7 @@ int main()
 	Light light;
 
 	// Fill the FBX with data
-	std::string binaryFileName = "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/Portal_test_FBX.bin";
+	std::string binaryFileName = "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/testosper.bin";
 	//std::string binaryFileName = "D://GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin";
 	mesh.ExportMeshes(scene, binaryFileName);
 	cam.ExportCameras(scene, binaryFileName);

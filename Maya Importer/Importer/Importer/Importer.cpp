@@ -491,13 +491,13 @@ bool Importer::extractSkinAnimations(unsigned int& offset, char* fileData, unsig
 		if (skins[i].numberOfInfluences * sizeof(int) > fileSize - offset)
 			return false;
 		skins[i].influenceIndices = new int[skins[i].numberOfInfluences];
-		memcpy(&skins[i].influenceIndices, &fileData[offset], skins[i].numberOfInfluences * sizeof(int));
+		memcpy(skins[i].influenceIndices, &fileData[offset], skins[i].numberOfInfluences * sizeof(int));
 		offset += skins[i].numberOfInfluences * sizeof(int);
 
 		if (skins[i].skinVertexCount * sizeof(VertexInfluence) > fileSize - offset)
 			return false;
 		skins[i].Weights = new VertexInfluence[skins[i].skinVertexCount];
-		memcpy(&skins[i].Weights, &fileData[offset], skins[i].skinVertexCount * sizeof(VertexInfluence));
+		memcpy(skins[i].Weights, &fileData[offset], skins[i].skinVertexCount * sizeof(VertexInfluence));
 		offset += skins[i].skinVertexCount * sizeof(VertexInfluence);
 	}
 	return true;
@@ -516,7 +516,7 @@ bool Importer::extractKeys(unsigned int& offset, char* fileData, unsigned int& f
 		if (Curves[i].numberOfKeyframes * sizeof(KeyframePoint) > fileSize - offset)
 			return false;
 		Curves[i].keys = new KeyframePoint[Curves[i].numberOfKeyframes];
-		memcpy(&Curves[i].keys, &fileData[offset], Curves[i].numberOfKeyframes * sizeof(KeyframePoint));
+		memcpy(Curves[i].keys, &fileData[offset], Curves[i].numberOfKeyframes * sizeof(KeyframePoint));
 		offset += Curves[i].numberOfKeyframes * sizeof(KeyframePoint);
 
 		if (Curves[i].curveNameLength > fileSize - offset)

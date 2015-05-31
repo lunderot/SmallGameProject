@@ -162,6 +162,8 @@ public:
 	unsigned int getNumMorph() const;
 	unsigned int getNumWeights() const;
 	unsigned int getNumCurves() const;
+	unsigned int getNumJoints() const;
+	unsigned int getNumSkins() const;
 
 	const ImporterTransform* getTransform() const;
 	const ImporterMesh* getMesh() const;
