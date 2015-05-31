@@ -45,6 +45,7 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 	FbxNode* rootNode = scene->GetRootNode();
 	int counter = 0;
 	const ImporterTransform * importedTransforms = importer.getTransform();
+	std::cout << "TRANSFORMS" << endl;
 	for (unsigned int i = 0; i < importer.getNumTransforms(); i++)
 	{
 		//FbxNode* TransformNode = FbxNode::Create(scene, std::string(std::string(importedTransforms[i].name) + std::to_string(counter)).c_str());
@@ -63,18 +64,30 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 		//quaternion->Set(importedTransforms[i].rotation[0], importedTransforms[i].rotation[1], importedTransforms[i].rotation[2], importedTransforms[i].rotation[3]);
 		double* Euler;
 		Euler = QuatToEuler(importedTransforms[i].rotation);
+		FbxMatrix matrix;
+		
 		//std::cout << "iport rot" << std::endl;
 		//std::cout << importedTransforms[i].rotation[0] << std::endl;
 		//std::cout << importedTransforms[i].rotation[1] << std::endl;
 		//std::cout << importedTransforms[i].rotation[2] << std::endl;
 		//std::cout << importedTransforms[i].rotation[3] << std::endl;
 		//double* euler = QuatToEuler(importedTransforms[i].rotation);
-		TransformNode->LclRotation.Set(FbxDouble3(atan(test._32 / test._33) * 180 / FBXSDK_PI, asin(-test._31) * 180 / FBXSDK_PI, atan(test._21 / test._11) * 180 / FBXSDK_PI)/*quaternion->DecomposeSphericalXYZ()*/);
+		float tmp;
+		cout <<  "cp" << abs(asin(-test._31)) << endl;
+		if (abs(asin(-test._31)) < 0.001f)
+			tmp = asin(-test._31) * 180 / FBXSDK_PI;
+		else
+			tmp = asin(-test._31) * 180 / FBXSDK_PI - 90;
+
+		cout << tmp << endl;
+		TransformNode->LclRotation.Set(FbxDouble3(atan(test._32 / test._33) * 180 / FBXSDK_PI, tmp, atan(test._21 / test._11) * 180 / FBXSDK_PI)/*quaternion->DecomposeSphericalXYZ()*/);
 
 		TransformNode->LclScaling.Set(FbxDouble3(importedTransforms[i].scale[0], importedTransforms[i].scale[1], importedTransforms[i].scale[2]));
 
 		TransformNode->LclTranslation.Set(FbxDouble3(importedTransforms[i].position[0], importedTransforms[i].position[1], importedTransforms[i].position[2]));
 
+		TransformNode->SetPreRotation(FbxNode::EPivotSet::eSourcePivot, FbxVector4(0, 90, 0));
+		TransformNode->SetPostRotation(FbxNode::EPivotSet::eSourcePivot, FbxVector4(0, -90, 0));
 		int parentID = importedTransforms[i].parentID;
 		//std::cout << parentID << std::endl;
 		//std::cout << "Rot we got" << std::endl;
@@ -112,19 +125,27 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 	meshes.resize(importer.getNumMeshes());
 	const ImporterMesh* importedMeshes = importer.getMesh();
 	const ImporterMaterial* importedMaterials = importer.getMaterial();
-
+	std::cout << "MESHES" << endl;
+	std::cout << importer.getNumMeshes() << endl;
 	for (unsigned int i = 0; i < importer.getNumMeshes(); i++)
 	{
 
 		// Mesh
+		cout << "MESH NAME: " << importedMeshes[i].name << endl;
 		//FbxMesh* mesh = FbxMesh::Create(scene, std::string(std::string(importedMeshes[i].name) + std::to_string(counter)).c_str());
 		FbxMesh* mesh = FbxMesh::Create(scene, importedMeshes[i].name);
 		counter++;
 
 		std::vector <FbxVector4> vertices;
-
-		for (unsigned int j = 0; j < importedMeshes[i].indice_count; j++)
+		
+		cout << "COUNTER: " << i << endl;
+		cout << "INDICES: " << importedMeshes[i].indice_count << endl;
+		cout << "VERTEX: " << importedMeshes[i].vertex_count << endl;
+		//getchar();
+		for (unsigned int j = 0; j < importedMeshes[i].vertex_count; j++)
 		{
+			cout << j << endl;
+			//cout << importedMeshes[i].position[j * 3 + 0] << " " << importedMeshes[i].position[j * 3 + 1] << " " << importedMeshes[i].position[j * 3 + 2] << endl;
 			FbxVector4 vertex(importedMeshes[i].position[j * 3 + 0], importedMeshes[i].position[j * 3 + 1], importedMeshes[i].position[j * 3 + 2]);
 			vertices.push_back(vertex);
 		}

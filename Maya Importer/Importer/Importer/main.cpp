@@ -1,26 +1,39 @@
 #include "Importer.h"
+#include <iostream>
 #include <fstream>
 int main()
 {
 	Importer importer;
-	importer.importFile("C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/Portal_test_FBX.bin");
-
-	ofstream out("C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/Portal_test_FBX_ImporterTest.txt");
-	out << importer.headers << endl;
-
-	for (unsigned int i = 0; i < importer.headers.group_count; i++)
+	if (!importer.importFile("C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/rekt.bin"))
 	{
-		out << importer.transforms[i].name << endl;
-		out << importer.transforms[i].rotation[0] << " " << importer.transforms[i].rotation[1] << " " << importer.transforms[i].rotation[2] << " " << importer.transforms[i].rotation[3] << " " << endl;
+		std::cout << "IMPORTER FAIL!!!" << endl;
 	}
 
-	out << "-------------------------------------------------------------------------";
-	importer.getTransform();
+	ofstream out("C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/Portal_test_FBX_ImporterTest.txt");
+	//out << importer.headers << endl;
 
-	for (unsigned int i = 0; i < importer.headers.group_count; i++)
+	const ImporterTransform* transforms = importer.getTransform();
+	for (unsigned int i = 0; i < importer.getNumTransforms(); i++)
 	{
-		out << importer.getTransform()[i].name << endl;
-		out << importer.getTransform()[i].rotation[0] << " " << importer.getTransform()[i].rotation[1] << " " << importer.getTransform()[i].rotation[2] << " " << importer.getTransform()[i].rotation[3] << " " << endl;
+		out << transforms[i].name << endl;
+		out << transforms[i].rotation[0] << " " << transforms[i].rotation[1] << " " << transforms[i].rotation[2] << " " << transforms[i].rotation[3] << " " << endl;
+	}
+
+	const ImporterMesh* meshes = importer.getMesh();
+	for (unsigned int i = 0; i < importer.getNumMeshes(); i++)
+	{
+		out << meshes[i].position_count << endl;
+		for (unsigned int j = 0; j < meshes[i].position_count; j++)
+			out << meshes[i].position[j] << endl;
+
+		for (unsigned int j = 0; j < meshes[i].uv_count; j++)
+			out << meshes[i].uv[j] << endl;
+
+		for (unsigned int j = 0; j < meshes[i].normal_count; j++)
+			out << meshes[i].normal[j] << endl;
+
+		for (unsigned int j = 0; j < meshes[i].indice_count; j++)
+			out << meshes[i].vertices[j] << endl;
 	}
 
 	//for (unsigned int i = 0; i < importer.headers.joint_count; i++)
@@ -251,6 +264,6 @@ int main()
 	out << importer.spheres[i].position[0] << " " << importer.spheres[i].position[1] << " " << importer.spheres[i].position[2] << endl;
 	out << importer.spheres[i].radius << endl;
 	}*/
-
+	getchar();
 	return 0;
 }

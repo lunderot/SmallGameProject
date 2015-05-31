@@ -174,6 +174,7 @@ public:
 	const ImporterWeights* getWeights() const;
 	const ImporterKeyframes* getCurves() const;
 
+
 private:
 	//Allt här under lär bli private
 	bool extractMainHeader(unsigned int& offset, char* fileData, unsigned int& fileSize);

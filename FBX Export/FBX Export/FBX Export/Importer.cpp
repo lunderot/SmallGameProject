@@ -19,7 +19,7 @@ Importer::~Importer()
 		delete[] transforms[i].name;
 
 	for (unsigned int i = 0; i < headers.mesh_count; i++)
-	{ 
+	{
 		delete[] meshes[i].position;
 		delete[] meshes[i].uv;
 		delete[] meshes[i].normal;
@@ -51,7 +51,7 @@ Importer::~Importer()
 	for (unsigned int i = 0; i < headers.light_count; i++)
 	{
 		delete[] lights[i].parentID;
-		delete[] lights[i].name;		
+		delete[] lights[i].name;
 	}
 
 	for (unsigned int i = 0; i < headers.joint_count; i++)
@@ -164,11 +164,11 @@ bool Importer::extractTransforms(unsigned int& offset, char* fileData, unsigned 
 
 		char* node_name = new char[transforms[i].name_Length + 1];
 		node_name[transforms[i].name_Length] = '\0';
-	
+
 		memcpy((char*)node_name, &fileData[offset], transforms[i].name_Length);
 		transforms[i].name = node_name;
 
-		offset += transforms[i].name_Length;	
+		offset += transforms[i].name_Length;
 	}
 
 	return true;
@@ -264,7 +264,7 @@ bool Importer::extractCameras(unsigned int& offset, char* fileData, unsigned int
 			return false;
 		char* name = new char[cameras[i].name_length + 1];
 		name[cameras[i].name_length] = '\0';
-		
+
 		memcpy(name, &fileData[offset], cameras[i].name_length);
 
 		cameras[i].name = name;
@@ -278,7 +278,7 @@ bool Importer::extractCameras(unsigned int& offset, char* fileData, unsigned int
 bool Importer::extractMaterials(unsigned int& offset, char* fileData, unsigned int& fileSize)
 {
 	materials = new ImporterMaterial[headers.material_count];
-	
+
 	for (unsigned int i = 0; i < headers.material_count; i++)
 	{
 		if (sizeof(MaterialData) > fileSize - offset)
@@ -295,14 +295,14 @@ bool Importer::extractMaterials(unsigned int& offset, char* fileData, unsigned i
 		offset += materials[i].name_length;
 		materials[i].name = name;
 
-	/*	memcpy(materials[i].ambient, materials[i].ambient, sizeof(matData.ambient));
+		/*	memcpy(materials[i].ambient, materials[i].ambient, sizeof(matData.ambient));
 		memcpy(materials[i].diffuse, materials[i].diffuse, sizeof(matData.diffuse));
 		memcpy(materials[i].incandescence, materials[i].incandescence, sizeof(matData.incandescence));
 		memcpy(materials[i].reflection, materials[i].reflection, sizeof(matData.reflection));
 		memcpy(materials[i].specular, matData.specular, sizeof(matData.specular));
 		memcpy(materials[i].transparency_color, matData.transparency_color, sizeof(matData.transparency_color));
 
-		materials[i].mtrl_type = matData.mtrl_type;	
+		materials[i].mtrl_type = matData.mtrl_type;
 		materials[i].diffuse_factor = matData.diffuse_factor;
 		materials[i].shininess = matData.shininess;
 		materials[i].normal_depth = matData.normal_depth;
@@ -381,12 +381,13 @@ bool Importer::extractLights(unsigned int& offset, char* fileData, unsigned int&
 			return false;
 		lights[i].parentID = new int[lights[i].numberOfParents];
 		memcpy(lights[i].parentID, &fileData[offset], lights[i].numberOfParents * sizeof(int));
+		offset += lights[i].numberOfParents * sizeof(int);
 
 		if (lights[i].name_Length > fileSize - offset)
 			return false;
 		char* name = new char[lights[i].name_Length + 1];
 		name[lights[i].name_Length] = '\0';
-		
+
 		memcpy(name, &fileData[offset], lights[i].name_Length);
 		lights[i].name = name;
 
@@ -409,7 +410,7 @@ bool Importer::extractJoint(unsigned int& offset, char* fileData, unsigned int& 
 		if (joints[i].transform.name_Length > fileSize - offset)
 			return false;
 		char* name = new char[joints[i].transform.name_Length + 1];
-		name[joints[i].transform.name_Length] = '\0';	
+		name[joints[i].transform.name_Length] = '\0';
 
 		memcpy(name, &fileData[offset], joints[i].transform.name_Length);
 		joints[i].transform.name = name;
@@ -439,7 +440,7 @@ bool Importer::extractNurb(unsigned int& offset, char* fileData, unsigned int& f
 			return false;
 		char* name = new char[nurbs[i].name_Length + 1];
 		name[nurbs[i].name_Length] = '\0';
-		
+
 		memcpy(name, &fileData[offset], nurbs[i].name_Length);
 		nurbs[i].name = name;
 
@@ -486,7 +487,7 @@ bool Importer::extractSkinAnimations(unsigned int& offset, char* fileData, unsig
 			return false;
 		memcpy(&skins[i], &fileData[offset], sizeof(SkinAnimation));
 		offset += sizeof(SkinAnimation);
-		
+
 		if (skins[i].numberOfInfluences * sizeof(int) > fileSize - offset)
 			return false;
 		skins[i].influenceIndices = new int[skins[i].numberOfInfluences];
