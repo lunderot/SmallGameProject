@@ -12,21 +12,21 @@ double* QuatToEuler(const double quat[4])
 	double sqz = quat[2] * quat[2];
 	//double unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
 	double test = quat[0] * quat[1] + quat[2] * quat[3];
-	if (test > 0.49999999999) { // singularity at north pole
-		returnValues[1] = 2 * atan2(quat[0], quat[3]) * 180 / FBXSDK_PI;
-		returnValues[2] = FBXSDK_PI / 2 * 180 / FBXSDK_PI;
+	if (test > 0.49999999999f) { // singularity at north pole
+		returnValues[1] = 2 * atan2(quat[0], quat[3]) * 180.0f / FBXSDK_PI;
+		returnValues[2] = FBXSDK_PI / 2 * 180.0f / FBXSDK_PI;
 		returnValues[0] = 0;
 		return returnValues;
 	}
-	if (test < -0.4999999999) { // singularity at south pole
-		returnValues[1] = -2 * atan2(quat[0], quat[3]) * 180 / FBXSDK_PI;
-		returnValues[2] = FBXSDK_PI / 2 * 180 / FBXSDK_PI;
+	if (test < -0.4999999999f) { // singularity at south pole
+		returnValues[1] = -2 * atan2(quat[0], quat[3]) * 180.0f / FBXSDK_PI;
+		returnValues[2] = FBXSDK_PI / 2 * 180.0f / FBXSDK_PI;
 		returnValues[0] = 0;
 		return returnValues;
 	}
-	returnValues[1] = atan2(2 * quat[1] * quat[3] - 2 * quat[0] * quat[2], 1 - 2 * sqy - 2 * sqz) * 180 / FBXSDK_PI;//sqx - sqy - sqz + sqw);
-	returnValues[2] = asin(2 * test) * 180 / FBXSDK_PI;
-	returnValues[0] = atan2(2 * quat[0] * quat[3] - 2 * quat[1] * quat[2], 1 - 2 * sqx - 2 * sqz) * 180 / FBXSDK_PI;//-sqx + sqy - sqz + sqw);
+	returnValues[1] = atan2(2 * quat[1] * quat[3] - 2 * quat[0] * quat[2], 1 - 2 * sqy - 2 * sqz) * 180.0f / FBXSDK_PI;//sqx - sqy - sqz + sqw);
+	returnValues[2] = asin(2 * test) * 180.0f / FBXSDK_PI;
+	returnValues[0] = atan2(2 * quat[0] * quat[3] - 2 * quat[1] * quat[2], 1 - 2 * sqx - 2 * sqz) * 180.0f / FBXSDK_PI;//-sqx + sqy - sqz + sqw);
 	return returnValues;
 }
 
@@ -75,19 +75,19 @@ void Mesh::ExportMeshes(FbxScene* scene, std::string fileName)
 		float tmp;
 		cout <<  "cp" << abs(asin(-test._31)) << endl;
 		if (abs(asin(-test._31)) < 0.001f)
-			tmp = asin(-test._31) * 180 / FBXSDK_PI;
+			tmp = asin(-test._31) * 180.0f / FBXSDK_PI;
 		else
-			tmp = asin(-test._31) * 180 / FBXSDK_PI - 90;
+			tmp = asin(-test._31) * 180.0f / FBXSDK_PI - 90.0f;
 
 		cout << tmp << endl;
-		TransformNode->LclRotation.Set(FbxDouble3(atan(test._32 / test._33) * 180 / FBXSDK_PI, tmp, atan(test._21 / test._11) * 180 / FBXSDK_PI)/*quaternion->DecomposeSphericalXYZ()*/);
+		TransformNode->LclRotation.Set(FbxDouble3(atan(test._32 / test._33) * 180.0f / FBXSDK_PI, tmp, atan(test._21 / test._11) * 180.0f / FBXSDK_PI)/*quaternion->DecomposeSphericalXYZ()*/);
 
 		TransformNode->LclScaling.Set(FbxDouble3(importedTransforms[i].scale[0], importedTransforms[i].scale[1], importedTransforms[i].scale[2]));
 
 		TransformNode->LclTranslation.Set(FbxDouble3(importedTransforms[i].position[0], importedTransforms[i].position[1], importedTransforms[i].position[2]));
 
-		TransformNode->SetPreRotation(FbxNode::EPivotSet::eSourcePivot, FbxVector4(0, 90, 0));
-		TransformNode->SetPostRotation(FbxNode::EPivotSet::eSourcePivot, FbxVector4(0, -90, 0));
+		TransformNode->SetPreRotation(FbxNode::EPivotSet::eSourcePivot, FbxVector4(0, 90.0f, 0));
+		TransformNode->SetPostRotation(FbxNode::EPivotSet::eSourcePivot, FbxVector4(0, -90.0f, 0));
 		int parentID = importedTransforms[i].parentID;
 		//std::cout << parentID << std::endl;
 		//std::cout << "Rot we got" << std::endl;
