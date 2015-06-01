@@ -32,7 +32,8 @@ void Light::ExportLights(FbxScene* scene, std::string fileName)
 
 		//Color & Intensity
 		light->Color.Set(FbxDouble3(importedLights[i].color[0], importedLights[i].color[1], importedLights[i].color[2]));
-		light->Intensity.Set(importedLights[i].intensity);
+		light->Intensity.Set(importedLights[i].intensity * 100);
+		cout << importedLights[i].intensity << endl;
 
 		// Decay Type
 		if (importedLights[i].dType == 0)

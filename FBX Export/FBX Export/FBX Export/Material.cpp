@@ -14,7 +14,7 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 		FbxDouble3 emissiveColor(importedMaterials[importedMesh.material_Id[i]].incandescence[0], importedMaterials[importedMesh.material_Id[i]].incandescence[1], importedMaterials[importedMesh.material_Id[i]].incandescence[2]);
 		FbxDouble3 transparencyColor(importedMaterials[importedMesh.material_Id[i]].transparency_color[0], importedMaterials[importedMesh.material_Id[i]].transparency_color[1], importedMaterials[importedMesh.material_Id[i]].transparency_color[2]);
 		FbxDouble3 specularColor(importedMaterials[importedMesh.material_Id[i]].specular[0], importedMaterials[importedMesh.material_Id[i]].specular[1] , importedMaterials[importedMesh.material_Id[i]].specular[2]);
-
+		
 		const char* pathName = "C://Users/Litet/Documents/GitHub/SmallGameProject/FBX Export/FBX Export/";
 		// Lambert
 		if (importedMaterials[importedMesh.material_Id[i]].mtrl_type == 0)
@@ -100,14 +100,17 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 			material->TransparentColor.Set(transparencyColor);
 
 			material->Specular.Set(specularColor);
-			material->SpecularFactor.Set(importedMaterials[importedMesh.material_Id[i]].specular_factor);
 
-			material->Shininess.Set(importedMaterials[importedMesh.material_Id[i]].shininess);
+			// No need... super boost?
+			//material->SpecularFactor.Set(importedMaterials[importedMesh.material_Id[i]].specular_factor * 100);
+
+			material->Shininess.Set(importedMaterials[importedMesh.material_Id[i]].specular_factor);
+			
 			material->Reflection.Set(FbxDouble3(importedMaterials[importedMesh.material_Id[i]].reflection[0], importedMaterials[importedMesh.material_Id[i]].reflection[1], importedMaterials[importedMesh.material_Id[i]].reflection[2]));
 			
 			// Bugged...?
-			//material->ReflectionFactor.Set(FbxDouble(1));
-			
+			material->ReflectionFactor.Set(FbxDouble(importedMaterials[importedMesh.material_Id[i]].reflection_factor));
+			cout << importedMaterials[importedMesh.material_Id[i]].shininess << endl;
 
 			FbxNode* node = mesh->GetNode();
 			if (node)
