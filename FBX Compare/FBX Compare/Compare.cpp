@@ -26,6 +26,22 @@ void Compare::DoComparison(std::string pOutputFile)
 
 void Compare::MeshCompare()
 {
+	for (unsigned int i = 0; i < this->lGoldMeshInfo.size(); i++)
+	{
+		for (unsigned int j = 0; j < this->lGoldMeshInfo[i].normals.size(); j++)
+		{
+			FBXSDK_printf("gold %f %f %f\n", this->lGoldMeshInfo[i].normals[j][0], this->lGoldMeshInfo[i].normals[j][1], this->lGoldMeshInfo[i].normals[j][2]);
+		}
+	}
+
+	for (unsigned int i = 0; i < this->lTestMeshInfo.size(); i++)
+	{
+		for (unsigned int j = 0; j < this->lTestMeshInfo[i].normals.size(); j++)
+		{
+			FBXSDK_printf("test %f %f %f\n", this->lTestMeshInfo[i].normals[j][0], this->lTestMeshInfo[i].normals[j][1], this->lTestMeshInfo[i].normals[j][2]);
+		}
+	}
+
 	if (this->lGoldMeshInfo.size() != this->lTestMeshInfo.size())
 	{
 		FBXSDK_printf("\nThe number of meshes differ between files\n");
@@ -55,12 +71,13 @@ void Compare::MeshCompare()
 						FBXSDK_printf("DIFF norm\n");
 						break;
 					}
-					FBXSDK_printf("comp %f %f %f\n", comp_x - (*it)[0], comp_y - (*it)[1], comp_z - (*it)[2]);
+					//FBXSDK_printf("comp %f %f %f\n", comp_x - (*it)[0], comp_y - (*it)[1], comp_z - (*it)[2]);
 					it++;
 				}
 			}
 		
 			FBXSDK_printf("NumNormals %d %d\n", this->lGoldMeshInfo[i].normals.size(), this->lTestMeshInfo[i].normals.size());
+			FBXSDK_printf("NumUVs %d %d\n", this->lGoldMeshInfo[i].uv.size(), this->lTestMeshInfo[i].uv.size());
 			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].position.size(); j++)
 			{
 				double comp_x = this->lGoldMeshInfo[i].position[j][0];
