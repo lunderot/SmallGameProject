@@ -25,13 +25,33 @@ int main(int argc, char** argv)
 	FbxIOSettings* lSdkSettings = FbxIOSettings::Create(lSdkManager, IOSROOT);
 	SetSettings(lSdkManager, lSdkSettings);
 
-	Scenes scenes(lSdkManager, "file1.fbx", "file2.fbx");
+	const char* lFileName1 = nullptr;
+	const char* lFileName2 = nullptr;
 
-	FBXSDK_printf("FBX Compare\n\n");
-	FBXSDK_printf("Differences between files:\n\n");
+	if (argc < 3)
+	{
+		FBXSDK_printf("No input files specified!\n\n");
+	}
+	else
+	{
+		lFileName1 = argv[1];
+		lFileName2 = argv[2];
+	}
 
-	Compare comparitor = Compare(&scenes);
-	comparitor.DoComparison("out.txt");
+	if (lFileName1 && lFileName2)
+	{
+		Scenes scenes(lSdkManager, std::string(lFileName1), std::string(lFileName2));
+
+		FBXSDK_printf("FBX Compare\n\n");
+		FBXSDK_printf("Differences between files:\n\n");
+
+		Compare comparitor = Compare(&scenes);
+		comparitor.DoComparison("out.txt");
+	}
+	else
+	{
+		FBXSDK_printf("No input files specified!\n\n");
+	}
 
 	lSdkManager->Destroy();
 
