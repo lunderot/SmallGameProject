@@ -87,6 +87,7 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 			shadingName = "Phong";
 			FbxSurfacePhong* material = NULL;
 			material = node->GetSrcObject<FbxSurfacePhong>(0);
+			
 			material = FbxSurfacePhong::Create(scene, materialName.Buffer());
 			materialName += i;
 			material->Emissive.Set(emissiveColor);
@@ -102,6 +103,11 @@ void Material::ExportMaterials(FbxScene* scene, FbxMesh* mesh, const ImporterMes
 			material->SpecularFactor.Set(importedMaterials[importedMesh.material_Id[i]].specular_factor);
 
 			material->Shininess.Set(importedMaterials[importedMesh.material_Id[i]].shininess);
+			material->Reflection.Set(FbxDouble3(importedMaterials[importedMesh.material_Id[i]].reflection[0], importedMaterials[importedMesh.material_Id[i]].reflection[1], importedMaterials[importedMesh.material_Id[i]].reflection[2]));
+			
+			// Bugged...?
+			//material->ReflectionFactor.Set(FbxDouble(1));
+			
 
 			FbxNode* node = mesh->GetNode();
 			if (node)
