@@ -38,61 +38,138 @@ void Compare::MeshCompare()
 		{
 			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].normals.size(); j++)
 			{
-				if (this->lGoldMeshInfo[i].normals.size() != this->lTestMeshInfo[i].normals.size())
+				double comp_x = this->lGoldMeshInfo[i].normals[j][0];
+				double comp_y = this->lGoldMeshInfo[i].normals[j][1];
+				double comp_z = this->lGoldMeshInfo[i].normals[j][2];
+				std::vector<FbxVector4>::iterator it = this->lTestMeshInfo[i].normals.begin();
+
+				while (it <= this->lTestMeshInfo[i].normals.end())
 				{
-					FBXSDK_printf("\nThe number of normals differ in mesh number %d\n", i);
-					FBXSDK_printf("Early error out!\n");
-				}
-				else
-				{
-					for (unsigned int k = 0; k < 4; k++)
+					it = std::find_if(it, this->lTestMeshInfo[i].normals.end(), [&, comp_x](const FbxVector4& element){return (abs(element[0] - comp_x) < EPSILON); });
+					if (abs((*it)[1] - comp_y) < EPSILON && abs((*it)[2] - comp_z) < EPSILON)
 					{
-						if ((abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])) < -EPSILON)
-						{
-							FBXSDK_printf("Mesh [%d], normal [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), abs(abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])));
-						}
+						break;
 					}
+					if (it == this->lTestMeshInfo[i].normals.end())
+					{
+						FBXSDK_printf("DIFF norm\n");
+						break;
+					}
+					FBXSDK_printf("comp %f %f %f\n", comp_x - (*it)[0], comp_y - (*it)[1], comp_z - (*it)[2]);
+					it++;
 				}
 			}
-
+		
+			FBXSDK_printf("NumNormals %d %d\n", this->lGoldMeshInfo[i].normals.size(), this->lTestMeshInfo[i].normals.size());
 			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].position.size(); j++)
 			{
-				if (this->lGoldMeshInfo[i].position.size() != this->lTestMeshInfo[i].position.size())
+				double comp_x = this->lGoldMeshInfo[i].position[j][0];
+				double comp_y = this->lGoldMeshInfo[i].position[j][1];
+				double comp_z = this->lGoldMeshInfo[i].position[j][2];
+				std::vector<FbxVector4>::iterator it = this->lTestMeshInfo[i].position.begin();
+
+				//FBXSDK_printf("comp %f %f %f\n", comp_x, comp_y, comp_z);
+
+				while (it <= this->lTestMeshInfo[i].position.end())
 				{
-					FBXSDK_printf("\nThe number of vertex positions differ in mesh number %d\n", i);
-					FBXSDK_printf("Early error out!\n");
-				}
-				else
-				{
-					for (unsigned int k = 0; k < 4; k++)
+					it = std::find_if(it, this->lTestMeshInfo[i].position.end(), [&, comp_x](const FbxVector4& element){return (abs(element[0] - comp_x) < EPSILON); });
+					if (abs((*it)[1] - comp_y) < EPSILON && abs((*it)[2] - comp_z) < EPSILON)
 					{
-						if ((abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) < -EPSILON)
-						{
-							FBXSDK_printf("Mesh [%d], vert pos [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), abs(abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])));
-						}
+						//FBXSDK_printf("gay %f %f %f\n", (*it)[0], (*it)[1], (*it)[2]);
+						break;
 					}
+					if (it == this->lTestMeshInfo[i].position.end())
+					{
+						FBXSDK_printf("DIFF pos\n");
+						break;
+					}
+					//FBXSDK_printf("ittt %f %f %f\n", (*it)[0], (*it)[1], (*it)[2]);
+					it++;
 				}
 			}
 
 			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].uv.size(); j++)
 			{
-				if (this->lGoldMeshInfo[i].uv.size() != this->lTestMeshInfo[i].uv.size())
+				double comp_x = this->lGoldMeshInfo[i].uv[j][0];
+				double comp_y = this->lGoldMeshInfo[i].uv[j][1];
+				std::vector<FbxVector2>::iterator it = this->lTestMeshInfo[i].uv.begin();
+
+				while (it <= this->lTestMeshInfo[i].uv.end())
 				{
-					FBXSDK_printf("\nThe number of UV coordinates differ in mesh number %d\n", i);
-					FBXSDK_printf("Early error out!\n");
-				}
-				else
-				{
-					for (unsigned int k = 0; k < 2; k++)
+					it = std::find_if(it, this->lTestMeshInfo[i].uv.end(), [&, comp_x](const FbxVector2& element){return (abs(element[0] - comp_x) < EPSILON); });
+					if (abs((*it)[1] - comp_y) < EPSILON)
 					{
-						if ((abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])) < -EPSILON)
-						{
-							FBXSDK_printf("Mesh [%d], UV [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), abs(abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])));
-						}
+						break;
 					}
+					if (it == this->lTestMeshInfo[i].uv.end())
+					{
+						FBXSDK_printf("DIFF uv\n");
+						break;
+					}
+					it++;
 				}
 			}
 		}
+
+		//for (unsigned int i = 0; i < this->lGoldMeshInfo.size(); i++)
+		//{
+		//	for (unsigned int j = 0; j < this->lGoldMeshInfo[i].normals.size(); j++)
+		//	{
+		//		if (this->lGoldMeshInfo[i].normals.size() != this->lTestMeshInfo[i].normals.size())
+		//		{
+		//			FBXSDK_printf("\nThe number of normals differ in mesh number %d\n", i);
+		//			FBXSDK_printf("Early error out!\n");
+		//		}
+		//		else
+		//		{
+		//			for (unsigned int k = 0; k < 4; k++)
+		//			{
+		//				if ((abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])) < -EPSILON)
+		//				{
+		//					FBXSDK_printf("Mesh [%d], normal [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), abs(abs(this->lGoldMeshInfo[i].normals[j][k]) - abs(this->lTestMeshInfo[i].normals[j][k])));
+		//				}
+		//			}
+		//		}
+		//	}
+
+		//	for (unsigned int j = 0; j < this->lGoldMeshInfo[i].position.size(); j++)
+		//	{
+		//		if (this->lGoldMeshInfo[i].position.size() != this->lTestMeshInfo[i].position.size())
+		//		{
+		//			FBXSDK_printf("\nThe number of vertex positions differ in mesh number %d\n", i);
+		//			FBXSDK_printf("Early error out!\n");
+		//		}
+		//		else
+		//		{
+		//			for (unsigned int k = 0; k < 4; k++)
+		//			{
+		//				if ((abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])) < -EPSILON)
+		//				{
+		//					FBXSDK_printf("Mesh [%d], vert pos [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), abs(abs(this->lGoldMeshInfo[i].position[j][k]) - abs(this->lTestMeshInfo[i].position[j][k])));
+		//				}
+		//			}
+		//		}
+		//	}
+
+		//	for (unsigned int j = 0; j < this->lGoldMeshInfo[i].uv.size(); j++)
+		//	{
+		//		if (this->lGoldMeshInfo[i].uv.size() != this->lTestMeshInfo[i].uv.size())
+		//		{
+		//			FBXSDK_printf("\nThe number of UV coordinates differ in mesh number %d\n", i);
+		//			FBXSDK_printf("Early error out!\n");
+		//		}
+		//		else
+		//		{
+		//			for (unsigned int k = 0; k < 2; k++)
+		//			{
+		//				if ((abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])) > EPSILON || (abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])) < -EPSILON)
+		//				{
+		//					FBXSDK_printf("Mesh [%d], UV [%d], coord %s differ by more than an epsilon: % f\n", i, j, this->ReturnXYZW(k), abs(abs(this->lGoldMeshInfo[i].uv[j][k]) - abs(this->lTestMeshInfo[i].uv[j][k])));
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }
 
@@ -108,35 +185,35 @@ void Compare::CameraCompare()
 	{
 		for (unsigned int i = 0; i < this->lGoldCamInfo.size(); i++)
 		{
-			for (unsigned int j = 0; j < 3; j++)
-			{
-				if ((abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])) > EPSILON || (abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])) < -EPSILON)
-				{
-					FBXSDK_printf("Camera [%d], %s-position differ by more than an epsilon: % f\n", i, this->ReturnXYZW(j), abs(abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])));
-				}
-			}
-			for (unsigned int j = 0; j < 3; j++)
-			{
-				if ((abs(this->lGoldCamInfo[i].up_vector[j]) - abs(this->lTestCamInfo[i].up_vector[j])) > EPSILON || (abs(this->lGoldCamInfo[i].up_vector[j]) - abs(this->lTestCamInfo[i].up_vector[j])) < -EPSILON)
-				{
-					FBXSDK_printf("Camera [%d], up-vector %s-value differ by more than an epsilon: % f\n", i, this->ReturnXYZW(j), abs(abs(this->lGoldCamInfo[i].up_vector[j]) - abs(this->lTestCamInfo[i].up_vector[j])));
-				}
-			}
-			for (unsigned int j = 0; j < 3; j++)
-			{
-				if ((abs(this->lGoldCamInfo[i].interest_position[j]) - abs(this->lTestCamInfo[i].interest_position[j])) > EPSILON || (abs(this->lGoldCamInfo[i].interest_position[j]) - abs(this->lTestCamInfo[i].interest_position[j])) < -EPSILON)
-				{
-					FBXSDK_printf("Camera [%d], interest position %s-value differ by more than an epsilon: % f\n", i, this->ReturnXYZW(j), abs(abs(this->lGoldCamInfo[i].interest_position[j]) - abs(this->lTestCamInfo[i].interest_position[j])));
-				}
-			}
-			if ((abs(this->lGoldCamInfo[i].field_of_view_x) - abs(this->lTestCamInfo[i].field_of_view_x)) > EPSILON || (abs(this->lGoldCamInfo[i].field_of_view_x) - abs(this->lTestCamInfo[i].field_of_view_x)) < -EPSILON)
-			{
-				FBXSDK_printf("Camera [%d], FOV x-value differ by more than an epsilon: % f\n", i, abs(abs(this->lGoldCamInfo[i].field_of_view_x) - abs(this->lTestCamInfo[i].field_of_view_x)));
-			}
-			if ((abs(this->lGoldCamInfo[i].field_of_view_y) - abs(this->lTestCamInfo[i].field_of_view_y)) > EPSILON || (abs(this->lGoldCamInfo[i].field_of_view_y) - abs(this->lTestCamInfo[i].field_of_view_y)) < -EPSILON)
-			{
-				FBXSDK_printf("Camera [%d], FOV y-value differ by more than an epsilon: % f\n", i, abs(abs(this->lGoldCamInfo[i].field_of_view_y) - abs(this->lTestCamInfo[i].field_of_view_y)));
-			}
+			//for (unsigned int j = 0; j < 3; j++)
+			//{
+			//	if ((abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])) > EPSILON || (abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])) < -EPSILON)
+			//	{
+			//		FBXSDK_printf("Camera [%d], %s-position differ by more than an epsilon: % f\n", i, this->ReturnXYZW(j), abs(abs(this->lGoldCamInfo[i].position[j]) - abs(this->lTestCamInfo[i].position[j])));
+			//	}
+			//}
+			//for (unsigned int j = 0; j < 3; j++)
+			//{
+			//	if ((abs(this->lGoldCamInfo[i].up_vector[j]) - abs(this->lTestCamInfo[i].up_vector[j])) > EPSILON || (abs(this->lGoldCamInfo[i].up_vector[j]) - abs(this->lTestCamInfo[i].up_vector[j])) < -EPSILON)
+			//	{
+			//		FBXSDK_printf("Camera [%d], up-vector %s-value differ by more than an epsilon: % f\n", i, this->ReturnXYZW(j), abs(abs(this->lGoldCamInfo[i].up_vector[j]) - abs(this->lTestCamInfo[i].up_vector[j])));
+			//	}
+			//}
+			//for (unsigned int j = 0; j < 3; j++)
+			//{
+			//	if ((abs(this->lGoldCamInfo[i].interest_position[j]) - abs(this->lTestCamInfo[i].interest_position[j])) > EPSILON || (abs(this->lGoldCamInfo[i].interest_position[j]) - abs(this->lTestCamInfo[i].interest_position[j])) < -EPSILON)
+			//	{
+			//		FBXSDK_printf("Camera [%d], interest position %s-value differ by more than an epsilon: % f\n", i, this->ReturnXYZW(j), abs(abs(this->lGoldCamInfo[i].interest_position[j]) - abs(this->lTestCamInfo[i].interest_position[j])));
+			//	}
+			//}
+			//if ((abs(this->lGoldCamInfo[i].field_of_view_x) - abs(this->lTestCamInfo[i].field_of_view_x)) > EPSILON || (abs(this->lGoldCamInfo[i].field_of_view_x) - abs(this->lTestCamInfo[i].field_of_view_x)) < -EPSILON)
+			//{
+			//	FBXSDK_printf("Camera [%d], FOV x-value differ by more than an epsilon: % f\n", i, abs(abs(this->lGoldCamInfo[i].field_of_view_x) - abs(this->lTestCamInfo[i].field_of_view_x)));
+			//}
+			//if ((abs(this->lGoldCamInfo[i].field_of_view_y) - abs(this->lTestCamInfo[i].field_of_view_y)) > EPSILON || (abs(this->lGoldCamInfo[i].field_of_view_y) - abs(this->lTestCamInfo[i].field_of_view_y)) < -EPSILON)
+			//{
+			//	FBXSDK_printf("Camera [%d], FOV y-value differ by more than an epsilon: % f\n", i, abs(abs(this->lGoldCamInfo[i].field_of_view_y) - abs(this->lTestCamInfo[i].field_of_view_y)));
+			//}
 			if ((abs(this->lGoldCamInfo[i].near_plane) - abs(this->lTestCamInfo[i].near_plane)) > EPSILON || (abs(this->lGoldCamInfo[i].near_plane) - abs(this->lTestCamInfo[i].near_plane)) < -EPSILON)
 			{
 				FBXSDK_printf("Camera [%d], near clip plane differ by more than an epsilon: % f\n", i, abs(abs(this->lGoldCamInfo[i].near_plane) - abs(this->lTestCamInfo[i].near_plane)));

@@ -27,7 +27,6 @@ void Camera::ExportCameras(FbxScene* scene, std::string fileName)
 
 			camera->FieldOfViewX.Set(importedCameras[i].field_of_view_x);
 			camera->FieldOfViewY.Set(importedCameras[i].field_of_view_y);
-			
 
 			camera->NearPlane.Set(importedCameras[i].near_plane);
 			camera->FarPlane.Set(importedCameras[i].far_plane);
@@ -40,7 +39,6 @@ void Camera::ExportCameras(FbxScene* scene, std::string fileName)
 			for (unsigned int j = 0; j < importedCameras[i].nrOfParents; j++)
 			{
 				int parentID = importedCameras[i].parentID[j] + 1;
-
 				FbxNode* parentNode = scene->GetNode(parentID);
 				parentNode->SetNodeAttribute(camera);
 			}
