@@ -26,22 +26,6 @@ void Compare::DoComparison(std::string pOutputFile)
 
 void Compare::MeshCompare()
 {
-	for (unsigned int i = 0; i < this->lGoldMeshInfo.size(); i++)
-	{
-		for (unsigned int j = 0; j < this->lGoldMeshInfo[i].normals.size(); j++)
-		{
-			FBXSDK_printf("gold %f %f %f\n", this->lGoldMeshInfo[i].normals[j][0], this->lGoldMeshInfo[i].normals[j][1], this->lGoldMeshInfo[i].normals[j][2]);
-		}
-	}
-
-	for (unsigned int i = 0; i < this->lTestMeshInfo.size(); i++)
-	{
-		for (unsigned int j = 0; j < this->lTestMeshInfo[i].normals.size(); j++)
-		{
-			FBXSDK_printf("test %f %f %f\n", this->lTestMeshInfo[i].normals[j][0], this->lTestMeshInfo[i].normals[j][1], this->lTestMeshInfo[i].normals[j][2]);
-		}
-	}
-
 	if (this->lGoldMeshInfo.size() != this->lTestMeshInfo.size())
 	{
 		FBXSDK_printf("\nThe number of meshes differ between files\n");
@@ -68,16 +52,13 @@ void Compare::MeshCompare()
 					}
 					if (it == this->lTestMeshInfo[i].normals.end())
 					{
-						FBXSDK_printf("DIFF norm\n");
+						FBXSDK_printf("Mesh [%d], normal [%d] differ by more than an epsilon.", i, j);
 						break;
 					}
-					//FBXSDK_printf("comp %f %f %f\n", comp_x - (*it)[0], comp_y - (*it)[1], comp_z - (*it)[2]);
 					it++;
 				}
 			}
 		
-			FBXSDK_printf("NumNormals %d %d\n", this->lGoldMeshInfo[i].normals.size(), this->lTestMeshInfo[i].normals.size());
-			FBXSDK_printf("NumUVs %d %d\n", this->lGoldMeshInfo[i].uv.size(), this->lTestMeshInfo[i].uv.size());
 			for (unsigned int j = 0; j < this->lGoldMeshInfo[i].position.size(); j++)
 			{
 				double comp_x = this->lGoldMeshInfo[i].position[j][0];
@@ -85,22 +66,18 @@ void Compare::MeshCompare()
 				double comp_z = this->lGoldMeshInfo[i].position[j][2];
 				std::vector<FbxVector4>::iterator it = this->lTestMeshInfo[i].position.begin();
 
-				//FBXSDK_printf("comp %f %f %f\n", comp_x, comp_y, comp_z);
-
 				while (it <= this->lTestMeshInfo[i].position.end())
 				{
 					it = std::find_if(it, this->lTestMeshInfo[i].position.end(), [&, comp_x](const FbxVector4& element){return (abs(element[0] - comp_x) < EPSILON); });
 					if (abs((*it)[1] - comp_y) < EPSILON && abs((*it)[2] - comp_z) < EPSILON)
 					{
-						//FBXSDK_printf("gay %f %f %f\n", (*it)[0], (*it)[1], (*it)[2]);
 						break;
 					}
 					if (it == this->lTestMeshInfo[i].position.end())
 					{
-						FBXSDK_printf("DIFF pos\n");
+						FBXSDK_printf("Mesh [%d], vert pos [%d] differ by more than an epsilon.", i, j);
 						break;
 					}
-					//FBXSDK_printf("ittt %f %f %f\n", (*it)[0], (*it)[1], (*it)[2]);
 					it++;
 				}
 			}
@@ -120,7 +97,7 @@ void Compare::MeshCompare()
 					}
 					if (it == this->lTestMeshInfo[i].uv.end())
 					{
-						FBXSDK_printf("DIFF uv\n");
+						FBXSDK_printf("Mesh [%d], UV coord [%d] differ by more than an epsilon.", i, j);
 						break;
 					}
 					it++;

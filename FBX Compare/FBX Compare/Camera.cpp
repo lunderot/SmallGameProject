@@ -16,7 +16,7 @@ bool Camera::GetInfo(FbxNode* pNode, CamInfo& pCamInfo)
 
 	if (lCamera)
 	{
-		FBXSDK_printf("current camera node: %s\n", pNode->GetName());
+		//FBXSDK_printf("current camera node: %s\n", pNode->GetName());
 
 		this->GetStats(lCamera, pCamInfo);
 

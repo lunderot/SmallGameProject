@@ -48,10 +48,6 @@ int main(int argc, char** argv)
 		Compare comparitor = Compare(&scenes);
 		comparitor.DoComparison("out.txt");
 	}
-	else
-	{
-		FBXSDK_printf("No input files specified!\n\n");
-	}
 
 	lSdkManager->Destroy();
 

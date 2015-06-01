@@ -18,8 +18,7 @@ Scenes::Scenes(FbxManager* pManager, std::string pGolden, std::string pTest)
 
 Scenes::~Scenes()
 {
-	//this->lSdkGoldenScene->Destroy();
-	//this->lSdkTestScene->Destroy();
+
 }
 
 FbxScene* Scenes::GetGolden()
@@ -38,6 +37,7 @@ void Scenes::CheckStatus()
 	{
 		FBXSDK_printf("Failed to initialize importer.\n");
 		FBXSDK_printf("Error: %s\n", lSdkImporter->GetStatus().GetErrorString());
+		getchar();
 		exit(-1);
 	}
 }
