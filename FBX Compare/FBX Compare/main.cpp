@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 		FBXSDK_printf("Differences between files:\n\n");
 
 		Compare comparitor = Compare(&scenes);
-		comparitor.DoComparison("out.txt");
+		comparitor.DoComparison("");
 	}
 
 	lSdkManager->Destroy();

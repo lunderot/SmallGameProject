@@ -57,9 +57,6 @@ void Mesh::GetNormals(FbxMesh* pMesh, MeshInfo& pMeshInfo)
 				pMeshInfo.normals.push_back(lNormalElement->GetDirectArray().GetAt(lNormalIndex));
 			}
 		}
-
-
-			//FBXSDK_printf("normals for vertex[%d]: %f %f %f %f \n", lVertexIndex, pMeshInfo.normals[lVertexIndex][0], pMeshInfo.normals[lVertexIndex][1], pMeshInfo.normals[lVertexIndex][2], pMeshInfo.normals[lVertexIndex][3]);
 	}
 }
 
@@ -68,8 +65,6 @@ void Mesh::GetPosition(FbxMesh* pMesh, MeshInfo& pMeshInfo)
 	for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
 	{
 		pMeshInfo.position.push_back(pMesh->GetControlPointAt(lVertexIndex));
-
-		//FBXSDK_printf("position for vertex[%d]: %f %f %f %f \n", lVertexIndex, pMeshInfo.position[lVertexIndex][0], pMeshInfo.position[lVertexIndex][1], pMeshInfo.position[lVertexIndex][2], pMeshInfo.position[lVertexIndex][3]);
 	}
 }
 
@@ -97,7 +92,5 @@ void Mesh::GetUV(FbxMesh* pMesh, MeshInfo& pMeshInfo)
 				pMeshInfo.uv.push_back(lUvElement->GetDirectArray().GetAt(lUvIndex));
 			}
 		}
-
-
 	}
 }

@@ -38,7 +38,6 @@ void Hierarchy::GetChildren(FbxNode* pNode, TransformNodeInfo& pTransformNodeInf
 	std::string temp_name;
 	for (int i = 0; i < pNode->GetChildCount(); i++)
 	{
-		//temp_name = pNode->GetChildName(i);
 		FbxNode* temp_node = pNode->GetChild(i);
 		temp_name = temp_node->GetName();
 		
