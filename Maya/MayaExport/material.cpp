@@ -123,7 +123,6 @@ MStatus Materials::exportMaterial(vector<MaterialData>& mat_vector, map<const ch
 
 MStatus Materials::commonDiffuseValues(MFnDependencyNode& node, MaterialData& matStrct, vector<const char*> &node_name, vector<const char*> &diffuse_map, vector<const char*> &normal_map, vector<const char*> &specular_map)
 {
-	//matStrct.node_name = node.name().asChar();
 	node_name.push_back(node.name().asChar());
 	matStrct.name_length = node.name().length();
 
@@ -208,13 +207,6 @@ MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct,
 			tempOut.append("/");
 			tempOut.append(fileName);
 
-			//matStrct.diffuse_map = new char[fileName.size() + 1];
-			//for (unsigned int x = 0; x < matStrct.duffuse_map_length; x++)
-			//{
-			//	matStrct.diffuse_map[x] = fileName[x];
-			//}
-			//matStrct.diffuse_map[matStrct.duffuse_map_length] = '\0';
-
 			char* diffuse_map_temp = new char[fileName.size() + 1];
 			for (unsigned int x = 0; x < matStrct.duffuse_map_length; x++)
 			{
@@ -252,13 +244,6 @@ MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct,
 				string tempOut = this->outputDir;
 				tempOut.append("/");
 				tempOut.append(fileName);
-
-				//matStrct.specular_map = new char[fileName.size() + 1];
-				//for (unsigned int x = 0; x < matStrct.specular_map_length; x++)
-				//{
-				//	matStrct.specular_map[x] = fileName[x];
-				//}
-				//matStrct.specular_map[matStrct.specular_map_length] = '\0';
 
 				char* specular_map_temp = new char[fileName.size() + 1];
 				for (unsigned int x = 0; x < matStrct.specular_map_length; x++)
@@ -310,13 +295,6 @@ MStatus Materials::findTextures(MFnDependencyNode& node, MaterialData& matStrct,
 					string tempOut = this->outputDir;
 					tempOut.append("/");
 					tempOut.append(fileName);
-
-					//matStrct.normal_map = new char[fileName.size() + 1];
-					//for (unsigned int x = 0; x < matStrct.normal_map_length; x++)
-					//{
-					//	matStrct.normal_map[x] = fileName[x];
-					//}
-					//matStrct.normal_map[matStrct.normal_map_length] = '\0';
 
 					char* normal_map_temp = new char[fileName.size() + 1];
 					for (unsigned int x = 0; x < matStrct.normal_map_length; x++)

@@ -21,9 +21,6 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, KeyframesData& keyframeCu
 
 		KeyframePoint point;
 
-		//keyframeCurve.points = new KeyframePoint[keyframeCurve.numberOfKeyframes];
-
-		//keyframeCurve.curveName = curveObject.name().asChar();
 		curveName.push_back(curveObject.name().asChar());
 		keyframeCurve.curveNameLength = curveObject.name().length();
 
@@ -49,7 +46,6 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, KeyframesData& keyframeCu
 			point.time = curveObject.time(i).as(MTime::kSeconds);
 			point.value = curveObject.value(i);
 
-			//keyframeCurve.points[i] = point;
 			temp_point.push_back(point);
 		}
 
@@ -64,15 +60,12 @@ MStatus Keyframe::exportKeyframes(MObject& mayaObject, KeyframesData& keyframeCu
 		MObject controlledObject = allConnections[0].node();
 		keyframeCurve.attachToNameLength = allConnections[0].partialName().length();
 
-		//keyframeCurve.attachToName = new char[keyframeCurve.attachToNameLength + 1];
 		char* attachToName_temp = new char[keyframeCurve.attachToNameLength + 1];
 
 		for (unsigned int i = 0; i < keyframeCurve.attachToNameLength; i++)
 		{ 
-			//keyframeCurve.attachToName[i] = allConnections[0].partialName().asChar()[i];
 			attachToName_temp[i] = allConnections[0].partialName().asChar()[i];
 		}
-		//keyframeCurve.attachToName[keyframeCurve.attachToNameLength] = '\0';
 		attachToName_temp[keyframeCurve.attachToNameLength] = '\0';
 
 		attachToName.push_back((const char*)attachToName_temp);
